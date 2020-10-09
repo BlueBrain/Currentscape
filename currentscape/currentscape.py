@@ -2,9 +2,11 @@
 """The main function is based on scripts from the susmentioned article
     that are under the CC0 1.0 Universal (CC0 1.0) Public Domain Dedication license."""
 
-from pylab import *
 import json
 import os
+import numpy as np
+import matplotlib
+import matplotlib.pyplot as plt
 
 
 def replace_defaults(config, new_config):
@@ -22,8 +24,8 @@ def set_default_config(c):
     if c is None:
         c = {}
     elif isinstance(c, str):
-        f = open(c, "r")
-        c = json.load(f)
+        with open(c, "r") as f:
+            c = json.load(f)
 
     config = {}
     show = {}
@@ -47,7 +49,7 @@ def set_default_config(c):
     config["currentscape"] = currentscape
 
     voltage = {}
-    voltage["ticks"] = None
+    voltage["ticks"] = (-50, -20)
     voltage["ylim"] = (-90, 30)
     voltage["units"] = "[mV]"
     voltage["color"] = "black"
@@ -67,15 +69,16 @@ def set_default_config(c):
     config["figsize"] = (3, 4)
     config["labelpad"] = 1
     config["textsize"] = 6
-    config["legendsize"] = 6
+    config["legendtextsize"] = 6
+    config["legendbgcolor"] = "lightgrey"
     config["titlesize"] = 12
 
-    adjust = {}
-    adjust["left"] = None
-    adjust["right"] = 0.85
-    adjust["top"] = None
-    adjust["bottom"] = None
-    config["adjust"] = adjust
+    adjust_ = {}
+    adjust_["left"] = None
+    adjust_["right"] = 0.85
+    adjust_["top"] = None
+    adjust_["bottom"] = None
+    config["adjust"] = adjust_
 
     return replace_defaults(config, c)
 
@@ -104,15 +107,15 @@ def remove_ticks_and_frame(ax):
 
 def adjust(adjust_left, adjust_right, adjust_top, adjust_bottom):
     """Adjust Subplots."""
-    subplots_adjust(wspace=0, hspace=0)
+    plt.subplots_adjust(wspace=0, hspace=0)
     if adjust_left:
-        subplots_adjust(left=adjust_left)
+        plt.subplots_adjust(left=adjust_left)
     if adjust_right:
-        subplots_adjust(right=adjust_right)
+        plt.subplots_adjust(right=adjust_right)
     if adjust_top:
-        subplots_adjust(top=adjust_top)
+        plt.subplots_adjust(top=adjust_top)
     if adjust_bottom:
-        subplots_adjust(bottom=adjust_bottom)
+        plt.subplots_adjust(bottom=adjust_bottom)
 
 
 def set_label(ax, x, y, label, textsize):
@@ -128,7 +131,7 @@ def set_label(ax, x, y, label, textsize):
     )
 
 
-def set_legend(ax, im, curr_names):
+def set_legend(ax, im, curr_names, bg_color):
     """Set each current name color-coded in legend."""
     # create a patch (proxy artist) for every current
     patches = [
@@ -136,38 +139,42 @@ def set_legend(ax, im, curr_names):
     ]
     # put those patched as legend-handles into the legend
     leg = ax.legend(
-        handles=patches, bbox_to_anchor=(1.01, 1), loc=2, borderaxespad=0.0,
+        handles=patches,
+        bbox_to_anchor=(1.01, 1),
+        loc=2,
+        borderaxespad=0.0,
+        facecolor=bg_color,
+        edgecolor="black",
+        fancybox=False,  # disable round edges
     )
-    # set legend label color
+    leg.get_frame().set_linewidth(0.5)  # set border thickness
+    # set legend label color & boldness
     for i_color, text in enumerate(leg.texts):
         text.set_color(im.cmap(im.norm(i_color)))
+        text.set_weight("bold")
 
 
-def plotCurrentscape(voltage, currents, config):
-    """Returns a figure containing current scapes."""
-    # load config and set default to unspecified terms
-    c = set_default_config(config)
+def data_processing(currents, resy=1000):
+    """Process data for the plot."""
     # make a copy of currents
-    # CURRENTSCAPE CALCULATION STARTS HERE.
-    curr = array(currents)
+    curr = np.array(currents)
     cpos = curr.copy()
     cpos[curr < 0] = 0
     cneg = curr.copy()
     cneg[curr > 0] = 0
 
-    normapos = sum(abs(array(cpos)), axis=0)
-    normaneg = sum(abs(array(cneg)), axis=0)
+    normapos = np.sum(abs(np.array(cpos)), axis=0)
+    normaneg = np.sum(abs(np.array(cneg)), axis=0)
     npPD = normapos
     nnPD = normaneg
     cnorm = curr.copy()
     cnorm[curr > 0] = (abs(curr) / normapos)[curr > 0]
     cnorm[curr < 0] = -(abs(curr) / normaneg)[curr < 0]
 
-    resy = 1000
-    impos = zeros((resy, shape(cnorm)[-1]))
-    imneg = zeros((resy, shape(cnorm)[-1]))
+    impos = np.zeros((resy, np.shape(cnorm)[-1]))
+    imneg = np.zeros((resy, np.shape(cnorm)[-1]))
 
-    times = arange(0, shape(cnorm)[-1])
+    times = np.arange(0, np.shape(cnorm)[-1])
     for t in times:
         lastpercent = 0
         for numcurr, curr in enumerate(cnorm):
@@ -182,76 +189,46 @@ def plotCurrentscape(voltage, currents, config):
                 percent = int(abs(curr[t]) * (resy))
                 imneg[lastpercent : lastpercent + percent, t] = numcurr
                 lastpercent = lastpercent + percent
-    im0 = vstack((impos, imneg))
-    # CURRENTSCAPE CALCULATION ENDS HERE.
+    im0 = np.vstack((impos, imneg))
 
-    # PLOT CURRENTSCAPE
-    # adjust_left = None
-    # adjust_right = 0.82
-    # adjust_top = None
-    # adjust_bottom = None
-    # curr_names = [
-    #     "Ih",
-    #     "Ca_HVA2",
-    #     "Ca_LVAst",
-    #     "SK_E2",
-    #     "SKv3_1",
-    #     "K_Pst",
-    #     "K_Tst",
-    #     "NaTg",
-    # ]
-    # voltage_ticks = [-50, -20]
-    # voltage_ylim = (-90, 30)
-    # voltage_units = "[mV]"
-    # voltage_color = "black"
-    # current_ticks = [5, 50, 500]
-    # current_ylim = (0.01, 1500)
-    # current_units = "[pA]"
-    # current_color = "black"
-    # in_label = "inward %"
-    # out_label = "outward %"
+    N_curr = len(cnorm)  # number of currents
 
-    # labelpad = 1
-    # elcolormap = "Set1"
-    # title = "XX pA"
-    # figsize = (3, 4)
-    # textsize = 6
-    # legendsize = 6
-    # titlesize = 12
+    return im0, npPD, nnPD, N_curr
 
-    # set voltage ticks if not forced by config
-    if not c["voltage"]["ticks"]:
-        low_tick = int(voltage[0])  # round down
-        high_tick = round(low_tick + 30, -1)
-        c["voltage"]["ticks"] = [low_tick, high_tick]
+
+def create_figure(voltage, im0, npPD, nnPD, c, N_curr, resy=1000):
+    """Create the currentscape figure."""
     # set text size
-    rcParams["axes.labelsize"] = c["textsize"]
-    rcParams["ytick.labelsize"] = c["textsize"]
-    rcParams["legend.fontsize"] = c["legendsize"]
+    plt.rcParams["axes.labelsize"] = c["textsize"]
+    plt.rcParams["ytick.labelsize"] = c["textsize"]
+    plt.rcParams["legend.fontsize"] = c["legendtextsize"]
     # remove legend handles
-    rcParams["legend.handletextpad"] = 0
-    rcParams["legend.labelspacing"] = 0
-    rcParams["legend.handlelength"] = 0
-
-    # print(c)
-    resy = c["currentscape"]["y_resolution"]
+    plt.rcParams["legend.handletextpad"] = 0
+    plt.rcParams["legend.labelspacing"] = 0
+    plt.rcParams["legend.handlelength"] = 0
 
     # START PLOT
-    fig = figure(figsize=c["figsize"])
+    fig = plt.figure(figsize=c["figsize"])
     if c["title"]:
         fig.suptitle(c["title"], fontsize=c["titlesize"])
 
     # PLOT VOLTAGE TRACE
     xmax = len(voltage)
-    ax = subplot2grid((7, 1), (0, 0), rowspan=2)
-    t = arange(0, len(voltage))
-    plot(t, voltage, color=c["voltage"]["color"], lw=1.0)
-    plot(
-        t, ones(len(t)) * c["voltage"]["ticks"][0], ls="dashed", color="black", lw=0.75
+    ax = plt.subplot2grid((7, 1), (0, 0), rowspan=2)
+    t = np.arange(0, len(voltage))
+    ax.plot(t, voltage, color=c["voltage"]["color"], lw=1.0)
+    ax.plot(
+        t,
+        np.ones(len(t)) * c["voltage"]["ticks"][0],
+        ls="dashed",
+        color="black",
+        lw=0.75,
     )
-    vlines(1, c["voltage"]["ticks"][0], c["voltage"]["ticks"][-1], lw=1, color="black")
-    ylim(c["voltage"]["ylim"])
-    xlim(0, xmax)
+    ax.vlines(
+        1, c["voltage"]["ticks"][0], c["voltage"]["ticks"][-1], lw=1, color="black"
+    )
+    ax.set_ylim(c["voltage"]["ylim"])
+    ax.set_xlim(0, xmax)
     if c["show"]["labels"]:
         ax.set_ylabel(c["voltage"]["units"], labelpad=c["labelpad"])
     if c["show"]["ticklabels"]:
@@ -259,13 +236,13 @@ def plotCurrentscape(voltage, currents, config):
     remove_ticks_and_frame(ax)
 
     # PLOT TOTAL INWARD CURRENT IN LOG SCALE
-    ax = subplot2grid((7, 1), (2, 0), rowspan=1)
-    fill_between(arange(len((npPD))), (npPD), color=c["current"]["color"])
+    ax = plt.subplot2grid((7, 1), (2, 0), rowspan=1)
+    ax.fill_between(np.arange(len((npPD))), (npPD), color=c["current"]["color"])
     for tick in c["current"]["ticks"]:
-        plot(tick * ones(len(nnPD)), color="black", ls=":", lw=1)
-    yscale("log")
-    ylim(c["current"]["ylim"])
-    xlim(0, xmax)
+        ax.plot(tick * np.ones(len(nnPD)), color="black", ls=":", lw=1)
+    ax.set_yscale("log")
+    ax.set_ylim(c["current"]["ylim"])
+    ax.set_xlim(0, xmax)
     if c["show"]["labels"]:
         ax.set_ylabel("+" + c["current"]["units"], labelpad=c["labelpad"])
     if c["show"]["ticklabels"]:
@@ -274,19 +251,19 @@ def plotCurrentscape(voltage, currents, config):
     remove_ticks_and_frame(ax)
 
     # PLOT CURRENT SHARES
-    ax = subplot2grid((7, 1), (3, 0), rowspan=3)
-    im = imshow(
+    ax = plt.subplot2grid((7, 1), (3, 0), rowspan=3)
+    im = ax.imshow(
         im0[::1, ::1],
         interpolation="nearest",
         aspect="auto",
         cmap=c["currentscape"]["cmap"],
     )
-    ylim(2 * resy, 0)
-    plot(resy * ones(len(npPD)), color="black", lw=2)
+    ax.set_ylim(2 * resy, 0)
+    ax.plot(resy * np.ones(len(npPD)), color="black", lw=2)
     plt.gca().xaxis.set_major_locator(plt.NullLocator())
     plt.gca().yaxis.set_major_locator(plt.NullLocator())
-    xlim(0, xmax)
-    clim(0, len(cnorm))  # not sure about the vmax
+    ax.set_xlim(0, xmax)
+    im.set_clim(0, N_curr)  # not sure about the vmax
     if c["show"]["labels"]:
         # cheat to set two labels at the right places for 1 axis
         set_label(
@@ -305,16 +282,16 @@ def plotCurrentscape(voltage, currents, config):
         )
     # legend
     if c["show"]["legend"]:
-        set_legend(ax, im, c["current"]["names"])
+        set_legend(ax, im, c["current"]["names"], c["legendbgcolor"])
 
     # PLOT TOTAL OUTWARD CURRENT IN LOG SCALE
-    ax = subplot2grid((7, 1), (6, 0), rowspan=1)
-    fill_between(arange(len((nnPD))), (nnPD), color=c["current"]["color"])
+    ax = plt.subplot2grid((7, 1), (6, 0), rowspan=1)
+    ax.fill_between(np.arange(len((nnPD))), (nnPD), color=c["current"]["color"])
     for tick in c["current"]["ticks"]:
-        plot(tick * ones(len(nnPD)), color="black", ls=":", lw=1)
-    yscale("log")
-    ylim(c["current"]["ylim"][1], c["current"]["ylim"][0])  # inverse axis
-    xlim(0, xmax)
+        ax.plot(tick * np.ones(len(nnPD)), color="black", ls=":", lw=1)
+    ax.set_yscale("log")
+    ax.set_ylim(c["current"]["ylim"][1], c["current"]["ylim"][0])  # inverse axis
+    ax.set_xlim(0, xmax)
     if c["show"]["labels"]:
         ax.set_ylabel("-" + c["current"]["units"], labelpad=c["labelpad"])
     if c["show"]["ticklabels"]:
@@ -329,16 +306,38 @@ def plotCurrentscape(voltage, currents, config):
         c["adjust"]["bottom"],
     )
 
+    return fig
+
+
+def save_figure(fig, c):
+    """Save figure in output according to config file."""
+    if not os.path.exists(c["output"]["dir"]):
+        os.makedirs(c["output"]["dir"])
+    out_path = (
+        os.path.join(c["output"]["dir"], c["output"]["fname"])
+        + "."
+        + c["output"]["extension"]
+    )
+    fig.savefig(
+        out_path, dpi=c["output"]["dpi"], transparent=c["output"]["transparent"]
+    )
+
+
+def plot_currentscape(voltage, currents, config):
+    """Returns a figure containing current scapes."""
+    # load config and set default to unspecified terms
+    c = set_default_config(config)
+    resy = c["currentscape"]["y_resolution"]  # y resolution for current shares
+
+    # currenscape data processing
+    print("processing data")
+    im0, npPD, nnPD, N_curr = data_processing(currents, resy)
+
+    # plot currentscape
+    print("producing figure")
+    fig = create_figure(voltage, im0, npPD, nnPD, c, N_curr, resy)
+
     if c["output"]["savefig"]:
-        if not os.path.exists(c["output"]["dir"]):
-            os.makedirs(c["output"]["dir"])
-        out_path = (
-            os.path.join(c["output"]["dir"], c["output"]["fname"])
-            + "."
-            + c["output"]["extension"]
-        )
-        fig.savefig(
-            out_path, dpi=c["output"]["dpi"], transparent=c["output"]["transparent"]
-        )
+        save_figure(fig, c)
 
     return fig

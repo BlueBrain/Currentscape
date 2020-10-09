@@ -1,0 +1,66 @@
+{
+    "show": {
+        "labels": true,
+        "ticklabels": true,
+        "legend": true
+    },
+    "current": {
+        "names": [
+            "Na",
+            "CaT",
+            "CaS",
+            "A",
+            "KCa",
+            "Kd",
+            "H",
+            "L"
+        ],
+        "ticks": [
+            5,
+            50,
+            500
+        ],
+        "ylim": [
+            0.01,
+            1500
+        ],
+        "units": "[pA]",
+        "color": "black"
+    },
+    "currentscape": {
+        "in_label": "inward %",
+        "out_label": "outward %",
+        "cmap": "Set1"
+    },
+    "voltage": {
+        "ylim": [
+            -90,
+            30
+        ],
+        "units": "[mV]",
+        "color": "black"
+    },
+    "output": {
+        "savefig": true,
+        "dir": "examples/output",
+        "fname": "example",
+        "extension": "png",
+        "dpi": 400,
+        "transparent": false
+    },
+    "figsize": [
+        3,
+        4
+    ],
+    "labelpad": 1,
+    "textsize": 6,
+    "legendtextsize": 6,
+    "legendbgcolor": "lightgrey",
+    "titlesize": 12,
+    "adjust": {
+        "left": null,
+        "right": 0.82,
+        "top": null,
+        "bottom": null
+    }
+}

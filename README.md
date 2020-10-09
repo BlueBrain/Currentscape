@@ -3,11 +3,45 @@ The code in this package is able to reproduce the currentscape figure in the sus
 
 Given voltage and current data, as well as an adequate config json file, producing a currenscape figure should be as simple as
 
-    from currentscape import plotCurrentscape
+    import os
+    import numpy as np
+    from currentscape.currentscape import plot_currentscape
 
-    ... loading voltage, current and config here
+    data_dir = "/gpfs/bbp.cscs.ch/home/ajaquier/Eve-Marder-style-module/output/memodel_dirs/L23_BP/bNAC/L23_BP_bNAC_150/python_recordings"
+    currs = [
+        "ihcn_Ih",
+        "ica_Ca_HVA2",
+        "ica_Ca_LVAst",
+        "ik_SK_E2",
+        "ik_SKv3_1",
+        "ik_K_Pst",
+        "ik_K_Tst",
+        "ina_NaTg",
+    ]
 
-    fig = plotCurrentscape(voltage, currents, config)
+    # load voltage data
+    v_path = os.path.join(data_dir, "_".join(("soma_step1", "v")) + ".dat")
+    voltage = np.loadtxt(v_path)[:, 1] # load 2nd column. 1st column is time.
+
+    # load currents from files
+    currents = []
+    for curr in currs:
+        file_path = os.path.join(data_dir, "_".join(("soma_step1", curr)) + ".dat")
+        currents.append(np.loadtxt(file_path)[:, 1]) # load 2nd column. 1st column is time.
+    currents = np.array(currents)
+
+    # define config
+    config = "path/to/config"
+    # can also pass config as a dictionnary, as commented below
+    # curr_names = ["Ih", "Ca_HVA2", "Ca_LVAst", "SK_E2", "SKv3_1", "K_Pst", "K_Tst", "NaTg"]
+    # config = {
+    #     "current": {"names": curr_names},
+    #     "legendtextsize": 5,
+    # }
+
+    # produce currentscape figure
+    fig = plot_currentscape(voltage, currents, config)
+    fig.show()
 
 The voltage should be a list of floats corresponding to the voltage at each timestep.
 
@@ -80,7 +114,8 @@ Here is an example of a config file containing all defaults values :
         "title": "",
         "labelpad": 1,
         "textsize": 6,
-        "legendsize": 6,
+        "legendtextsize": 6,
+        "legendbgcolor": "lightgrey",
         "titlesize": 12,
         "adjust": {
             "left": null,
@@ -88,6 +123,23 @@ Here is an example of a config file containing all defaults values :
             "top": null,
             "bottom": null
         }
+    }
+
+If you do not want to modify the default values, you should at least specify the current names if you want to plot with the legend.
+Your configuration file could be as small as:
+
+    {
+        "current": {
+            "names": [
+                "Na",
+                "CaT",
+                "CaS",
+                "A",
+                "KCa",
+                "Kd",
+                "H",
+                "L"
+            ],
     }
 
 The config argument can be passed as a dictionnary, or as a path to a json file.

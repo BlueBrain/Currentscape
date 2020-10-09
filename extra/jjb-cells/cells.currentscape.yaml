@@ -1,0 +1,6 @@
+- project:
+    name: 'currentscape'
+    git_project: 'cells/currentscape'
+    jobs:
+      - 'cells.python.{name}.gerrit'
+      - 'cells.python.{name}'

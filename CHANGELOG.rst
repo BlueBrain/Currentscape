@@ -1,7 +1,7 @@
 Changelog
 =========
 
-Version 0.0.1.dev0
+Version 0.0.1
 -----------
 
 New Features
@@ -12,4 +12,3 @@ New Features
     but the figure display can still be adapted to most data, using a configuration file.
 - Added example from original paper.
 - Added example in README.md with link to homemade data.
-

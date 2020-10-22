@@ -94,7 +94,6 @@ Here is an example of a config file containing all defaults values :
                 -90,
                 30
             ],
-            # is set automatically, but can be force to given values here
             "ticks":[],
             "units": "[mV]",
             "color": "black"

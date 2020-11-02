@@ -1,7 +1,11 @@
-"""Module for plotting currentscapes as in https://datadryad.org/stash/dataset/doi:10.5061/dryad.d0779mb."""
-"""The main function is based on scripts from the susmentioned article
-    that are under the CC0 1.0 Universal (CC0 1.0) Public Domain Dedication license."""
+"""Module to plot currentscapes.
 
+As in https://datadryad.org/stash/dataset/doi:10.5061/dryad.d0779mb.
+The main function is based on scripts from the susmentioned article,
+that are under the CC0 1.0 Universal (CC0 1.0) Public Domain Dedication license.
+"""
+
+# pylint: disable=too-many-statements
 import json
 import os
 import numpy as np
@@ -154,23 +158,8 @@ def set_legend(ax, im, curr_names, bg_color):
         text.set_weight("bold")
 
 
-def data_processing(currents, resy=1000):
-    """Process data for the plot."""
-    # make a copy of currents
-    curr = np.array(currents)
-    cpos = curr.copy()
-    cpos[curr < 0] = 0
-    cneg = curr.copy()
-    cneg[curr > 0] = 0
-
-    normapos = np.sum(abs(np.array(cpos)), axis=0)
-    normaneg = np.sum(abs(np.array(cneg)), axis=0)
-    npPD = normapos
-    nnPD = normaneg
-    cnorm = curr.copy()
-    cnorm[curr > 0] = (abs(curr) / normapos)[curr > 0]
-    cnorm[curr < 0] = -(abs(curr) / normaneg)[curr < 0]
-
+def create_cscape_image(cnorm, resy):
+    """Create currentscape image."""
     impos = np.zeros((resy, np.shape(cnorm)[-1]))
     imneg = np.zeros((resy, np.shape(cnorm)[-1]))
 
@@ -189,7 +178,27 @@ def data_processing(currents, resy=1000):
                 percent = int(abs(curr[t]) * (resy))
                 imneg[lastpercent : lastpercent + percent, t] = numcurr
                 lastpercent = lastpercent + percent
-    im0 = np.vstack((impos, imneg))
+    return np.vstack((impos, imneg))
+
+
+def data_processing(currents, resy=1000):
+    """Process data for the plot."""
+    # make a copy of currents
+    curr = np.array(currents)
+    cpos = curr.copy()
+    cpos[curr < 0] = 0
+    cneg = curr.copy()
+    cneg[curr > 0] = 0
+
+    normapos = np.sum(abs(np.array(cpos)), axis=0)
+    normaneg = np.sum(abs(np.array(cneg)), axis=0)
+    npPD = normapos
+    nnPD = normaneg
+    cnorm = curr.copy()
+    cnorm[curr > 0] = (abs(curr) / normapos)[curr > 0]
+    cnorm[curr < 0] = -(abs(curr) / normaneg)[curr < 0]
+
+    im0 = create_cscape_image(cnorm, resy)
 
     N_curr = len(cnorm)  # number of currents
 

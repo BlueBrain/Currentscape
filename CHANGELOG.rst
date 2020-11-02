@@ -1,7 +1,23 @@
 Changelog
 =========
 
+Version 0.0.3
+-------------
+
+Fixes
+~~~~~
+- Fixed non pylint-conform style.
+
+
 Version 0.0.2
+-------------
+
+New Features
+~~~~~~~~~~~~
+- Added documentation.
+
+
+Version 0.0.1
 -------------
 
 New Features
@@ -12,4 +28,3 @@ New Features
     but the figure display can still be adapted to most data, using a configuration file.
 - Added example from original paper.
 - Added example in README.md with link to homemade data.
-- Added proper documentation.

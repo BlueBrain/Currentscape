@@ -3,7 +3,7 @@
 import numpy as np
 
 
-def single_compartment(v, p, temp):
+def single_compartment(v, t, p, temp):
 
     V = v[0]
     NaM = v[1]

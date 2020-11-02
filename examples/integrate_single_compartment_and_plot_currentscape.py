@@ -38,7 +38,15 @@ def plot_from_original_paper():
     t = np.arange(t0, tf, dt)
 
     # integration is performed using odeint, a built-in python package to integrate Ordinary Differential Equations
-    fullsolution = odeint(single_compartment, y0, t, args=(parameters, temp,))
+    fullsolution = odeint(
+        single_compartment,
+        y0,
+        t,
+        args=(
+            parameters,
+            temp,
+        ),
+    )
 
     # define voltage and currents for currentscape plotting
     voltage = fullsolution[:, 0]

@@ -28,7 +28,7 @@ setup(
         "Source": "ssh://bbpcode.epfl.ch/cells/currentscape",
     },
     license="BBP-internal-confidential",
-    install_requires=[],
+    install_requires=["numpy", "matplotlib", "scipy"],
     packages=find_packages(),
     python_requires=">=3.6",
     extras_require={"docs": ["sphinx", "sphinx-bluebrain-theme"]},

@@ -152,4 +152,3 @@ def model(v, p, temp):
 
     r = [iNa, iCaT, iCaS, iA, iKCa, iKd, iH, iL]
     return r
-

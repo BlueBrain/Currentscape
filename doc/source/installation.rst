@@ -45,5 +45,5 @@ and run pip from inside the newly created currentscape subdirectory
 Supported systems
 -----------------
 
-The code of BGLibPy can be installed on any POSIX system that supports 
+The code of currentscape can be installed on any POSIX system that supports 
 pip-installable python code.

@@ -299,14 +299,15 @@ def create_figure(voltage, im0, npPD, nnPD, c, N_curr, resy=1000):
     for tick in c["current"]["ticks"]:
         ax.plot(tick * np.ones(len(nnPD)), color="black", ls=":", lw=1)
     ax.set_yscale("log")
-    ax.set_ylim(c["current"]["ylim"][1], c["current"]["ylim"][0])  # inverse axis
-    ax.set_xlim(0, xmax)
     if c["show"]["labels"]:
         ax.set_ylabel("-" + c["current"]["units"], labelpad=c["labelpad"])
     if c["show"]["ticklabels"]:
         ax.set_yticks(c["current"]["ticks"])
         ax.get_yaxis().set_major_formatter(matplotlib.ticker.ScalarFormatter())
     remove_ticks_and_frame(ax)
+    # somehow, set_ylim is not taken into account if it is set before set_yticks
+    ax.set_ylim(c["current"]["ylim"][1], c["current"]["ylim"][0])  # inverse axis
+    ax.set_xlim(0, xmax)
 
     adjust(
         c["adjust"]["left"],

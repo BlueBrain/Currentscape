@@ -147,6 +147,6 @@ As data can vary greatly, it is recommended to adapt the config file consequentl
 
 One may want to change the y axis limits, or the ticks, for example.
 
-If the legend is cut, one may decrease the legendsize, the adjust right parameter or to increase the figsize.
+If the legend is cut, one may decrease the legendsize, the adjust right parameter or increase the figsize.
 
 

@@ -5,4 +5,4 @@ API Documentation
    :nosignatures:
    :toctree: currentscape
 
-   currentscape
+   currentscape.currentscape

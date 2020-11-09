@@ -30,18 +30,25 @@ Pre-installed modules
 
 First, you need to load an archive of your choice containing Python. Then you can load Python ::
 
-    module load archive/2020-02
+    module load archive/2020-10
     module load python
 
 
 Matplotlib
 ~~~~~~~~~~
 
-You won't have to manually install Matplotlib, it is automatically installed by
-the pip-install of currentscape.
+Matplotlib is automatically installed with the pip installation,
+but is not automatically installed with the currentscape module yet, so in that case, 
+you should install it yourself in your virtual environment ::
+
+    pip install matplotlib
 
 Numpy
 ~~~~~
 
-You won't have to manually install Numpy, it is automatically installed by
-the pip-install of currentscape.
+Numpy is automatically installed with the pip installation,
+but is not automatically installed with the currentscape module yet, so in that case, 
+you should load it yourself ::
+
+    module load archive/2020-10
+    module load py-numpy

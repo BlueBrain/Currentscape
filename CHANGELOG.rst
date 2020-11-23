@@ -1,6 +1,13 @@
 Changelog
 =========
 
+
+Version 0.0.4
+-------------
+
+- Added docs to tox envlist.
+
+
 Version 0.0.3
 -------------
 

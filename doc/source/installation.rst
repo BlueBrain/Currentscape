@@ -9,7 +9,7 @@ Installing currentscape as a BBP module
 If you are on gpfs, getting currentscape should be as easy as::
 
     module load unstable
-    module load currentscape
+    module load py-currentscape
 
 
 Installing currentscape

@@ -1,6 +1,27 @@
 Changelog
 =========
 
+Version 0.0.6
+-------------
+
+Fixes
+~~~~~
+- Currentscape used to fill empty data (e.g. no inward/outward current at all)
+    with the first color in data. Now it fills it with white.
+- Fixed config example in README and doc.
+- Removed top and bottom frame of currentscape which was hiding part of the data.
+- Fixed central black line separating currentscape plots that weas hiding part of the data.
+
+New Features
+~~~~~~~~~~~~
+- Added new colormap choices.
+- Added possibility of putting patterns (hatches) on top of color palette.
+- When using patterns, matplotlib uses bar plots, which takes some time to compute,
+    so reducing x-resolution was enabled.
+- Patterns color, design and 'density' can be customised.
+- The legend y position can be customised.
+- Added a 'mixer' that prevent two successive currents to have the same color or pattern.
+
 
 Version 0.0.4
 -------------

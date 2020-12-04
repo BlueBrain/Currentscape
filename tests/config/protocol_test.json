@@ -1,0 +1,28 @@
+{
+    "test": {
+        "type": "StepProtocol",
+        "stimuli": {
+            "step": {
+                "delay": 700.0,
+                "amp": 0.063014185402,
+                "duration": 2000.0,
+                "totduration": 3000.0
+            },
+            "holding": {
+                "delay": 0.0,
+                "amp": -0.0144071499339,
+                "duration": 3000.0,
+                "totduration": 3000.0
+            }
+        },
+        "extra_recordings": [
+            {
+                "comp_x": 0.5,
+                "type": "nrnseclistcomp",
+                "name": "ais",
+                "seclist_name": "axon",
+                "sec_index": 0
+            }
+        ]
+    }
+}

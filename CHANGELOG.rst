@@ -18,9 +18,15 @@ New Features
 - Added possibility of putting patterns (hatches) on top of color palette.
 - When using patterns, matplotlib uses bar plots, which takes some time to compute,
     so reducing x-resolution was enabled.
+- Chunksize (when reducing x-resolution) is corrected when not a divisor of data size.
 - Patterns color, design and 'density' can be customised.
 - The legend y position can be customised.
 - Added a 'mixer' that prevent two successive currents to have the same color or pattern.
+- Added library to easily extract currents from any location (soma or other).
+- Now uses neuron in extract_currs lib to get the segment area and use it to turn
+    current densities into currents.
+- Can use default protocols from singlecell-optimization, or custom protocols.
+- Added tests for extract currents.
 
 
 Version 0.0.4

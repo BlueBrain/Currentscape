@@ -27,7 +27,7 @@ is the only function you will need to load from the currentscape module.
         import numpy as np
         from currentscape.currentscape import plot_currentscape
 
-Then, you can load your data. You must select voltage and currents data.
+Then, you can load your data. You must select voltage and currents data. (see 'Extracting currents' section below for how to get voltage and currents from a cell)
 The voltage data should be a list, and the currents data should be a list
 containing one list for each current. Each voltage and current list should have the same size.
 You can access the dataset in the example
@@ -249,393 +249,142 @@ x_chunksize is related to the x resolution, with x_chunksize = 1 being maximum r
 You could also want to use pattern if you are using a non-qualitative colormap that do not have a lot of distinguishable colors.
 
 
+Extracting currents
+===================
 
-Producing the voltage and currents data
-=======================================
-
-You may wonder how to produce the data needed by currentscape.
-Below is an example script of how to extract these data using bluepyopt and neurom.
-Bluepyopt runs the cell and records the voltage and current densities.
-Neurom computes the soma area.
-Then, the current data can be collected by multiplying the current densities by the soma area.
+You can now use the currentscape module to easily extract currents at different locations with custom protocols.
+This should be as simple as:
 
 .. code-block:: python
 
-        """Extract voltage and currents recordings."""
+        from extract_currs.main_func import extract
+        extract("extraction_config_filename")
 
-        import argparse
-        import collections
-        import logging
-        import numpy as np
-        import os
-
-        import json
-        import bluepyopt.ephys as ephys
-        import neurom as nm
-
-        logger = logging.getLogger(__name__)
+Where you have a config file (not the same as for the ploting module) in a json format. The config file can also be passed as a dictionary.
+The segment area from neuron is used in the module to output the currents (and not the current densities).
 
 
-        class RecordingCustom(ephys.recordings.CompRecording):
-            """Response to stimulus with recording every 0.1 ms."""
+The config file for extractng currents
+======================================
 
-            def __init__(self, name=None, location=None, variable="v"):
-                """Constructor.
+Below is an example of a config file used to extract currents.
 
-                Args:
-                    name (str): name of this object
-                    location (Location): location in the model of the recording
-                    variable (str): which variable to record from (e.g. 'v')
-                """
-                super(RecordingCustom, self).__init__(
-                    name=name, location=location, variable=variable
-                )
+.. code-block:: JSON
 
-            def instantiate(self, sim=None, icell=None):
-                """Instantiate recording."""
-                logger.debug(
-                    "Adding compartment recording of %s at %s", self.variable, self.location
-                )
-
-                self.varvector = sim.neuron.h.Vector()
-                seg = self.location.instantiate(sim=sim, icell=icell)
-                self.varvector.record(getattr(seg, "_ref_%s" % self.variable), 0.1)
-
-                self.tvector = sim.neuron.h.Vector()
-                self.tvector.record(sim.neuron.h._ref_t, 0.1)  # pylint: disable=W0212
-
-                self.instantiated = True
-
-
-        def multi_locations(sectionlist):
-            """Define mechanisms."""
-            if sectionlist == "alldend":
-                seclist_locs = [
-                    ephys.locations.NrnSeclistLocation("apical", seclist_name="apical"),
-                    ephys.locations.NrnSeclistLocation("basal", seclist_name="basal"),
-                ]
-            elif sectionlist == "somadend":
-                seclist_locs = [
-                    ephys.locations.NrnSeclistLocation("apical", seclist_name="apical"),
-                    ephys.locations.NrnSeclistLocation("basal", seclist_name="basal"),
-                    ephys.locations.NrnSeclistLocation("somatic", seclist_name="somatic"),
-                ]
-            elif sectionlist == "somaxon":
-                seclist_locs = [
-                    ephys.locations.NrnSeclistLocation("axonal", seclist_name="axonal"),
-                    ephys.locations.NrnSeclistLocation("somatic", seclist_name="somatic"),
-                ]
-            elif sectionlist == "allact":
-                seclist_locs = [
-                    ephys.locations.NrnSeclistLocation("apical", seclist_name="apical"),
-                    ephys.locations.NrnSeclistLocation("basal", seclist_name="basal"),
-                    ephys.locations.NrnSeclistLocation("somatic", seclist_name="somatic"),
-                    ephys.locations.NrnSeclistLocation("axonal", seclist_name="axonal"),
-                ]
-            else:
-                seclist_locs = [
-                    ephys.locations.NrnSeclistLocation(sectionlist, seclist_name=sectionlist)
-                ]
-
-            return seclist_locs
-
-
-        def load_mechanisms(mechs_filename):
-            """Define mechanisms."""
-            with open(mechs_filename) as mechs_file:
-                mech_definitions = json.load(
-                    mechs_file, object_pairs_hook=collections.OrderedDict
-                )["mechanisms"]
-
-            mechanisms_list = []
-            for sectionlist, channels in mech_definitions.items():
-
-                seclist_locs = multi_locations(sectionlist)
-
-                for channel in channels["mech"]:
-                    mechanisms_list.append(
-                        ephys.mechanisms.NrnMODMechanism(
-                            name="%s.%s" % (channel, sectionlist),
-                            mod_path=None,
-                            suffix=channel,
-                            locations=seclist_locs,
-                            preloaded=True,
-                        )
-                    )
-
-            return mechanisms_list
-
-
-        def define_parameters(params_filename):
-            """Define parameters."""
-            parameters = []
-
-            with open(params_filename) as params_file:
-                definitions = json.load(params_file, object_pairs_hook=collections.OrderedDict)
-
-            # set distributions
-            distributions = collections.OrderedDict()
-            distributions["uniform"] = ephys.parameterscalers.NrnSegmentLinearScaler()
-
-            distributions_definitions = definitions["distributions"]
-            for distribution, definition in distributions_definitions.items():
-
-                if "parameters" in definition:
-                    dist_param_names = definition["parameters"]
-                else:
-                    dist_param_names = None
-                distributions[
-                    distribution
-                ] = ephys.parameterscalers.NrnSegmentSomaDistanceScaler(
-                    name=distribution,
-                    distribution=definition["fun"],
-                    dist_param_names=dist_param_names,
-                )
-
-            params_definitions = definitions["parameters"]
-
-            if "__comment" in params_definitions:
-                del params_definitions["__comment"]
-
-            for sectionlist, params in params_definitions.items():
-                if sectionlist == "global":
-                    seclist_locs = None
-                    is_global = True
-                    is_dist = False
-                elif "distribution_" in sectionlist:
-                    is_dist = True
-                    seclist_locs = None
-                    is_global = False
-                    dist_name = sectionlist.split("distribution_")[1]
-                    dist = distributions[dist_name]
-                else:
-                    seclist_locs = multi_locations(sectionlist)
-                    is_global = False
-                    is_dist = False
-
-                bounds = None
-                value = None
-                for param_config in params:
-                    param_name = param_config["name"]
-
-                    if isinstance(param_config["val"], (list, tuple)):
-                        is_frozen = False
-                        bounds = param_config["val"]
-                        value = None
-
-                    else:
-                        is_frozen = True
-                        value = param_config["val"]
-                        bounds = None
-
-                    if is_global:
-                        parameters.append(
-                            ephys.parameters.NrnGlobalParameter(
-                                name=param_name,
-                                param_name=param_name,
-                                frozen=is_frozen,
-                                bounds=bounds,
-                                value=value,
-                            )
-                        )
-                    elif is_dist:
-                        parameters.append(
-                            ephys.parameters.MetaParameter(
-                                name="%s.%s" % (param_name, sectionlist),
-                                obj=dist,
-                                attr_name=param_name,
-                                frozen=is_frozen,
-                                bounds=bounds,
-                                value=value,
-                            )
-                        )
-
-                    else:
-                        if "dist" in param_config:
-                            dist = distributions[param_config["dist"]]
-                            use_range = True
-                        else:
-                            dist = distributions["uniform"]
-                            use_range = False
-
-                        if use_range:
-                            parameters.append(
-                                ephys.parameters.NrnRangeParameter(
-                                    name="%s.%s" % (param_name, sectionlist),
-                                    param_name=param_name,
-                                    value_scaler=dist,
-                                    value=value,
-                                    bounds=bounds,
-                                    frozen=is_frozen,
-                                    locations=seclist_locs,
-                                )
-                            )
-                        else:
-                            parameters.append(
-                                ephys.parameters.NrnSectionParameter(
-                                    name="%s.%s" % (param_name, sectionlist),
-                                    param_name=param_name,
-                                    value_scaler=dist,
-                                    value=value,
-                                    bounds=bounds,
-                                    frozen=is_frozen,
-                                    locations=seclist_locs,
-                                )
-                            )
-
-            return parameters
-
-
-        def define_protocols(cell, var_list):
-            """Define Protocols."""
-            # load config
-            cvcode_active = False
-
-            # recording location
-            soma_loc = ephys.locations.NrnSeclistCompLocation(
-                name="soma", seclist_name="somatic", sec_index=0, comp_x=0.5
-            )
-
-            step_protocols = []
-
-            # load config data
-            total_duration = 3000
-            step_delay = 700
-            step_duration = 2000
-            hold_step_delay = 0
-            hold_step_duration = 3000
-
-            # protocol names
-            protocol_names = ["step{}".format(x) for x in range(1, 4)]
-
-            # define current amplitude data
-            amplitudes = [
-                0.0378085112412,
-                0.0504113483216,
-                0.063014185402,
-            ]  # do not take 1st value (hypamp)
-            hypamp = -0.0144071499339
-            for protocol_name, amplitude in zip(protocol_names, amplitudes):
-                # use RecordingCustom to sample time, voltage every 0.1 ms.
-                rec = []
-                for var in var_list:
-                    rec.append(
-                        RecordingCustom(
-                            name=protocol_name + "_" + var, location=soma_loc, variable=var
-                        )
-                    )
-
-                # create step stimulus
-                stim = ephys.stimuli.NrnSquarePulse(
-                    step_amplitude=amplitude,
-                    step_delay=step_delay,
-                    step_duration=step_duration,
-                    location=soma_loc,
-                    total_duration=total_duration,
-                )
-
-                # create holding stimulus
-                hold_stim = ephys.stimuli.NrnSquarePulse(
-                    step_amplitude=hypamp,
-                    step_delay=hold_step_delay,
-                    step_duration=hold_step_duration,
-                    location=soma_loc,
-                    total_duration=total_duration,
-                )
-
-                # create protocol
-                stims = [stim, hold_stim]
-                protocol = ephys.protocols.SweepProtocol(
-                    protocol_name, stims, rec, cvcode_active
-                )
-
-                step_protocols.append(protocol)
-
-            return ephys.protocols.SequenceProtocol("twostep", protocols=step_protocols)
-
-
-        def main():
-            """Main."""
-
-            # output directory
-            output_dir = "output_example"
-            # create output directory if needed
-            if not os.path.isdir(output_dir):
-                os.makedirs(output_dir)
-
-            base_dir_1 = "/gpfs/bbp.cscs.ch/home/ajaquier/Eve-Marder-style-module/output"
-            base_dir_2 = os.path.join(base_dir_1, "memodel_dirs/L23_BP/bNAC/L23_BP_bNAC_150")
-            emodel = "bNAC_L23SBC"
-
-            # load morphology
-            morph_path = os.path.join(
-                base_dir_2,
-                "morphology",
-                "C230998A-I3_-_Scale_x1.000_y0.975_z1.000_-_Clone_2.asc",
-            )
-            morph = ephys.morphologies.NrnFileMorphology(morph_path)
-
-            # load mechanisms
-            params_filename = os.path.join(base_dir_1, "config", "params", "int.json")
-            mechs = load_mechanisms(params_filename)
-
-            # load parameters
-            with open(os.path.join(base_dir_1, "config", "params", "final.json"), "r") as f:
-                params_file = json.load(f)
-            data = params_file[emodel]
-            release_params = data["params"]
-
-            params = define_parameters(params_filename)
-
-            # create cell
-            cell = ephys.models.CellModel(name=emodel, morph=morph, mechs=mechs, params=params)
-
-            # simulator
-            sim = ephys.simulators.NrnSimulator(dt=0.025)
-
-            # create protocols
-            # voltage and currents to be recorded
-            var_list = [
+        {
+            "emodel": "bNAC_L23SBC",
+            "output_dir": "output",
+            "join_emodel_to_output_dir_name": true,
+            "use_recipes": false,
+            "recipe_dir": "/gpfs/bbp.cscs.ch/home/ajaquier/Eve-Marder-style-module/output/config/recipes",
+            "recipe_filename": "recipes.json",
+            "morph_name": "_",
+            "morph_filename": "C230998A-I3_-_Scale_x1.000_y0.975_z1.000_-_Clone_2.asc",
+            "apical_point_isec": null,
+            "morph_dir": "/gpfs/bbp.cscs.ch/home/ajaquier/Eve-Marder-style-module/output/memodel_dirs/L23_BP/bNAC/L23_BP_bNAC_150/morphology",
+            "params_dir": "/gpfs/bbp.cscs.ch/home/ajaquier/Eve-Marder-style-module/output/config/params",
+            "params_filename": "int.json",
+            "final_params_dir": "/gpfs/bbp.cscs.ch/home/ajaquier/Eve-Marder-style-module/output/config/params",
+            "final_params_filename": "final.json",
+            "var_list": [
                 "v",
                 "ihcn_Ih",
-                # "ica_Ca_HVA",
+                "ica_Ca_HVA",
                 "ica_Ca_HVA2",
                 "ica_Ca_LVAst",
                 "ik_K_Pst",
                 "ik_K_Tst",
-                # "ik_KdShu2007",
-                # "ina_Nap_Et2",
+                "ik_KdShu2007",
+                "ina_Nap_Et2",
                 "ina_NaTg",
-                # "ina_NaTg2",
+                "ina_NaTg2",
                 "ik_SK_E2",
                 "ik_SKv3_1",
-                # "ik_StochKv2",
-                # "ik_StochKv3",
-            ]
-            protocols = define_protocols(cell, var_list)
+                "ik_StochKv2",
+                "ik_StochKv3",
+                "i_pas"
+            ],
+            "etypetest": "",
+            "protocols_dir": ".",
+            "protocols_filename": "protocol_test.json",
+            "features_dir": "/gpfs/bbp.cscs.ch/home/ajaquier/Eve-Marder-style-module/output/config/features",
+            "features_filename": "bNAC.json"
+        }
 
-            # run
-            print("Python Recordings Running...")
+The following keys are mandatory: emodel, output_dir, var_list, use_recipes.
+Protocols can now record in multiple places in the neuron, the available variables on those places can differ.
+So now, if a current that is in the var_list is not present in the recording location, the script does not crash, and the variable is simply ignored for this location.
 
-            responses = protocols.run(cell_model=cell, param_values=release_params, sim=sim)
+The extract currents module has two main modes: using recipes, or using custom protocols and parameters.
 
-            # get soma area
-            nrn = nm.load_neuron(morph_path)
-            soma_area = nm.get("soma_surface_areas", nrn)[0]
+recipe mode
+===========
 
-            for key, resp in responses.items():
-                output_path = os.path.join(output_dir, "soma_" + key + ".dat")
+When you set use_recipes to true, the script will retrieve the default protocols, features and parameters in the recipes file.
+When use_recipes is set to true, recipe_dir, recipe_filename and etypetest should also be present in the config file. 
+If etypetest is not an empty string, the script will retrieve the apical point section index from recipes. 
+Depending on the emodel, you might have an error if you set use_recipes to true, but leave etypetest to an empty string.
+When use_recipes, the recipe file expects that you have the following folder structure in the directory you launched the script from:
 
-                time = np.array(resp["time"])
-                soma_data = np.array(resp["voltage"])  # can be voltage or current density
-                if key[-2:] != "_v":  # current, not voltage
-                    soma_data = 10 * soma_area * soma_data  # turn mA/cm2 into pA
+./
 
-                np.savetxt(output_path, np.transpose(np.vstack((time, soma_data))))
+  config/
 
-            print("Python Recordings Done")
+    features/
 
+    params/
 
-        if __name__ == "__main__":
-            main()
+    protocols/
 
+with a config folder filled as in /gpfs/bbp.cscs.ch/project/proj38/singlecell/optimization/config/ . You can also find there the recipes file.
+
+custom mode
+===========
+
+When use_recipes is set to false, the following keys should be filled in the config:
+
+morph_name, morph_filename, morph_dir, apical_point_isec, params_dir, params_filename, final_params_dir (usually the same as params_dir), final_params_filename (usually final.json), protocols_dir, protocols_filename, features_dir, features_filename
+
+with protocols_dir and protocols_filename pointing to your cutomized protocols file. 
+If there is no "Main" key in your protocols file, features are not used and features_dir and features_filename can both be set to an empty string (""). 
+morph_name is used solely for the naming of the output files.
+
+Your protocols file should follow the same structure as in /gpfs/bbp.cscs.ch/project/proj38/singlecell/optimization/config/protocols/ .
+Note that all protocols are recorded in the soma by default, but you can add recording locations using the extra_recordings key.
+
+Below is an example of a simple custom protocol, recording a step protocol in the soma and in the ais.
+
+.. code-block:: JSON
+
+        {
+            "test": {
+                "type": "StepProtocol",
+                "stimuli": {
+                    "step": {
+                        "delay": 700.0,
+                        "amp": 0.063014185402,
+                        "duration": 2000.0,
+                        "totduration": 3000.0
+                    },
+                    "holding": {
+                        "delay": 0.0,
+                        "amp": -0.0144071499339,
+                        "duration": 3000.0,
+                        "totduration": 3000.0
+                    }
+                },
+                "extra_recordings": [
+                    {
+                        "comp_x": 0.5,
+                        "type": "nrnseclistcomp",
+                        "name": "ais",
+                        "seclist_name": "axon",
+                        "sec_index": 0
+                    }
+                ]
+            }
+        }
+
+Note that if you want to use a "StepThresholdProtocol", you should follow the same procedure as in a protocol from 
+/gpfs/bbp.cscs.ch/project/proj38/singlecell/optimization/config/protocols/ 
+with a "Main" protocol calling the others, in order to collect threshold data needed for the Step Threshold Protocol.

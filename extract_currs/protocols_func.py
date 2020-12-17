@@ -13,6 +13,7 @@ from extract_currs.protocols import (
     RatSSCxThresholdDetectionProtocol,
     RatSSCxRinHoldcurrentProtocol,
     RatSSCxMainProtocol,
+    SweepProtocolCustom,
 )
 from extract_currs.recordings import RecordingCustom
 from extract_currs.locations import (
@@ -272,7 +273,7 @@ def define_protocols(
                         )
                     )
 
-                protocols_dict[protocol_name] = ephys.protocols.SweepProtocolCustom(
+                protocols_dict[protocol_name] = SweepProtocolCustom(
                     name=protocol_name, stimuli=stimuli, recordings=recordings
                 )
 

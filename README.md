@@ -70,7 +70,8 @@ Here is an example of a config file containing all defaults values :
         "show": {
             "labels": true,
             "ticklabels": true,
-            "legend": true
+            "legend": true,
+            "all_currents": false
         },
         "current": {
             "_comment1": "is not set by default.  The current names should appear in the same order as in the currents argument. is mandatory if ['show']['legend'] is true",
@@ -84,32 +85,67 @@ Here is an example of a config file containing all defaults values :
                 "H",
                 "L"
             ],
+            "_comment2": "if True, reorder currents with decreasing order of %.",
+            "reorder": true,
+            "_comment3": "if True, do not take into account ticks and ylim below.",
+            "autoscale_ticks_and_ylim": true,
+            "_comment4": "only taken into account if autoscale_ticks_and_ylim is False",
             "ticks": [
                 5,
                 50,
                 500
             ],
+            "_comment5": "only taken into account if autoscale_ticks_and_ylim is False",
             "ylim": [
                 0.01,
                 1500
             ],
             "units": "[pA]",
-            "color": "black"
+            "_comment6": "color for summed currents.",
+            "color": "black",
+            "_comment7": "True to plot absolute currents with stackplots, False to plot them with lines",
+            "stackplot": false,
+            "_comment8": "thickness of black line separating the inward & outward stackplots. in %age of y size of plot.",
+            "black_line_thickness": 2
         },
         "currentscape": {
             "in_label": "inward %",
             "out_label": "outward %",
             "_comment1": "if too low, white pixels can appear at the bottom of currentscape plots because of rounding errors.",
-            "y_resolution": 10000,
-            "_comment2": "thickness of black line separating the two inward & outward currentscapes. in %age of y size of plot.",
-            "black_line_thickness": 2,
-            "_comment3": "data along x axis are summed up into chunks when pattern use is True. Put to 1 to disable.",
-            "x_chunksize": 50
+            "y_resolution": 10000
+        },
+        "ions": {
+            "_comment1": "if True, do not take into account ticks and ylim below.",
+            "autoscale_ticks_and_ylim": true,
+            "_comment2": "only taken into account if autoscale_ticks_and_ylim is False",
+            "ticks": [
+                5,
+                50,
+                500
+            ],
+            "_comment3": "only taken into account if autoscale_ticks_and_ylim is False",
+            "ylim": [
+                0.01,
+                1500
+            ],
+            "units": "mM",
+            "_comment4": "if True, reorder currents with decreasing order",
+            "reorder": true,
+            "_comment5": "is not set by default.  The ions concentration names should appear in the same order as in the ions argument. is mandatory if ['show']['legend'] is true",
+            "names": [
+                "cai",
+                "ki",
+                "nai"
+            ]
         },
         "colormap": {
             "name": "Set1",
             "_comment1": "color number. Taken into account only if pattern use is True",
             "n_colors": 8
+        },
+        "stackplot": {
+            "_comment3": "data along x axis are summed up into chunks when pattern use is True. Put to 1 to disable.",
+            "x_chunksize": 50
         },
         "pattern": {
             "use": false,
@@ -117,6 +153,18 @@ Here is an example of a config file containing all defaults values :
             "density": 5,
             "linewidth": 0.2,
             "color": "black"
+        },
+        "line": {
+            "_comment1": "Is used when pattern:use and show:all_currents are True and current:stackplot is False. Should have the same length as pattern:patterns",
+            "styles": [
+                "solid",
+                [0, [1, 1]],
+                [0, [2, 1]],
+                [0, [2, 1, 1, 1]],
+                [0, [2, 1, 1, 1, 1, 1]],
+                [0, [2, 1, 2, 1, 1, 1]],
+                [0, [2, 1, 2, 1, 1, 1, 1, 1]]
+            ]
         },
         "voltage": {
             "ylim": [-90, 30],
@@ -134,11 +182,11 @@ Here is an example of a config file containing all defaults values :
             "transparent": false
         },
         "legend": {
-            "textsize": 6,
+            "textsize": 4,
             "bgcolor": "lightgrey",
             "_comment1": "1. : top of legend is at the same level as top of currentscape plot. higher value put legend higher in figure.",
             "ypos": 1.0,
-            "_comment2": "forced to 0 if pattern use is False",
+            "_comment2": "forced to 0 if pattern:use is False and current:stackplot is False",
             "handlelength": 1.4
         },
         "figsize": [
@@ -150,7 +198,7 @@ Here is an example of a config file containing all defaults values :
         "labelpad": 1,
         "textsize": 6,
         "adjust": {
-            "left": null,
+            "left": 0.15,
             "right": 0.85,
             "top": null,
             "bottom": null
@@ -217,6 +265,17 @@ To decrease computing time, you have two possibilities: decrease the pattern den
 x_chunksize is related to the x resolution, with x_chunksize = 1 being maximum resolution. The default is x_chunksize=50.
 
 You could also want to use pattern if you are using a non-qualitative colormap that do not have a lot of distinguishable colors.
+
+
+### Showing all absolute currents
+
+By putting "show":{"all_currents": True} in the config file, two subplots showing all the positive and negative currents are added at the bottom of the figure.
+The currents can be displayed as stackplots by putting "current":{"stackplot": True} in the config, or as lines, by putting "current":{"stackplot": False} in the config. In case they are displayed with lines, while using patterns for the current shares, the lines will be displayed with styles (dashed, dotted, etc.). In such a case, the number of line styles should be equal to the number of patterns (which they are, be default). Keep this in mind when changing either the line styles or the patterns.
+
+
+### Showing ionic concentrations
+
+You can plot the ionic concentrations in a subplot at the bottom of the figure by passing your ionic concentration data to the main function: plot_currentscape(voltage, currents, config, ions), and by passing the ion names to the config under: "ions":{"names":your_list}. Note that, as for the currents, the ion names should correspond to the ion data (i.e. be listed in the same order).
 
 
 ### Extracting currents
@@ -338,3 +397,7 @@ Below is an example of a simple custom protocol, recording a step protocol in th
     }
 
 Note that if you want to use a "StepThresholdProtocol", you should follow the same procedure as in a protocol from /gpfs/bbp.cscs.ch/project/proj38/singlecell/optimization/config/protocols/ with a "Main" protocol calling the others, in order to collect threshold data needed for the Step Threshold Protocol.
+
+### Extracting ionic concentrations
+
+Ionic concentrations can be extracted by using the same method as the currents extraction. The ionic concentration variables simply have to be added to the "var_list" in the config file. The ionic concentration variables should end with an 'i', e.g. cai, nai, ki, etc.

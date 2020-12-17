@@ -1,6 +1,34 @@
 Changelog
 =========
 
+Version 0.0.7
+-------------
+
+Added
+~~~~~
+- Added tests for data processing functions.
+- Added warning when there is not enough colors in colormap.
+
+Changes
+~~~~~~~
+- Refactored currentscape into smaller, more meaningful modules.
+- Changed default left-side adjusting, 
+    so that the labels and ticks do not overlap.
+- Changed dict key for blackline thickness and x-chunksize in config
+    since they should not belong exclusively to currentscape anymore.
+
+New Features
+~~~~~~~~~~~~
+- Reorder the currents in each subplot, 
+    so that the currents with the largest contribution lay at the top.
+    The legend is reordered accordingly.
+- Added an autoscaling for y limits and ticks for current (and ions) subplots.
+- Added a new subplot to currentscape: absolute currents.
+- Absolute currents can be displayed as lines or as a stackplot.
+- Allowed extract_currs to extract ionic concentration.
+- Added a new subplot to currentscape: ionic concentration.
+
+
 Version 0.0.6
 -------------
 

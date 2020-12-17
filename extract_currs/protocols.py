@@ -13,11 +13,23 @@ logger = logging.getLogger(__name__)
 def get_loc_varlist(isection):
     """Get all possible variables in a location."""
     local_varlist = []
+
+    # currents etc.
     raw_dict = isection.psection()["density_mechs"]
-    for channel, vars in raw_dict.items():
-        for var in vars.keys():
+    for channel, vars_ in raw_dict.items():
+        for var in vars_.keys():
             local_varlist.append("_".join((var, channel)))
+
+    # ion concentration
+    ions = isection.psection()["ions"]
+    for _, ion in ions.items():
+        for concentration in ion.keys():
+            # concentration should have 'i' at the end (e.g. ki, cai, nai, ...)
+            if concentration[-1] == "i":
+                local_varlist.append(concentration)
+
     local_varlist.append("v")
+
     return local_varlist
 
 

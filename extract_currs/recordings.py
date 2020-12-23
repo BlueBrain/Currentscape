@@ -58,9 +58,9 @@ class RecordingCustom(ephys.recordings.CompRecording):
                 self.name, self.tvector.to_python(), self.varvector.to_python()
             )
         else:
-            # ionic current: turn mA/cm2 (*um2 / 10.) into pA
+            # ionic current: turn mA/cm2 (*um2) into pA
             return ephys.responses.TimeVoltageResponse(
                 self.name,
                 self.tvector.to_python(),
-                numpy.array(self.varvector.to_python()) * self.segment_area / 10.0,
+                numpy.array(self.varvector.to_python()) * self.segment_area * 10.0,
             )

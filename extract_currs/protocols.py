@@ -9,54 +9,7 @@ import bluepyopt.ephys as ephys
 
 logger = logging.getLogger(__name__)
 
-
-def get_loc_varlist(isection):
-    """Get all possible variables in a location."""
-    local_varlist = []
-
-    # currents etc.
-    raw_dict = isection.psection()["density_mechs"]
-    for channel, vars_ in raw_dict.items():
-        for var in vars_.keys():
-            local_varlist.append("_".join((var, channel)))
-
-    # ion concentration
-    ions = isection.psection()["ions"]
-    for _, ion in ions.items():
-        for concentration in ion.keys():
-            # concentration should have 'i' at the end (e.g. ki, cai, nai, ...)
-            if concentration[-1] == "i":
-                local_varlist.append(concentration)
-
-    local_varlist.append("v")
-
-    return local_varlist
-
-
-def check_recordings(recordings, icell, sim):
-    """Returns a list of valid recordings (where the variable is in the location)."""
-
-    new_recs = []  # to return
-    varlists = {}  # keep varlists to avoid re-computing them every time
-
-    for rec in recordings:
-        # get section from location
-        seg = rec.location.instantiate(sim=sim, icell=icell)
-        sec = seg.sec
-        section_key = str(sec)
-
-        # get list of variables available in the section
-        if section_key in varlists:
-            local_varlist = varlists[section_key]
-        else:
-            local_varlist = get_loc_varlist(sec)
-            varlists[section_key] = local_varlist
-
-        # keep recording if its variable is available in its location
-        if rec.variable in local_varlist:
-            new_recs.append(rec)
-
-    return new_recs
+from extract_currs.recordings import check_recordings
 
 
 class RatSSCxMainProtocol(ephys.protocols.Protocol):

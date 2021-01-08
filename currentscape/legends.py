@@ -8,7 +8,9 @@ from matplotlib.legend_handler import HandlerTuple
 from currentscape.plotting import select_color
 
 
-def base_legend(ax, curr_names, bg_color, ypos, idx_names=None, handlelength=None):
+def base_legend(
+    ax, curr_names, bg_color, ypos, idx_names=None, handlelength=None, lines=False
+):
     """Returns a legend with all current names.
 
     Args:
@@ -19,14 +21,20 @@ def base_legend(ax, curr_names, bg_color, ypos, idx_names=None, handlelength=Non
         idx_names (ndarray of ints): indexes to new name order (new_names = names[idx_names])
         handlelength (float): size of the handles.
             Takes default value if None. No handles displayed if 0.
+        lines (bool): if True, get lines as handles. if False, get patches as handles.
     """
     if idx_names is None:
         idx_names = range(len(curr_names))
-    # create a patch (proxy artist) for every current
-    patches = [matplotlib.patches.Patch(label=curr_names[i]) for i in idx_names]
+    # create a patch (proxy artist) or a line for every current
+    if lines:
+        handles = [
+            matplotlib.lines.Line2D([], [], label=curr_names[i]) for i in idx_names
+        ]
+    else:
+        handles = [matplotlib.patches.Patch(label=curr_names[i]) for i in idx_names]
     # put those patched as legend-handles into the legend
     leg = ax.legend(
-        handles=patches,
+        handles=handles,
         bbox_to_anchor=(1.01, ypos),
         loc=2,
         borderaxespad=0.0,
@@ -89,6 +97,35 @@ def set_legend_with_hatches(ax, cmap, mapper, c, idx_names):
         handle.set_hatch(patterns[((mapper * i_color) // n_colors) % len(patterns)])
 
 
+def set_legend_with_lines(ax, cmap, mapper, c, idx_names, names, n_colors):
+    """Create legend and color each current name, and set handles color and pattern.
+
+    Args:
+        ax (matplotlib.axes): currentscape axis
+        cmap (matplotlib.colors.Colormap): colormap
+        mapper (int): number used to mix color and patterns
+        c (dict): config
+        idx_names (ndarray of ints): indexes to new name order (new_names = names[idx_names])
+        names (list of str): legend labels
+        n_colors (int): number of colors (is not always equal to c["colormap"]["n_colors"])
+    """
+    bg_color = c["legend"]["bgcolor"]
+    ypos = c["legend"]["ypos"]
+
+    leg = base_legend(ax, names, bg_color, ypos, idx_names, lines=True)
+
+    # set legend label color & boldness, and handles color&pattern
+    ls = c["line"]["styles"]
+    lw = c["lw"]
+    for i_color, (text, handle) in enumerate(zip(leg.texts, leg.legendHandles)):
+        text.set_color(cmap((mapper * i_color) % n_colors))
+        text.set_weight("bold")
+
+        handle.set_color(cmap((mapper * i_color) % n_colors))
+        handle.set_linestyle(ls[((mapper * i_color) // n_colors) % len(ls)])
+        handle.set_linewidth(lw)
+
+
 def get_handles_with_hatches_and_linestyles(c, cmap, mapper, N_curr):
     """Return handles as a list of tuples (patch, line).
 
@@ -104,7 +141,7 @@ def get_handles_with_hatches_and_linestyles(c, cmap, mapper, N_curr):
     n_col = c["colormap"]["n_colors"]
     n_pat = len(patterns)
     ls = c["line"]["styles"]
-    lw = c["current"]["lw"]
+    lw = c["lw"]
 
     # create a patch (proxy artist) for every current
     return [

@@ -227,6 +227,7 @@ Each parameter name is self-explanatory.
             "titlesize": 12,
             "labelpad": 1,
             "textsize": 6,
+            "lw": 0.5,
             "adjust": {
                 "left": 0.15,
                 "right": 0.85,

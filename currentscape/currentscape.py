@@ -16,6 +16,7 @@ from currentscape.data_processing import (
     autoscale_ticks_and_ylim,
 )
 from currentscape.plotting import (
+    configure_mpl_rcParams,
     get_colormap,
     adjust,
     save_figure,
@@ -38,21 +39,10 @@ def create_figure(voltage, currs, c, ions):
         ions (IonConcentrations): object containing ionic concentration data
     """
     use_patterns = c["pattern"]["use"]
-    # set text size
-    plt.rcParams["axes.labelsize"] = c["textsize"]
-    plt.rcParams["ytick.labelsize"] = c["textsize"]
-    plt.rcParams["legend.fontsize"] = c["legend"]["textsize"]
-    # remove legend handles
-    if use_patterns:
-        plt.rcParams["hatch.linewidth"] = c["pattern"]["linewidth"]
-        plt.rcParams["legend.handlelength"] = c["legend"]["handlelength"]
-    else:
-        plt.rcParams["legend.handletextpad"] = 0
-        plt.rcParams["legend.labelspacing"] = 0
-        plt.rcParams["legend.handlelength"] = 0
+    configure_mpl_rcParams(c)
 
     cmap = get_colormap(
-        c["colormap"]["name"], c["colormap"]["n_colors"], use_patterns, currs.N
+        c["colormap"]["name"], c["colormap"]["n_colors"], use_patterns, currs.N, ions.N
     )
 
     # get adequate ticks and ylim
@@ -109,7 +99,10 @@ def create_figure(voltage, currs, c, ions):
 
     # PLOT IONIC CONCENTRATION
     if ions.data is not None:
-        ions.plot(c, row, rows_tot, cmap)
+        if use_patterns:
+            ions.plot_with_linestyles(c, row, rows_tot, cmap)
+        else:
+            ions.plot(c, row, rows_tot, cmap)
         row += 1
 
     adjust(
@@ -138,7 +131,7 @@ def plot_currentscape(voltage, currents_data, config, ions_data=None):
     print("processing data")
 
     currs = Currents(currents_data, c)
-    ions = IonConcentrations(ions_data, c["ions"]["names"], c["ions"]["reorder"])
+    ions = IonConcentrations(ions_data, c)
 
     # plot currentscape
     print("producing figure")

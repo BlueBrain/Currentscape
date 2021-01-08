@@ -52,7 +52,7 @@ class CurrentPlottingMixin:
             np.arange(self.x_size),
             curr,
             color=c["current"]["color"],
-            lw=c["current"]["lw"],
+            lw=c["lw"],
             zorder=2,
         )
         apply_labels_ticks_and_lims(
@@ -186,7 +186,7 @@ class CurrentPlottingMixin:
         """
         n_colors = c["colormap"]["n_colors"]
         ls = c["line"]["styles"]
-        lw = c["current"]["lw"]
+        lw = c["lw"]
 
         x = np.arange(self.x_size)
 

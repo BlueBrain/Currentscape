@@ -18,6 +18,22 @@ logging.basicConfig()  # needed for python2
 logger = logging.getLogger(__name__)
 
 
+def configure_mpl_rcParams(c):
+    """Configure matplotlib rcParams."""
+    # set text size
+    plt.rcParams["axes.labelsize"] = c["textsize"]
+    plt.rcParams["ytick.labelsize"] = c["textsize"]
+    plt.rcParams["legend.fontsize"] = c["legend"]["textsize"]
+    if c["pattern"]["use"]:
+        plt.rcParams["hatch.linewidth"] = c["pattern"]["linewidth"]
+        plt.rcParams["legend.handlelength"] = c["legend"]["handlelength"]
+    else:
+        # remove legend handles
+        plt.rcParams["legend.handletextpad"] = 0
+        plt.rcParams["legend.labelspacing"] = 0
+        plt.rcParams["legend.handlelength"] = 0
+
+
 def stackplot_with_bars(
     ax,
     cnorm,
@@ -286,7 +302,7 @@ def get_colors(cmap, n_col):
     return list(new_cmap(range(n_col))), False
 
 
-def get_colormap(cmap, n_colors, use_patterns, N_curr):
+def get_colormap(cmap, n_colors, use_patterns, N_curr, N_ion):
     """Get colormap according to input, and add black then white colors at the end.
 
     The black color is used to create a black line separating currentscapes plots,
@@ -297,12 +313,26 @@ def get_colormap(cmap, n_colors, use_patterns, N_curr):
         n_colors (int): number of colors to extract IF use_patterns and n_colors>N_curr
         use_patterns (bool): True if currentscape plot uses bars and mixes color and pattern
         N_curr (int): number of currents
+        N_ion (int): number of ion concentrations
     """
-    # get colors from colormap
-    if use_patterns and N_curr > n_colors:
-        colors, launch_warning = get_colors(cmap, n_colors)
+    # choose the right number of colors for the colormap
+    if N_ion is not None and N_ion > N_curr:
+        N_max = N_ion
     else:
-        colors, launch_warning = get_colors(cmap, N_curr)
+        N_max = N_curr
+
+    if use_patterns and N_max > n_colors:
+        N_colormap = n_colors
+    else:
+        N_colormap = N_max
+
+    # get colors from colormap
+    colors, launch_warning = get_colors(cmap, N_colormap)
+
+    # append black, for black line separating currentscapes
+    colors.append(np.array([0.0, 0.0, 0.0, 1.0]))
+    # append white. default color when there is no current.
+    colors.append(np.array([1.0, 1.0, 1.0, 1.0]))
 
     # display warning if the colormap lacks colors
     if launch_warning:
@@ -320,11 +350,6 @@ def get_colormap(cmap, n_colors, use_patterns, N_curr):
                 "Please, choose a colormap with more colors "
                 "or use patterns for optimal display."
             )
-
-    # append black, for black line separating currentscapes
-    colors.append(np.array([0.0, 0.0, 0.0, 1.0]))
-    # append white. default color when there is no current.
-    colors.append(np.array([1.0, 1.0, 1.0, 1.0]))
 
     return matplotlib.colors.ListedColormap(colors)
 

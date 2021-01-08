@@ -7,6 +7,7 @@ import os
 import bluepyopt.ephys as ephys
 
 from extract_currs.protocols import (
+    RampProtocol,
     RampThresholdProtocol,
     StepProtocol,
     StepThresholdProtocol,
@@ -21,6 +22,7 @@ from extract_currs.locations import (
     NrnSomaDistanceCompLocationApical,
 )
 from extract_currs.features import define_fitness_calculator
+from extract_currs.stimuli import sAHP
 
 logger = logging.getLogger(__name__)
 
@@ -28,14 +30,50 @@ soma_loc = ephys.locations.NrnSeclistCompLocation(
     name="soma", seclist_name="somatic", sec_index=0, comp_x=0.5
 )
 
+
+def read_sAHP_protocol(protocol_name, protocol_definition, recordings):
+    """Read sAHP protocol from definition."""
+
+    sahp_definition = protocol_definition["stimuli"]["sahp"]
+
+    # assumes that holding.delay = 0 and holding.duration == sahp.totduration
+    if "holding_current" in sahp_definition:
+        holding_current = sahp_definition["holding_current"]
+    elif "holding" in protocol_definition["stimuli"]:
+        holding_current = protocol_definition["stimuli"]["holding"]["amp"]
+    else:
+        holding_current = 0.0
+
+    sahp_stimulus = sAHP(
+        delay=sahp_definition["delay"],
+        totduration=sahp_definition["totduration"],
+        # strange way to input amp, but Maria confirmed it.
+        amp=sahp_definition["amp"] - sahp_definition["depol"],
+        tmid=sahp_definition["delay"] + sahp_definition["duration_of_depol1"],
+        tmid2=sahp_definition["delay"]
+        + sahp_definition["duration"]
+        - sahp_definition["duration_of_depol2"],
+        toff=sahp_definition["delay"] + sahp_definition["duration"],
+        long_amp=sahp_definition["depol"],
+        holding_current=holding_current,
+        location=soma_loc,
+    )
+
+    return SweepProtocolCustom(
+        name=protocol_name,
+        stimuli=[sahp_stimulus],
+        recordings=recordings,
+    )
+
+
 # Adjust accordingly
 def read_ramp_threshold_protocol(protocol_name, protocol_definition, recordings):
-    """Read step protocol from definition."""
+    """Read ramp threshold protocol from definition."""
 
     ramp_definition = protocol_definition["stimuli"]["ramp"]
     ramp_stimulus = ephys.stimuli.NrnRampPulse(
-        ramp_delay=ramp_definition["delay"],
-        ramp_duration=ramp_definition["duration"],
+        ramp_delay=ramp_definition["ramp_delay"],
+        ramp_duration=ramp_definition["ramp_duration"],
         location=soma_loc,
         total_duration=ramp_definition["totduration"],
     )
@@ -53,6 +91,39 @@ def read_ramp_threshold_protocol(protocol_name, protocol_definition, recordings)
         holding_stimulus=holding_stimulus,
         thresh_perc_start=ramp_definition["thresh_perc_start"],
         thresh_perc_end=ramp_definition["thresh_perc_end"],
+        recordings=recordings,
+    )
+
+
+def read_ramp_protocol(protocol_name, protocol_definition, recordings):
+    """Read ramp protocol from definition."""
+
+    ramp_definition = protocol_definition["stimuli"]["ramp"]
+    ramp_stimulus = ephys.stimuli.NrnRampPulse(
+        ramp_amplitude_start=ramp_definition["ramp_amplitude_start"],
+        ramp_amplitude_end=ramp_definition["ramp_amplitude_end"],
+        ramp_delay=ramp_definition["ramp_delay"],
+        ramp_duration=ramp_definition["ramp_duration"],
+        location=soma_loc,
+        total_duration=ramp_definition["totduration"],
+    )
+
+    if "holding" in protocol_definition["stimuli"]:
+        holding_definition = protocol_definition["stimuli"]["holding"]
+        holding_stimulus = ephys.stimuli.NrnSquarePulse(
+            step_amplitude=holding_definition["amp"],
+            step_delay=holding_definition["delay"],
+            step_duration=holding_definition["duration"],
+            location=soma_loc,
+            total_duration=holding_definition["totduration"],
+        )
+    else:
+        holding_stimulus = None
+
+    return RampProtocol(
+        name=protocol_name,
+        ramp_stimulus=ramp_stimulus,
+        holding_stimulus=holding_stimulus,
         recordings=recordings,
     )
 
@@ -245,6 +316,20 @@ def define_protocols(
                 and protocol_definition["type"] == "RampThresholdProtocol"
             ):
                 protocols_dict[protocol_name] = read_ramp_threshold_protocol(
+                    protocol_name, protocol_definition, recordings
+                )
+            elif (
+                "type" in protocol_definition
+                and protocol_definition["type"] == "RampProtocol"
+            ):
+                protocols_dict[protocol_name] = read_ramp_protocol(
+                    protocol_name, protocol_definition, recordings
+                )
+            elif (
+                "type" in protocol_definition
+                and protocol_definition["type"] == "SAHPProtocol"
+            ):
+                protocols_dict[protocol_name] = read_sAHP_protocol(
                     protocol_name, protocol_definition, recordings
                 )
             elif (

@@ -799,7 +799,7 @@ class StepThresholdProtocol(StepProtocol):
 
 
 # Adjust accordingly
-class RampProtocol(ephys.protocols.SweepProtocol):
+class RampProtocol(SweepProtocolCustom):
     """Protocol consisting of ramp and holding current."""
 
     def __init__(
@@ -814,7 +814,7 @@ class RampProtocol(ephys.protocols.SweepProtocol):
 
         Args:
             name (str): name of this object
-            step_stimulus (list of Stimuli): Stimulus objects used in protocol
+            ramp_stimulus (list of Stimuli): Stimulus objects used in protocol
             recordings (list of Recordings): Recording objects used in the
                 protocol
             cvode_active (bool): whether to use variable time step

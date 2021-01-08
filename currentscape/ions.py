@@ -15,33 +15,84 @@ from currentscape.plotting import (
 )
 from currentscape.legends import (
     set_legend,
+    set_legend_with_lines,
 )
+from currentscape.mapper import create_mapper
 
 
 class IonConcentrations(DataSet):
     """Class containing ion concentrations data."""
 
-    def __init__(self, data, names, reorder_):
+    def __init__(self, data, c):
         """Constructor.
 
         Args:
             data (list of lists): data
                 all lists are expected to have the same size.
-            names (list of str): ion names
-            reorder_ (bool): set to True to reorder ions from largest to smallest
+            c (dict): config
+
+        Attributes:
+            mapper (int): number used to mix colors and patterns / linestyles
         """
-        super(IonConcentrations, self).__init__(data=data, names=names)
+        reorder_ = c["ions"]["reorder"]
+        use_patterns = c["pattern"]["use"]
+        n_patterns = len(c["pattern"]["patterns"])
+
+        super(IonConcentrations, self).__init__(data=data, names=c["ions"]["names"])
 
         if self.data is not None and reorder_:
             _, self.idxs = reorder(self.data)
 
-    def plot(
-        self,
-        c,
-        row,
-        rows_tot,
-        cmap,
-    ):
+        if use_patterns:
+            n_colors = min([c["colormap"]["n_colors"], self.N])
+            self.mapper = create_mapper(n_colors, n_patterns)
+        else:
+            self.mapper = None
+
+    def plot_with_linestyles(self, c, row, rows_tot, cmap):
+        """Plot all the ion concentration with linestyles.
+
+        Args:
+            c (dict): config
+            row (int): row of subplot
+            rows_tot (int): total number of subplots in the figure
+            cmap (matplotlib.colors.Colormap): colormap
+        """
+        n_colors = min([c["colormap"]["n_colors"], self.N])
+        ls = c["line"]["styles"]
+        lw = c["lw"]
+
+        ylim = list(c["ions"]["ylim"])
+
+        ax = plt.subplot2grid((rows_tot, 1), (row, 0), rowspan=1)
+
+        x = np.arange(self.x_size)
+
+        # here, use currs.idxs to have the same colors as in currs.names
+        # can do it because selected_currs have same shape as self (no zero arrays removed)
+        for i, ion in enumerate(self.data[self.idxs]):
+            if not np.all(ion == 0):
+                color = cmap((self.mapper * i) % n_colors)
+                linestyle = ls[((self.mapper * i) // n_colors) % len(ls)]
+
+                ax.plot(x, ion, color=color, ls=linestyle, lw=lw, zorder=2)
+
+        # legend
+        # place legend here so that legend top is at the level of share plot top
+        if c["show"]["legend"]:
+            set_legend_with_lines(
+                ax,
+                cmap,
+                self.mapper,
+                c,
+                self.idxs,
+                c["ions"]["names"],
+                n_colors,
+            )
+
+        apply_labels_ticks_and_lims(ax, c, self.x_size, ylim, True, "ions")
+
+    def plot(self, c, row, rows_tot, cmap):
         """Plot positive (or negative) ionic concentration.
 
         Args:
@@ -63,7 +114,7 @@ class IonConcentrations(DataSet):
                     ion,
                     color=color,
                     ls="solid",
-                    lw=c["current"]["lw"],
+                    lw=c["lw"],
                     zorder=2,
                 )
 

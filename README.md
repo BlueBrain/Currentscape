@@ -197,6 +197,7 @@ Here is an example of a config file containing all defaults values :
         "titlesize": 12,
         "labelpad": 1,
         "textsize": 6,
+        "lw": 0.5,
         "adjust": {
             "left": 0.15,
             "right": 0.85,

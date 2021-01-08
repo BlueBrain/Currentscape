@@ -59,7 +59,6 @@ def set_default_config(c):
     current["ticks"] = [5, 50, 500]
     # only taken into account if autoscale_ticks_and_ylim is False
     current["ylim"] = (0.01, 1500)
-    current["lw"] = 0.5
     current["units"] = "[pA]"
     # color for summed currents.
     current["color"] = "black"
@@ -161,6 +160,7 @@ def set_default_config(c):
     config["labelpad"] = 1
     config["textsize"] = 6
     config["titlesize"] = 12
+    config["lw"] = 0.5
 
     new_config = replace_defaults(config, c)
 

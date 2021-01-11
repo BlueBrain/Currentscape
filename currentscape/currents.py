@@ -1,6 +1,7 @@
 """Currents class."""
 
 # pylint: disable=wrong-import-position, super-with-arguments
+import math
 import numpy as np
 import matplotlib
 
@@ -20,6 +21,7 @@ from currentscape.plotting import (
     select_color,
     stackplot_with_bars,
     black_line_log_scale,
+    get_colors_and_hatches_lists,
 )
 from currentscape.legends import (
     set_legend_with_hatches,
@@ -246,6 +248,80 @@ class CurrentPlottingMixin:
 
         apply_labels_ticks_and_lims(ax, c, xmax, ylim, positive, "current")
 
+    def plot_overall_contribution(self, ax, data, c, cmap):
+        """Plot one pie chart of either positive or negative currents contribution.
+
+        Args:
+            ax (matplotlib.axes): currentscape axis
+            data (ndarray of ndarrays): positive or negative currents data
+            c (dict): config
+            cmap (matplotlib.colors.Colormap): colormap
+        """
+        # bar plot in polar coordinates -> pie chart
+        radius = 1
+        size = 0.5
+
+        # process data to be polar coordinates compatible
+        valsnorm = np.sum(data / np.sum(data) * 2 * np.pi, axis=1)
+        valsleft = np.cumsum(np.append(0, valsnorm[:-1]))
+
+        # color indexes
+        col_idxs = np.arange(self.N)
+        # set colors and patterns
+        colors, hatches = get_colors_and_hatches_lists(c, col_idxs, cmap, self.mapper)
+
+        bars = ax.bar(
+            x=valsleft,
+            width=valsnorm,
+            bottom=radius - size,
+            height=size,
+            color=colors,
+            edgecolor=c["pattern"]["color"],
+            linewidth=c["lw"],
+            align="edge",
+        )
+        # for loop, because hatches cannot be passed as a list
+        if hatches is not None:
+            for bar_, hatch in zip(bars, hatches):
+                bar_.set_hatch(hatch)
+
+        ax.set_axis_off()
+
+    def plot_overall_contributions(self, c, row, rows_tot, cmap):
+        """Plot positive and negative pie charts of currents summed over the whole simulation.
+
+        Args:
+            c (dict): config
+            row (int): row of subplot
+            rows_tot (int): total number of subplots in the figure
+            cmap (matplotlib.colors.Colormap): colormap
+        """
+        textsize = c["textsize"]
+        labelpad = c["labelpad"]
+        # POSITIVE
+        # trick: bar plot in polar coord. to do a pie chart.
+        ax = plt.subplot2grid((rows_tot, 2), (row, 0), rowspan=2, polar=True)
+
+        # get positive data and reorder them
+        pos_data = self.get_positive_data()[self.idxs]
+        self.plot_overall_contribution(ax, pos_data, c, cmap)
+
+        # pi is left in x polar coordinates, 1 is height of bars -> outside pie chart
+        # labelpad / 4 : looks close to labelpad in regular plot, but is not rigorous
+        set_label(ax, math.pi, 1 + labelpad / 4.0, "outward", textsize)
+
+        # NEGATIVE
+        # trick: bar plot in polar coord. to do a pie chart.
+        ax = plt.subplot2grid((rows_tot, 2), (row, 1), rowspan=2, polar=True)
+
+        # get positive data and reorder them
+        neg_data = self.get_negative_data()[self.idxs]
+        self.plot_overall_contribution(ax, neg_data, c, cmap)
+
+        # pi is left in x polar coordinates, 1 is height of bars -> outside pie chart
+        # labelpad / 4 : looks close to labelpad in regular plot, but is not rigorous
+        set_label(ax, math.pi, 1 + labelpad / 4.0, "inward", textsize)
+
 
 class Currents(CurrentPlottingMixin, DataSet):
     """Class containing current data."""
@@ -394,14 +470,15 @@ class Currents(CurrentPlottingMixin, DataSet):
                 in percentage of the plot height.
         """
         # idexes to map to re-ordered current names
-        # interchange index and values of inames to create imap
-        # that way, imap[idx] gives index in inames
+        # interchange index and values of self.idxs (name indexes) to create imap
+        # that way, imap[idx] gives index in self.idxs
         imap = np.zeros(self.N, dtype=int)
         imap[self.idxs] = np.arange(self.N)
 
         times = np.arange(0, self.x_size)
-        impos = np.full((resy, self.x_size), self.N + 1)
-        imneg = np.full((resy, self.x_size), self.N + 1)
+        # using int8 not to take too much memory
+        impos = np.full((resy, self.x_size), self.N + 1, dtype=np.int8)
+        imneg = np.full((resy, self.x_size), self.N + 1, dtype=np.int8)
 
         for t in times:
             lastpercent = 0

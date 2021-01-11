@@ -4,6 +4,10 @@ Changelog
 Version 0.0.7
 -------------
 
+Fixed
+~~~~~
+- Unit conversion when turning current density into currents in extract_currs.
+
 Added
 ~~~~~
 - Added tests for data processing functions.
@@ -27,6 +31,7 @@ New Features
 - Absolute currents can be displayed as lines or as a stackplot.
 - Allowed extract_currs to extract ionic concentration.
 - Added a new subplot to currentscape: ionic concentration.
+- Added a new subplot: pie charts showing the overall contribution of currents.
 
 
 Version 0.0.6

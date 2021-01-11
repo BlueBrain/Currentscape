@@ -48,6 +48,7 @@ def set_default_config(c):
     show["ticklabels"] = True
     show["legend"] = True
     show["all_currents"] = False
+    show["total_contribution"] = False
     config["show"] = show
 
     current = {}
@@ -103,6 +104,8 @@ def set_default_config(c):
     pattern["patterns"] = ["", "/", "\\", "x", ".", "o", "+"]
     pattern["density"] = 5
     pattern["linewidth"] = 0.2
+    # since the pattern color is defined by the edgecolor,
+    # this parameter also changes the edgecolor of the pie charts
     pattern["color"] = "black"
     config["pattern"] = pattern
 

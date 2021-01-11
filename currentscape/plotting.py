@@ -34,6 +34,43 @@ def configure_mpl_rcParams(c):
         plt.rcParams["legend.handlelength"] = 0
 
 
+def get_rows_tot(c, ions):
+    """Return the total number of rows cumulated by all the subplots."""
+    rows_tot = 7
+    if c["pattern"]["use"]:
+        rows_tot += 1
+    if c["show"]["all_currents"]:
+        rows_tot += 2
+    if ions.data is not None:
+        rows_tot += 1
+    if c["show"]["total_contribution"]:
+        rows_tot += 2
+
+    return rows_tot
+
+
+def get_colors_and_hatches_lists(c, col_idxs, cmap, mapper):
+    """Get colors and hatches lists from color indexes list.
+
+    Args:
+        c (dict): config
+        col_idxs (ndarray of ints): list of indexes of colors
+        cmap (matplotlib.colors.Colormap): colormap
+        mapper (int): number used to mix colors and patterns
+    """
+    n_colors = c["colormap"]["n_colors"]
+    patterns = np.array([x * c["pattern"]["density"] for x in c["pattern"]["patterns"]])
+
+    if c["pattern"]["use"]:
+        colors = cmap((mapper * col_idxs) % n_colors)
+        hatches = patterns[((mapper * col_idxs) // n_colors) % len(patterns)]
+    else:
+        colors = cmap(col_idxs)
+        hatches = None
+
+    return colors, hatches
+
+
 def stackplot_with_bars(
     ax,
     cnorm,

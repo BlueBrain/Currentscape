@@ -20,6 +20,7 @@ from currentscape.plotting import (
     get_colormap,
     adjust,
     save_figure,
+    get_rows_tot,
 )
 from currentscape.subplots import (
     plot_voltage_trace,
@@ -38,8 +39,8 @@ def create_figure(voltage, currs, c, ions):
         c (dict): config
         ions (IonConcentrations): object containing ionic concentration data
     """
-    use_patterns = c["pattern"]["use"]
     configure_mpl_rcParams(c)
+    use_patterns = c["pattern"]["use"]
 
     cmap = get_colormap(
         c["colormap"]["name"], c["colormap"]["n_colors"], use_patterns, currs.N, ions.N
@@ -52,13 +53,7 @@ def create_figure(voltage, currs, c, ions):
     if ions.data is not None and c["ions"]["autoscale_ticks_and_ylim"]:
         autoscale_ticks_and_ylim(c, np.max(ions.data), abs(np.min(ions.data)), "ions")
 
-    rows_tot = 7
-    if use_patterns:
-        rows_tot += 1
-    if c["show"]["all_currents"]:
-        rows_tot += 2
-    if ions.data is not None:
-        rows_tot += 1
+    rows_tot = get_rows_tot(c, ions)
     row = 0
 
     # START PLOT
@@ -97,13 +92,18 @@ def create_figure(voltage, currs, c, ions):
         currs.plot(c, row, rows_tot, cmap, False)
         row += 1
 
-    # PLOT IONIC CONCENTRATION
+    # PLOT IONIC CONCENTRATIONS
     if ions.data is not None:
         if use_patterns:
             ions.plot_with_linestyles(c, row, rows_tot, cmap)
         else:
             ions.plot(c, row, rows_tot, cmap)
         row += 1
+
+    # PLOT OVERALL CONTRIBUTIONS
+    if c["show"]["total_contribution"]:
+        currs.plot_overall_contributions(c, row, rows_tot, cmap)
+        row += 2
 
     adjust(
         c["adjust"]["left"],

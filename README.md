@@ -71,7 +71,9 @@ Here is an example of a config file containing all defaults values :
             "labels": true,
             "ticklabels": true,
             "legend": true,
-            "all_currents": false
+            "all_currents": false,
+            "_comment1": "total contribution plots two pie charts (positive and negative) showing the contribution of each current over the whole simulation.",
+            "total_contribution": false
         },
         "current": {
             "_comment1": "is not set by default.  The current names should appear in the same order as in the currents argument. is mandatory if ['show']['legend'] is true",
@@ -152,6 +154,7 @@ Here is an example of a config file containing all defaults values :
             "patterns": ["", "/", "\\", "x", ".", "o", "+"],
             "density": 5,
             "linewidth": 0.2,
+            "_comment1": "since the pattern color is defined by the edgecolor, this parameter also changes the edgecolor of the pie charts",
             "color": "black"
         },
         "line": {
@@ -277,6 +280,11 @@ The currents can be displayed as stackplots by putting "current":{"stackplot": T
 ### Showing ionic concentrations
 
 You can plot the ionic concentrations in a subplot at the bottom of the figure by passing your ionic concentration data to the main function: plot_currentscape(voltage, currents, config, ions), and by passing the ion names to the config under: "ions":{"names":your_list}. Note that, as for the currents, the ion names should correspond to the ion data (i.e. be listed in the same order).
+
+
+### Showing overall contribution pie charts
+
+By setting "show":{"total_contribution": True} in the configuration, two pie charts are added at the bottom of the figure, each showing the overall contribution of each current over the whole simulation, one for the outward currents, and the other one for the inward currents.
 
 
 ### Extracting currents

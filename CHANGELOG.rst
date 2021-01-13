@@ -20,6 +20,8 @@ Changes
     so that the labels and ticks do not overlap.
 - Changed dict key for blackline thickness and x-chunksize in config
     since they should not belong exclusively to currentscape anymore.
+- Changed 'labels' and 'ticklabels' to 'ylabels' and 'yticklabels' in config["show"]
+    to distinguish them from 'xlabels' and 'xticklabels'.
 
 New Features
 ~~~~~~~~~~~~
@@ -32,6 +34,10 @@ New Features
 - Allowed extract_currs to extract ionic concentration.
 - Added a new subplot to currentscape: ionic concentration.
 - Added a new subplot: pie charts showing the overall contribution of currents.
+- Label and ticklabel of the x axis can now be displayed on the bottom plot.
+- Gridlines corresponding to the x ticks can be displayed on all the plots.
+- x ticks can be custom or generated automatically.
+- Currentscape plotting can be disabled in the config.
 
 
 Version 0.0.6

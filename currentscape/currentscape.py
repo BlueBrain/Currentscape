@@ -21,10 +21,9 @@ from currentscape.plotting import (
     adjust,
     save_figure,
     get_rows_tot,
+    plot_x_labels,
 )
-from currentscape.subplots import (
-    plot_voltage_trace,
-)
+from currentscape.voltages import Voltages
 from currentscape.currents import Currents
 from currentscape.ions import IonConcentrations
 from currentscape.config_parser import set_default_config
@@ -61,8 +60,15 @@ def create_figure(voltage, currs, c, ions):
     if c["title"]:
         fig.suptitle(c["title"], fontsize=c["titlesize"])
 
+    # PLOT OVERALL CONTRIBUTIONS
+    # plot this first.
+    # cannot be at the bottom, because it would plot on top of xlabels if enabled.
+    if c["show"]["total_contribution"]:
+        currs.plot_overall_contributions(c, row, rows_tot, cmap)
+        row += 2
+
     # PLOT VOLTAGE TRACE
-    plot_voltage_trace(c, voltage, row, rows_tot)
+    voltage.plot(c, row, rows_tot)
     row += 2
 
     # PLOT TOTAL INWARD CURRENT IN LOG SCALE
@@ -70,11 +76,10 @@ def create_figure(voltage, currs, c, ions):
     row += 1
 
     # PLOT CURRENT SHARES
-    if use_patterns:
-        # mapper = create_mapper(c["colormap"]["n_colors"], len(c["pattern"]["patterns"]))
+    if c["show"]["currentscape"] and use_patterns:
         currs.plot_shares_with_bars(c, row, rows_tot, cmap)
         row += 4
-    else:
+    elif c["show"]["currentscape"]:
         # mapper = None
         currs.plot_shares_with_imshow(c, row, rows_tot, cmap)
         row += 3
@@ -100,10 +105,10 @@ def create_figure(voltage, currs, c, ions):
             ions.plot(c, row, rows_tot, cmap)
         row += 1
 
-    # PLOT OVERALL CONTRIBUTIONS
-    if c["show"]["total_contribution"]:
-        currs.plot_overall_contributions(c, row, rows_tot, cmap)
-        row += 2
+    # ADD X LABEL & X TICK LABELS
+    # add labels only on bottom subplot
+    # time is identical for every dataset here, so currs can be used, even for ions xticks.
+    plot_x_labels(fig.axes[-1], c, currs.xticks)
 
     adjust(
         c["adjust"]["left"],
@@ -115,14 +120,15 @@ def create_figure(voltage, currs, c, ions):
     return fig
 
 
-def plot_currentscape(voltage, currents_data, config, ions_data=None):
+def plot_currentscape(voltage_data, currents_data, config, ions_data=None, time=None):
     """Returns a figure containing current scapes.
 
     Args:
-        voltage (list): voltage data
+        voltage_data (list): voltage data
         currents_data (list of lists): currents data
         config (dict or str): dict or path to json file containing config
         ions_data (list of lists): ion concentrations data
+        time (list): time data
     """
     # load config and set default to unspecified terms
     c = set_default_config(config)
@@ -130,8 +136,9 @@ def plot_currentscape(voltage, currents_data, config, ions_data=None):
     # currenscape data processing
     print("processing data")
 
-    currs = Currents(currents_data, c)
-    ions = IonConcentrations(ions_data, c)
+    voltage = Voltages(voltage_data, c, time)
+    currs = Currents(currents_data, c, time)
+    ions = IonConcentrations(ions_data, c, time)
 
     # plot currentscape
     print("producing figure")

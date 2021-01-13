@@ -22,10 +22,12 @@ from currentscape.plotting import (
     stackplot_with_bars,
     black_line_log_scale,
     get_colors_and_hatches_lists,
+    show_xgridlines,
 )
 from currentscape.legends import (
     set_legend_with_hatches,
     set_legend_with_hatches_and_linestyles,
+    set_legend_with_lines,
     set_legend,
 )
 from currentscape.mapper import create_mapper
@@ -51,14 +53,21 @@ class CurrentPlottingMixin:
 
         ax = plt.subplot2grid((rows_tot, 1), (row, 0), rowspan=1)
         ax.fill_between(
-            np.arange(self.x_size),
+            self.time,
             curr,
             color=c["current"]["color"],
             lw=c["lw"],
             zorder=2,
         )
         apply_labels_ticks_and_lims(
-            ax, c, self.x_size, list(c["current"]["ylim"]), positive, "current"
+            ax,
+            c,
+            self.xticks,
+            [self.time[0], self.time[-1]],
+            list(c["current"]["ylim"]),
+            self.x_size,
+            positive,
+            "current",
         )
 
     def plot_shares_with_bars(self, c, row, rows_tot, cmap):
@@ -72,22 +81,30 @@ class CurrentPlottingMixin:
         """
         # outward currents
         ax = plt.subplot2grid((rows_tot, 1), (row, 0), rowspan=2)
-        size = stackplot_with_bars(
-            ax, self.pos_norm, self.idxs, cmap, c, self.N, self.mapper
-        )
+        stackplot_with_bars(ax, self.pos_norm, self.idxs, cmap, c, self.N, self.mapper)
 
         # add at black line a the bottom of the plot.
         # cannot use spines because with subplot_adjust(h=0),
         # spines overlap on neighboor plot and hide part of the data
         y_bottom = -c["current"]["black_line_thickness"] / 100.0
-        ax.fill_between([0, size], [y_bottom, y_bottom], color="black", lw=0)
+        ax.fill_between(
+            [self.time[0], self.time[-1]],
+            [y_bottom, y_bottom],
+            color="black",
+            lw=0,
+        )
 
-        ax.set_ylim(y_bottom, 1)
-        ax.set_xlim(0, size)
+        ylim = [y_bottom, 1]
+        ax.set_ylim(ylim)
+        ax.set_xlim([self.time[0], self.time[-1]])
         remove_ticks_and_frame_for_bar_plot(ax)
 
+        # show x axis gridline
+        if c["show"]["xgridlines"]:
+            show_xgridlines(ax, c, self.xticks, ylim)
+
         # labels
-        if c["show"]["labels"]:
+        if c["show"]["ylabels"]:
             ax.set_ylabel(c["currentscape"]["out_label"], labelpad=c["labelpad"])
 
         # legend
@@ -102,16 +119,19 @@ class CurrentPlottingMixin:
 
         # inward currents
         ax = plt.subplot2grid((rows_tot, 1), (row + 2, 0), rowspan=2)
-        size = stackplot_with_bars(
-            ax, self.neg_norm, self.idxs, cmap, c, self.N, self.mapper
-        )
+        stackplot_with_bars(ax, self.neg_norm, self.idxs, cmap, c, self.N, self.mapper)
 
-        ax.set_ylim(0, 1)
-        ax.set_xlim(0, size)
+        ylim = [0, 1]
+        ax.set_ylim(ylim)
+        ax.set_xlim([self.time[0], self.time[-1]])
         remove_ticks_and_frame_for_bar_plot(ax)
 
+        # show x axis gridline
+        if c["show"]["xgridlines"]:
+            show_xgridlines(ax, c, self.xticks, ylim)
+
         # labels
-        if c["show"]["labels"]:
+        if c["show"]["ylabels"]:
             ax.set_ylabel(c["currentscape"]["in_label"], labelpad=c["labelpad"])
 
     def plot_shares_with_imshow(self, c, row, rows_tot, cmap):
@@ -138,8 +158,14 @@ class CurrentPlottingMixin:
         plt.gca().yaxis.set_major_locator(plt.NullLocator())
 
         # set limits
-        ax.set_ylim(2 * resy + black_line_size, 0)
+        ylim = [2 * resy + black_line_size, 0]
+        ax.set_ylim(ylim)
         ax.set_xlim(0, self.x_size)
+
+        # show x axis gridline
+        if c["show"]["xgridlines"]:
+            show_xgridlines(ax, c, self.xticks_for_imshow(), ylim)
+
         # set number of colors
         # data + black for separating line + white for empty data = (N-1)+1+1
         im.set_clim(0, self.N + 1)
@@ -149,7 +175,7 @@ class CurrentPlottingMixin:
         ax.spines["bottom"].set_visible(False)
 
         # labels
-        if c["show"]["labels"]:
+        if c["show"]["ylabels"]:
             # cheat to set two labels at the right places for 1 axis
             set_label(
                 ax,
@@ -190,8 +216,6 @@ class CurrentPlottingMixin:
         ls = c["line"]["styles"]
         lw = c["lw"]
 
-        x = np.arange(self.x_size)
-
         # here, use currs.idxs to have the same colors as in currs.names
         # can do it because selected_currs have same shape as self (no zero arrays removed)
         for i, curr in enumerate(selected_currs[self.idxs]):
@@ -203,7 +227,7 @@ class CurrentPlottingMixin:
                     color = select_color(cmap, i, self.N)
                     linestyle = "solid"
 
-                ax.plot(x, curr, color=color, ls=linestyle, lw=lw, zorder=2)
+                ax.plot(self.time, curr, color=color, ls=linestyle, lw=lw, zorder=2)
 
     def plot(self, c, row, rows_tot, cmap, positive=True):
         """Plot all the positive (or negative) currents.
@@ -217,7 +241,6 @@ class CurrentPlottingMixin:
                 False to plot negative currents subplot
         """
         ylim = list(c["current"]["ylim"])
-        xmax = self.x_size
 
         ax = plt.subplot2grid((rows_tot, 1), (row, 0), rowspan=1)
 
@@ -231,10 +254,15 @@ class CurrentPlottingMixin:
         if c["current"]["stackplot"]:
             # create dataset from reordered selected currents
             sorted_idxs = reordered_idx(selected_currs)
-            sel_currs = DataSet(data=selected_currs[sorted_idxs], names=self.names)
+            sel_currs = DataSet(
+                data=selected_currs[sorted_idxs],
+                names=self.names,
+                time=self.time,
+                xticks=self.xticks,
+            )
             sel_currs.idxs = sorted_idxs
 
-            xmax = stackplot_with_bars(
+            stackplot_with_bars(
                 ax, sel_currs, self.idxs, cmap, c, self.N, self.mapper, False
             )
         else:
@@ -243,10 +271,54 @@ class CurrentPlottingMixin:
         # add black line separating positive currents from negative currents
         if positive and c["current"]["stackplot"]:
             ylim = black_line_log_scale(
-                ax, ylim, xmax, c["current"]["black_line_thickness"]
+                ax,
+                ylim,
+                [self.time[0], self.time[-1]],
+                c["current"]["black_line_thickness"],
             )
 
-        apply_labels_ticks_and_lims(ax, c, xmax, ylim, positive, "current")
+        # show legend if not shown in currentscape
+        if not c["show"]["currentscape"] and c["show"]["legend"] and positive:
+            # regular colors
+            if not c["pattern"]["use"]:
+                set_legend(
+                    ax,
+                    cmap,
+                    c["current"]["names"],
+                    c["legend"]["bgcolor"],
+                    c["legend"]["ypos"],
+                    self.idxs,
+                )
+            # colors & hatches
+            elif c["current"]["stackplot"]:
+                set_legend_with_hatches(ax, cmap, self.mapper, c, self.idxs)
+            # linestyles & hatches
+            elif c["show"]["total_contribution"]:
+                set_legend_with_hatches_and_linestyles(
+                    ax, cmap, self.mapper, c, self.idxs
+                )
+            # linestyles only
+            else:
+                set_legend_with_lines(
+                    ax,
+                    cmap,
+                    self.mapper,
+                    c,
+                    self.idxs,
+                    c["current"]["names"],
+                    c["colormap"]["n_colors"],
+                )
+
+        apply_labels_ticks_and_lims(
+            ax,
+            c,
+            self.xticks,
+            [self.time[0], self.time[-1]],
+            ylim,
+            self.x_size,
+            positive,
+            "current",
+        )
 
     def plot_overall_contribution(self, ax, data, c, cmap):
         """Plot one pie chart of either positive or negative currents contribution.
@@ -308,7 +380,8 @@ class CurrentPlottingMixin:
 
         # pi is left in x polar coordinates, 1 is height of bars -> outside pie chart
         # labelpad / 4 : looks close to labelpad in regular plot, but is not rigorous
-        set_label(ax, math.pi, 1 + labelpad / 4.0, "outward", textsize)
+        if c["show"]["ylabels"]:
+            set_label(ax, math.pi, 1 + labelpad / 4.0, "outward", textsize)
 
         # NEGATIVE
         # trick: bar plot in polar coord. to do a pie chart.
@@ -320,19 +393,21 @@ class CurrentPlottingMixin:
 
         # pi is left in x polar coordinates, 1 is height of bars -> outside pie chart
         # labelpad / 4 : looks close to labelpad in regular plot, but is not rigorous
-        set_label(ax, math.pi, 1 + labelpad / 4.0, "inward", textsize)
+        if c["show"]["ylabels"]:
+            set_label(ax, math.pi, 1 + labelpad / 4.0, "inward", textsize)
 
 
 class Currents(CurrentPlottingMixin, DataSet):
     """Class containing current data."""
 
-    def __init__(self, data, c):
+    def __init__(self, data, c, time=None):
         """Constructor.
 
         Args:
             data (list of lists): data
                 all lists are expected to have the same size.
             c (dict): config
+            time (list): time of the data
 
         Attributes:
             pos_norm (ndarray of ndarrays): norm of positive data
@@ -348,7 +423,12 @@ class Currents(CurrentPlottingMixin, DataSet):
         use_pattern = c["pattern"]["use"]
         n_patterns = len(c["pattern"]["patterns"])
 
-        super(Currents, self).__init__(data=data, names=c["current"]["names"])
+        super(Currents, self).__init__(
+            data=data,
+            names=c["current"]["names"],
+            time=time,
+            xticks=c["xaxis"]["xticks"],
+        )
 
         # self.idxs may be modified in the method below
         self.pos_norm, self.neg_norm, self.pos_sum, self.neg_sum = self.data_processing(
@@ -402,9 +482,9 @@ class Currents(CurrentPlottingMixin, DataSet):
             cnorm_pos, idx_pos = remove_zero_arrays(cnorm_pos)
             cnorm_neg, idx_neg = remove_zero_arrays(cnorm_neg)
 
-        pos_norm = DataSet(cnorm_pos)
+        pos_norm = DataSet(cnorm_pos, time=self.time, xticks=self.xticks)
         pos_norm.idxs = idx_pos
-        neg_norm = DataSet(cnorm_neg)
+        neg_norm = DataSet(cnorm_neg, time=self.time, xticks=self.xticks)
         neg_norm.idxs = idx_neg
 
         return (

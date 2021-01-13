@@ -7,12 +7,29 @@ from currentscape.data_processing import (
     sum_chunks,
     check_chunksize,
     reorder,
+    order_of_mag,
+    round_down_sig_digit,
 )
+from currentscape.datasets import DataSet
 
 
 def compare_floats(n1, n2, err=1e-10):
     """Assert that two floats are closer than a given uncertainty."""
     assert (n1 - n2) / n1 < err
+
+
+def test_order_of_mag():
+    """Test function returning order of magnitude of a number."""
+    assert order_of_mag(1234) == 1000
+    assert order_of_mag(0.0456) == 0.01
+
+
+def test_round_down_sig_digit():
+    """Test function rounding down a number to one (or more) significant digit(s)."""
+    assert round_down_sig_digit(0.0456) == 0.04
+    assert round_down_sig_digit(723) == 700
+    assert round_down_sig_digit(0.5) == 0.5
+    assert round_down_sig_digit(1234, 100) == 1200
 
 
 def test_autoscale():
@@ -82,3 +99,26 @@ def test_reorder():
         new_arr, [[1, 1, 2, 9, 3, 3], [1, 1, 2, 2, 3, 3], [0, 1, 2, 0, 1, 2]]
     )
     assert np.array_equal(new_idx, [3, 0, 1])
+
+
+def test_dataset_xticks():
+    """Test the DataSet function that automatically sets xticks."""
+    ds1 = DataSet(data=None, time=np.arange(0, 2000, 10))
+    assert np.array_equal(
+        ds1.xticks, [0.0, 250.0, 500.0, 750.0, 1000.0, 1250.0, 1500.0, 1750.0]
+    )
+
+    ds2 = DataSet(data=None, time=np.arange(0, 2001, 10))
+    assert np.array_equal(ds2.xticks, [0, 500, 1000, 1500, 2000])
+
+    ds3 = DataSet(data=None, time=np.array([0, 0.51]))
+    # round to avoid floating errors
+    ds3ticks = np.around(ds3.xticks, decimals=1)
+    expected_ds3 = np.around([0.0, 0.1, 0.2, 0.3, 0.4, 0.5], decimals=1)
+    assert np.array_equal(ds3ticks, expected_ds3)
+
+    ds4 = DataSet(data=None, time=np.arange(1002, 1055, 1))
+    assert np.array_equal(ds4.xticks, [1000, 1010, 1020, 1030, 1040, 1050])
+
+    ds5 = DataSet(data=None, time=np.arange(999, 1005, 1))
+    assert np.array_equal(ds5.xticks, [999, 1000, 1001, 1002, 1003, 1004])

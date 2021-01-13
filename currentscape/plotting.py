@@ -22,6 +22,7 @@ def configure_mpl_rcParams(c):
     """Configure matplotlib rcParams."""
     # set text size
     plt.rcParams["axes.labelsize"] = c["textsize"]
+    plt.rcParams["xtick.labelsize"] = c["textsize"]
     plt.rcParams["ytick.labelsize"] = c["textsize"]
     plt.rcParams["legend.fontsize"] = c["legend"]["textsize"]
     if c["pattern"]["use"]:
@@ -88,8 +89,6 @@ def stackplot_with_bars(
     Args:
         ax (matplotlib.axes): currentscape axis
         cnorm (DataSet): object containing data (e.g. currents data and idxs)
-        currs (list of list of floats): currents fraction (from 0 to 1(or -1))
-        idxs (ndarray of ints): list of original indexes of cpos/cneg in curr
         inames (ndarray of ints): indexes to new name order (new_names = names[inames])
         cmap (matplotlib.colors.Colormap): colormap
         c (dict): config
@@ -110,7 +109,9 @@ def stackplot_with_bars(
     imap[inames] = np.arange(N_curr)
 
     size = len(currs[0])
-    x = range(size)
+    step = float(cnorm.time[-1] - cnorm.time[0]) / size
+
+    x = np.arange(cnorm.time[0], cnorm.time[-1], step)
 
     if top_to_bottom:
         # stack from the top to bottom, like in create_cscape_image func.
@@ -138,7 +139,7 @@ def stackplot_with_bars(
                 color=color,
                 edgecolor=c["pattern"]["color"],
                 linewidth=0,  # do not draw edges
-                width=1,  # fill all the space between two bars
+                width=step,  # fill all the space between two bars
                 hatch=hatch,
                 bottom=bottom,
                 align="edge",  # Align the left edges of the bars with the x positions.
@@ -148,10 +149,8 @@ def stackplot_with_bars(
             if not top_to_bottom:
                 bottom += curr
 
-    return size
 
-
-def black_line_log_scale(ax, ylim, xmax, bl_thickness):
+def black_line_log_scale(ax, ylim, xlim, bl_thickness):
     """Produce a black line meant to distinguish between 2 plots in log scales.
 
     The black line is plotted at the bottom of the upper plot.
@@ -160,7 +159,7 @@ def black_line_log_scale(ax, ylim, xmax, bl_thickness):
     Args:
         ax (matplotlib.axes): currentscape axis
         ylim (list of 2 floats): limits of the y axis
-        xmax (int): size in the x axis
+        xlim (list of 2 floats): limits of the x axis
         bl_thickness (float): thickness of the black line separating the two plots,
             in percentage of the y axis size
 
@@ -172,7 +171,7 @@ def black_line_log_scale(ax, ylim, xmax, bl_thickness):
     y_bottom = ylim[0] / (percent_to_log)
 
     ax.fill_between(
-        [0, xmax],
+        xlim,
         [y_bottom, y_bottom],
         [ylim[0], ylim[0]],
         color="black",
@@ -196,8 +195,8 @@ def remove_ticks_and_frame(ax):
     ax.tick_params(
         axis="y",  # changes apply to the x-axis
         which="both",  # both major and minor ticks are affected
-        left=False,  # ticks along the bottom edge are off
-        right=False,  # ticks along the top edge are off
+        left=False,  # ticks along the left edge are off
+        right=False,  # ticks along the right edge are off
         pad=0,
     )
     ax.spines["top"].set_visible(False)
@@ -218,8 +217,8 @@ def remove_ticks_and_frame_for_bar_plot(ax):
     ax.tick_params(
         axis="y",  # changes apply to the x-axis
         which="both",  # both major and minor ticks are affected
-        left=False,  # ticks along the bottom edge are off
-        right=False,  # ticks along the top edge are off
+        left=False,  # ticks along the left edge are off
+        right=False,  # ticks along the right edge are off
         labelleft=False,  # labels along left edge are off
     )
     ax.spines["top"].set_visible(False)
@@ -252,42 +251,77 @@ def set_label(ax, x, y, label, textsize):
     )
 
 
-def apply_labels_ticks_and_lims(ax, c, xmax, ylim, positive=True, config_key="current"):
+def show_xgridlines(ax, c, xticks, ylim=None):
+    """Show vertical gridlines corresponding to the x ticks."""
+    lw = c["xaxis"]["gridline_width"]
+    ls = c["xaxis"]["gridline_style"]
+    color = c["xaxis"]["gridline_color"]
+
+    # plot on top of everything else
+    ax.vlines(xticks, ylim[0], ylim[1], lw=lw, color=color, zorder=5, ls=ls)
+
+
+def apply_labels_ticks_and_lims(
+    ax, c, xticks, xlim, ylim, xsize, positive=True, config_key="current"
+):
     """Apply labels, ticks, xlim and ylim to current / ion concentration plots.
 
     Args:
         ax (matplotlib.axes): currentscape axis
         c (dict): config
-        xmax (int): size of data
-        ylim (list of 2 floats): limits of y axis
+        xticks (list): tick positions on the x axis
+        xlim (list of 2 floats): limits of x axis
+        ylim (list of 2 floats): limits of y axis (can be different from ylim from config)
+        xsize (int): size of the x axis
         positive (bool): True for positive data, False for negative data
         config_key (str): key for getting data from config. Should be 'current' or 'ions'
     """
     # plot the horizontal dotted lines
     for tick in c[config_key]["ticks"]:
-        ax.plot(tick * np.ones(xmax), color="black", ls=":", lw=1, zorder=1)
+        ax.plot(tick * np.ones(xsize), color="black", ls=":", lw=1, zorder=1)
 
     ax.set_yscale("log")
 
     # labels
-    if c["show"]["labels"]:
+    if c["show"]["ylabels"]:
         if positive:
             ax.set_ylabel(c[config_key]["units"], labelpad=c["labelpad"])
         else:
             ax.set_ylabel("-" + c[config_key]["units"], labelpad=c["labelpad"])
 
     # ticks
-    if c["show"]["ticklabels"]:
+    if c["show"]["yticklabels"]:
         ax.set_yticks(c[config_key]["ticks"])
         ax.get_yaxis().set_major_formatter(matplotlib.ticker.FormatStrFormatter("%g"))
     remove_ticks_and_frame(ax)
 
+    # show x axis gridline
+    if c["show"]["xgridlines"]:
+        show_xgridlines(ax, c, xticks, ylim)
+
     # somehow, set_ylim is not taken into account if it is set before set_yticks
-    ax.set_xlim(0, xmax)
+    ax.set_xlim(xlim)
     if positive:
         ax.set_ylim(ylim[0], ylim[1])
     else:
         ax.set_ylim(ylim[1], ylim[0])
+
+
+def plot_x_labels(ax, c, xticks):
+    """Plot x labels and x ticklabels."""
+    if c["show"]["xlabels"]:
+        ax.set_xlabel(c["xaxis"]["units"], labelpad=c["labelpad"])
+
+    if c["show"]["xticklabels"]:
+        # enable label bottom
+        ax.tick_params(
+            axis="x",  # changes apply to the x-axis
+            which="both",  # both major and minor ticks are affected
+            pad=0,
+            labelbottom=True,
+        )
+        ax.set_xticks(xticks)
+        ax.get_xaxis().set_major_formatter(matplotlib.ticker.FormatStrFormatter("%g"))
 
 
 def select_color(cmap, i, N_col):

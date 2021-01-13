@@ -98,8 +98,13 @@ Each parameter name is self-explanatory.
 
         {
             "show": {
-                "labels": true,
-                "ticklabels": true,
+                "currentscape": true,
+                "ylabels": true,
+                "yticklabels": true,
+                "xlabels": false,
+                "xticklabels": false,
+                "_comment1": "If enabled, xgridlines plot vertical lines in all plots at xticks positions.",
+                "xgridlines": false,
                 "legend": true,
                 "all_currents": false,
                 "_comment1": "total contribution plots two pie charts (positive and negative) showing the contribution of each current over the whole simulation.",
@@ -160,7 +165,7 @@ Each parameter name is self-explanatory.
                     0.01,
                     1500
                 ],
-                "units": "mM",
+                "units": "[mM]",
                 "_comment4": "if True, reorder currents with decreasing order",
                 "reorder": true,
                 "_comment5": "is not set by default.  The ions concentration names should appear in the same order as in the ions argument. is mandatory if ['show']['legend'] is true",
@@ -205,6 +210,14 @@ Each parameter name is self-explanatory.
                 "units": "[mV]",
                 "color": "black",
                 "horizontal_lines": true
+            },
+            "xaxis": {
+                "units": "[ms]",
+                "_comment1": "if None, xticks are generated automatically. Can put a list of xticks to force custom xticks.",
+                "xticks": null,
+                "gridline_width": 1,
+                "gridline_color": "black",
+                "gridline_style": "--"
             },
             "output": {
                 "savefig": false,
@@ -281,6 +294,32 @@ The name of the colormap can be one of the matplotlib colormaps (https://matplot
 or one of the palettable module (https://jiffyclub.github.io/palettable/).
 The palettable colormaps should be inputted in the form "origin.palette_N", N being the number of different colors (i.e. the number of currents if patterns are not used.)
 Example: "cartocolors.qualitative.Safe_8"
+
+
+Showing x axis label, ticklabel, gridlines
+==========================================
+
+You can use the configuration to show x axis label, ticklabels and vertical gridlines. 
+The label and ticklabels are only shown on the bottom plot, and the vertical gridlines are shown on all plots, and correspond to the x ticks (generated automatically, if not set in the config). 
+However, to show ticklabels and gridlines, you have to also input time as an argument to the plot_currentscape function. Here is an example:
+
+.. code-block:: python
+
+        # load voltage data
+        data_dir = path/to/data/dir
+        v_path = os.path.join(data_dir, "_".join(("soma_step1", "v")) + ".dat")
+        time = np.loadtxt(v_path)[:, 0]
+        voltage = np.loadtxt(v_path)[:, 1]
+
+        currents = load_current_fct(data_dir)
+        config = path/to/config
+
+        # produce currentscape figure
+        fig = plot_currentscape(voltage, currents, config, time=time)
+
+Be aware that the time data are expected to grow monotonically.
+
+Also, when setting custom x ticks through the config, try to stick with ticks within time data limits for optimal display.
 
 
 Using patterns

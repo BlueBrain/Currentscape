@@ -88,6 +88,39 @@ def reorder(arr):
     return arr, idx
 
 
+def order_of_mag(n):
+    """Get order of magnitude of a (absolute value of a) number.
+
+    e.g. for 1234 -> 1000, or 0.0456 -> 0.01
+    """
+    return pow(10, floor(log10(abs(n))))
+
+
+def round_down_sig_digit(n, mag_order=None):
+    """Round down to a given number (default: 1) of significant digit.
+
+    e.g. 0.0456 -> 0.04, 723 -> 700
+
+    Args:
+        n (float or int): number to be rounded down
+        mag_order (float or int): 10 to the power of the desired order of magnitude
+            (e.g. 1000 to round the thousands)
+            if None: n is rounded to 1 sig digit
+    """
+    if mag_order is None:
+        mag_order = order_of_mag(n)
+
+    # when dealing with floats, floating point errors can happen (e.g. 0.5 // 0.1 -> 0.4)
+    # this can happen when n is already its own sig (sig = rounded down one significant digit nmb)
+    # (if it's bigger, usually n - sig is bigger than (float(n) - true n value) error
+    # so the error does not influence the result of n // mag_order when n != sig(n))
+    # -> if (dealing with floats) and (n == sig(n)), then return n
+    if mag_order < 1 and len(str(abs(n))) == len(str(mag_order)):
+        return n
+
+    return float(mag_order * (n // mag_order))
+
+
 def autoscale_ticks_and_ylim(c, pos, neg, config_key="current"):
     """Autoscale ticks and ylim and put the result in config.
 
@@ -106,9 +139,7 @@ def autoscale_ticks_and_ylim(c, pos, neg, config_key="current"):
 
     c[config_key]["ylim"] = (5.0 * maxi / 1e7, 5.0 * maxi)
 
-    # order of magnitude. e.g. for 1234 -> 1000, or 0.0456 -> 0.01
-    mag_order = pow(10, floor(log10(abs(maxi))))
     # e.g. 0.0456 -> 0.04, 723 -> 700
-    sig = float(mag_order * (maxi // mag_order))
+    sig = round_down_sig_digit(maxi)
 
     c[config_key]["ticks"] = [sig * 0.00001, sig * 0.001, sig * 0.1]

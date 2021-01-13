@@ -23,13 +23,14 @@ from currentscape.mapper import create_mapper
 class IonConcentrations(DataSet):
     """Class containing ion concentrations data."""
 
-    def __init__(self, data, c):
+    def __init__(self, data, c, time=None):
         """Constructor.
 
         Args:
             data (list of lists): data
                 all lists are expected to have the same size.
             c (dict): config
+            time (list): time of the data
 
         Attributes:
             mapper (int): number used to mix colors and patterns / linestyles
@@ -38,16 +39,19 @@ class IonConcentrations(DataSet):
         use_patterns = c["pattern"]["use"]
         n_patterns = len(c["pattern"]["patterns"])
 
-        super(IonConcentrations, self).__init__(data=data, names=c["ions"]["names"])
+        super(IonConcentrations, self).__init__(
+            data=data, names=c["ions"]["names"], time=time, xticks=c["xaxis"]["xticks"]
+        )
 
-        if self.data is not None and reorder_:
-            _, self.idxs = reorder(self.data)
+        self.mapper = None
 
-        if use_patterns:
-            n_colors = min([c["colormap"]["n_colors"], self.N])
-            self.mapper = create_mapper(n_colors, n_patterns)
-        else:
-            self.mapper = None
+        if self.data is not None:
+            if reorder_:
+                _, self.idxs = reorder(self.data)
+
+            if use_patterns:
+                n_colors = min([c["colormap"]["n_colors"], self.N])
+                self.mapper = create_mapper(n_colors, n_patterns)
 
     def plot_with_linestyles(self, c, row, rows_tot, cmap):
         """Plot all the ion concentration with linestyles.
@@ -90,7 +94,16 @@ class IonConcentrations(DataSet):
                 n_colors,
             )
 
-        apply_labels_ticks_and_lims(ax, c, self.x_size, ylim, True, "ions")
+        apply_labels_ticks_and_lims(
+            ax,
+            c,
+            self.xticks,
+            [self.time[0], self.time[-1]],
+            ylim,
+            self.x_size,
+            True,
+            "ions",
+        )
 
     def plot(self, c, row, rows_tot, cmap):
         """Plot positive (or negative) ionic concentration.
@@ -104,13 +117,12 @@ class IonConcentrations(DataSet):
         ax = plt.subplot2grid((rows_tot, 1), (row, 0), rowspan=1)
 
         # plot ion concentrations with lines.
-        x = np.arange(self.x_size)
         for i, ion in enumerate(self.data[self.idxs]):
             if not np.all(ion == 0):
                 color = select_color(cmap, i, self.N)
 
                 ax.plot(
-                    x,
+                    self.time,
                     ion,
                     color=color,
                     ls="solid",
@@ -131,5 +143,12 @@ class IonConcentrations(DataSet):
             )
 
         apply_labels_ticks_and_lims(
-            ax, c, self.x_size, list(c["ions"]["ylim"]), True, "ions"
+            ax,
+            c,
+            self.xticks,
+            [self.time[0], self.time[-1]],
+            list(c["ions"]["ylim"]),
+            self.x_size,
+            True,
+            "ions",
         )

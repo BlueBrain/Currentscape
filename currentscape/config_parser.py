@@ -1,6 +1,6 @@
 """Config-related functions."""
 
-# pylint: disable=too-many-statements
+# pylint: disable=too-many-statements, too-many-locals
 import logging
 
 import json
@@ -44,8 +44,12 @@ def set_default_config(c):
 
     config = {}
     show = {}
-    show["labels"] = True
-    show["ticklabels"] = True
+    show["currentscape"] = True
+    show["ylabels"] = True
+    show["yticklabels"] = True
+    show["xlabels"] = False
+    show["xticklabels"] = False
+    show["xgridlines"] = False
     show["legend"] = True
     show["all_currents"] = False
     show["total_contribution"] = False
@@ -85,7 +89,7 @@ def set_default_config(c):
     ions["autoscale_ticks_and_ylim"] = True
     ions["ticks"] = [5, 50, 500]
     ions["ylim"] = (0.01, 1500)
-    ions["units"] = "mM"
+    ions["units"] = "[mM]"
     ions["reorder"] = True
     ions["names"] = None
     config["ions"] = ions
@@ -131,6 +135,15 @@ def set_default_config(c):
     voltage["color"] = "black"
     voltage["horizontal_lines"] = True
     config["voltage"] = voltage
+
+    xaxis = {}
+    xaxis["units"] = "[ms]"
+    # if None, xticks are generated automatically. Can put a list of xticks to force custom xticks.
+    xaxis["xticks"] = None
+    xaxis["gridline_width"] = 1
+    xaxis["gridline_color"] = "black"
+    xaxis["gridline_style"] = "--"
+    config["xaxis"] = xaxis
 
     output = {}
     output["savefig"] = False
@@ -182,6 +195,10 @@ def set_default_config(c):
         new_config["current"]["black_line_thickness"] = new_config["currentscape"][
             "black_line_thickness"
         ]
+    if "labels" in new_config["show"]:
+        new_config["show"]["ylabels"] = new_config["show"]["labels"]
+    if "ticklabels" in new_config["show"]:
+        new_config["show"]["yticklabels"] = new_config["show"]["ticklabels"]
 
     check_config(new_config)
 

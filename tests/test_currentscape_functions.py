@@ -118,7 +118,7 @@ def test_dataset_xticks():
     assert np.array_equal(ds3ticks, expected_ds3)
 
     ds4 = DataSet(data=None, time=np.arange(1002, 1055, 1))
-    assert np.array_equal(ds4.xticks, [1000, 1010, 1020, 1030, 1040, 1050])
+    assert np.array_equal(ds4.xticks, [1010, 1020, 1030, 1040, 1050])
 
     ds5 = DataSet(data=None, time=np.arange(999, 1005, 1))
     assert np.array_equal(ds5.xticks, [999, 1000, 1001, 1002, 1003, 1004])

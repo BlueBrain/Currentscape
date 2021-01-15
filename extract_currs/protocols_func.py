@@ -22,7 +22,7 @@ from extract_currs.locations import (
     NrnSomaDistanceCompLocationApical,
 )
 from extract_currs.features import define_fitness_calculator
-from extract_currs.stimuli import sAHP
+from extract_currs.stimuli import SAHP
 
 logger = logging.getLogger(__name__)
 
@@ -44,7 +44,7 @@ def read_sAHP_protocol(protocol_name, protocol_definition, recordings):
     else:
         holding_current = 0.0
 
-    sahp_stimulus = sAHP(
+    sahp_stimulus = SAHP(
         delay=sahp_definition["delay"],
         totduration=sahp_definition["totduration"],
         # strange way to input amp, but Maria confirmed it.

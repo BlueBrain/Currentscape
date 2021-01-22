@@ -67,7 +67,7 @@ class BPEMStimulus(Stimulus, metaclass=abc.ABCMeta):
             sec=icomp.sec,
         )
 
-    def reset(self, sim=None):  # pylint:disable=W0613
+    def destroy(self, sim=None):  # pylint:disable=W0613
         """Reset instantiated attributes to None."""
 
         self.iclamp = None

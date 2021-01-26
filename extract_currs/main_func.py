@@ -250,6 +250,7 @@ def extract(config):
     else:
         params_filename = os.path.join(config["params_dir"], config["params_filename"])
     mechs = load_mechanisms(params_filename)
+    print("mechs ok")
 
     # ------------------------#
     # --- load parameters --- #
@@ -263,11 +264,16 @@ def extract(config):
 
     params = define_parameters(params_filename)
 
+    print("params ok")
+
     # --------------------------------#
     # --- create cell & simulator --- #
     # --------------------------------#
     cell = ephys.models.CellModel(name=emodel, morph=morph, mechs=mechs, params=params)
-    sim = ephys.simulators.NrnSimulator(dt=0.025)
+    print("cell ok")
+    sim = ephys.simulators.NrnSimulator(dt=0.025, cvode_active=False)
+
+    print("sim ok")
 
     # -------------------------#
     # --- create protocols --- #
@@ -302,6 +308,8 @@ def extract(config):
         "all protocols",
         protocols=protocols_list,
     )
+
+    print("all good")
 
     # ------------#
     # --- run --- #

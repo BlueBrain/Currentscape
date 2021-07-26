@@ -9,7 +9,14 @@ from examples.get_currents import model
 from currentscape.currentscape import plot_currentscape
 
 
-def plot_from_original_paper():
+def plot_from_original_paper(t0=0.0, tf=10000.0, dt=0.1):
+    """Plot currentscape using original paper data.
+
+    Args:
+        t0 (float): begin time of simulation (in ms)
+        tf (float): end time of simulation (in ms)
+        dt (float): time step (in ms)
+    """
     # specify the path to initial conditions and paramters files
     config = "examples/config.json"
 
@@ -32,9 +39,6 @@ def plot_from_original_paper():
     temp = 10
 
     # define integration interval and temporal resolution
-    t0 = 0.0
-    tf = 10000.0  # 10 second duration (10000 msec)
-    dt = 0.1
     t = np.arange(t0, tf, dt)
 
     # integration is performed using odeint, a built-in python package to integrate Ordinary Differential Equations

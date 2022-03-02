@@ -39,7 +39,7 @@ def set_default_config(c):
     if c is None:
         c = {}
     elif isinstance(c, str):
-        with open(c, "r") as f:
+        with open(c, "r", encoding="utf-8") as f:
             c = json.load(f)
 
     config = {}

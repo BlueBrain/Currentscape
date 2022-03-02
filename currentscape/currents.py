@@ -474,6 +474,10 @@ class Currents(CurrentPlottingMixin, DataSet):
         cnorm_pos = np.abs(cpos) / [x if x != 0 else 1.0 for x in normapos]
         cnorm_neg = -(np.abs(cneg) / [x if x != 0 else 1.0 for x in normaneg])
 
+        # memory optimisation
+        cpos = None
+        cneg = None
+
         if reorder_:
             cnorm_pos, cnorm_neg, idx_pos, idx_neg = self.reorder_currents_and_names(
                 cnorm_pos, cnorm_neg
@@ -534,9 +538,9 @@ class Currents(CurrentPlottingMixin, DataSet):
         """
         line_thickness = int(resy * lw / 100.0)
         if line_thickness < 1:
-            line = np.full((1, self.x_size), self.N)
+            line = np.full((1, self.x_size), self.N, dtype=np.int8)
         else:
-            line = np.full((line_thickness, self.x_size), self.N)
+            line = np.full((line_thickness, self.x_size), self.N, dtype=np.int8)
 
         return line
 

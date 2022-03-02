@@ -144,6 +144,12 @@ def plot_currentscape(voltage_data, currents_data, config, ions_data=None, time=
     print("producing figure")
     fig = create_figure(voltage, currs, c, ions)
 
+    # saving matplotlib figure needs a lot of memory
+    # so delete data that will not be used anymore before
+    currs = None
+    voltage = None
+    ions = None
+
     if c["output"]["savefig"]:
         save_figure(fig, c)
 

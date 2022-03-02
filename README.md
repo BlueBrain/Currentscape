@@ -445,3 +445,9 @@ Note that if you want to use a "StepThresholdProtocol", you should follow the sa
 ### Extracting ionic concentrations
 
 Ionic concentrations can be extracted by using the same method as the currents extraction. The ionic concentration variables simply have to be added to the "var_list" in the config file. The ionic concentration variables should end with an 'i', e.g. cai, nai, ki, etc.
+
+### Known caveats
+
+Since currentscape can deal with a lot of data, it sometimes crashes with an error message such as `Bus error` or `Killed` when it runs out of memory. You can solve this error by allocating more memory. 
+
+In bb5, interactive jobs usually have 4G. You can increase them by specifying e.g. `--mem=16G` when asking for a job. If you are asking for a full node, you can also use all of its available memory with `--exclusive --mem=0`.

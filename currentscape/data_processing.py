@@ -13,8 +13,11 @@ logger = logging.getLogger(__name__)
 def chunksize_warning(cs, len_curr, new_cs):
     """Warns that chunksize has been re-set."""
     logger.warning(
-        "x-chunksize (%d) should be a divisor of data size (%d)." % (cs, len_curr)
-        + " x-chunksize has been reset to %d." % new_cs
+        "x-chunksize (%d) should be a divisor of data size (%d)."
+        " x-chunksize has been reset to %d.",
+        cs,
+        len_curr,
+        new_cs,
     )
 
 

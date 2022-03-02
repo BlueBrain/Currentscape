@@ -1,5 +1,5 @@
 include:
-   - project: nse/ci
+   - project: cells/ci
      file:
         - /ci/lib/tox-docker.yml
         - /ci/jobs/check-packaging.yml

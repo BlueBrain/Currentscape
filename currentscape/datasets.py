@@ -55,7 +55,7 @@ class DataSet:
             self.names = np.array(names)
 
         if time is not None:
-            self.time = time
+            self.time = np.array(time)
         elif self.x_size:
             self.time = np.arange(self.x_size)
 

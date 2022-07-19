@@ -6,7 +6,6 @@ from math import floor, log10
 
 import numpy as np
 
-logging.basicConfig()  # needed for python2
 logger = logging.getLogger(__name__)
 
 

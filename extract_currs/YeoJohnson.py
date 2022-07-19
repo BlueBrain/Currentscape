@@ -26,7 +26,10 @@ class YeoJohnson:
 
     Adapted from CRAN - Package VGAM
     """
-    def fit(self, y, lmbda, derivative=0, epsilon=np.finfo(np.float).eps, inverse=False):
+
+    def fit(
+        self, y, lmbda, derivative=0, epsilon=np.finfo(np.float).eps, inverse=False
+    ):
         """
         :param y: The variable to be transformed (numeric array).
         :param lmbda: The function's Lambda value (numeric value or array).
@@ -53,13 +56,17 @@ class YeoJohnson:
             warnings.simplefilter("ignore")
             if inverse is True:
                 mask = np.where(((y >= 0) & l0) == True)
-                result[mask] = np.power(np.multiply(y[mask], lmbda[mask]) + 1, 1 / lmbda[mask]) - 1
+                result[mask] = (
+                    np.power(np.multiply(y[mask], lmbda[mask]) + 1, 1 / lmbda[mask]) - 1
+                )
 
                 mask = np.where(((y >= 0) & ~l0) == True)
                 result[mask] = np.expm1(y[mask])
 
                 mask = np.where(((y < 0) & l2) == True)
-                result[mask] = 1 - np.power(np.multiply(-(2 - lmbda[mask]), y[mask]) + 1, 1 / (2 - lmbda[mask]))
+                result[mask] = 1 - np.power(
+                    np.multiply(-(2 - lmbda[mask]), y[mask]) + 1, 1 / (2 - lmbda[mask])
+                )
 
                 mask = np.where(((y < 0) & ~l2) == True)
                 result[mask] = -np.expm1(-y[mask])
@@ -68,36 +75,62 @@ class YeoJohnson:
             else:
                 if derivative == 0:
                     mask = np.where(((y >= 0) & l0) == True)
-                    result[mask] = np.divide(np.power(y[mask] + 1, lmbda[mask]) - 1, lmbda[mask])
+                    result[mask] = np.divide(
+                        np.power(y[mask] + 1, lmbda[mask]) - 1, lmbda[mask]
+                    )
 
                     mask = np.where(((y >= 0) & ~l0) == True)
                     result[mask] = np.log1p(y[mask])
 
                     mask = np.where(((y < 0) & l2) == True)
-                    result[mask] = np.divide(-(np.power(-y[mask] + 1, 2 - lmbda[mask]) - 1), 2 - lmbda[mask])
+                    result[mask] = np.divide(
+                        -(np.power(-y[mask] + 1, 2 - lmbda[mask]) - 1), 2 - lmbda[mask]
+                    )
 
                     mask = np.where(((y < 0) & ~l2) == True)
                     result[mask] = -np.log1p(-y[mask])
 
                 # Not Derivative
                 else:
-                    p = self.fit(y, lmbda, derivative=derivative - 1, epsilon=epsilon, inverse=inverse)
+                    p = self.fit(
+                        y,
+                        lmbda,
+                        derivative=derivative - 1,
+                        epsilon=epsilon,
+                        inverse=inverse,
+                    )
 
                     mask = np.where(((y >= 0) & l0) == True)
-                    result[mask] = np.divide(np.multiply(np.power(y[mask] + 1, lmbda[mask]),
-                                                         np.power(np.log1p(y[mask]), derivative)) -
-                                             np.multiply(derivative, p[mask]), lmbda[mask])
+                    result[mask] = np.divide(
+                        np.multiply(
+                            np.power(y[mask] + 1, lmbda[mask]),
+                            np.power(np.log1p(y[mask]), derivative),
+                        )
+                        - np.multiply(derivative, p[mask]),
+                        lmbda[mask],
+                    )
 
                     mask = np.where(((y >= 0) & ~l0) == True)
-                    result[mask] = np.divide(np.power(np.log1p(y[mask]), derivative + 1), derivative + 1)
+                    result[mask] = np.divide(
+                        np.power(np.log1p(y[mask]), derivative + 1), derivative + 1
+                    )
 
                     mask = np.where(((y < 0) & l2) == True)
-                    result[mask] = np.divide(-(np.multiply(np.power(-y[mask] + 1, 2 - lmbda[mask]),
-                                                                    np.power(-np.log1p(-y[mask]), derivative)) -
-                                                        np.multiply(derivative, p[mask])), 2 - lmbda[mask])
+                    result[mask] = np.divide(
+                        -(
+                            np.multiply(
+                                np.power(-y[mask] + 1, 2 - lmbda[mask]),
+                                np.power(-np.log1p(-y[mask]), derivative),
+                            )
+                            - np.multiply(derivative, p[mask])
+                        ),
+                        2 - lmbda[mask],
+                    )
 
                     mask = np.where(((y < 0) & ~l2) == True)
-                    result[mask] = np.divide(np.power(-np.log1p(-y[mask]), derivative + 1), derivative + 1)
+                    result[mask] = np.divide(
+                        np.power(-np.log1p(-y[mask]), derivative + 1), derivative + 1
+                    )
 
         return result
 
@@ -107,17 +140,26 @@ class YeoJohnson:
             if not isinstance(y, (list, np.ndarray, pd.Series)):
                 raise Exception("Argument 'y' must be a list!")
             if not isinstance(lmbda, (int, float, np.int, np.float)):
-                if not isinstance(lmbda, (list, np.ndarray, pd.Series)) or len(lmbda) != len(y):
-                    raise Exception("Argument 'lmbda' must be a number "
-                                    "or a list, which its length matches 'y' argument!")
-            if not isinstance(derivative, (int, float, np.int, np.float)) or derivative < 0:
+                if not isinstance(lmbda, (list, np.ndarray, pd.Series)) or len(
+                    lmbda
+                ) != len(y):
+                    raise Exception(
+                        "Argument 'lmbda' must be a number "
+                        "or a list, which its length matches 'y' argument!"
+                    )
+            if (
+                not isinstance(derivative, (int, float, np.int, np.float))
+                or derivative < 0
+            ):
                 raise Exception("Argument 'derivative' must be a non-negative integer!")
             if not isinstance(epsilon, (int, float, np.int, np.float)) or epsilon <= 0:
                 raise Exception("Argument 'epsilon' must be a positive number!")
             if not isinstance(inverse, bool):
                 raise Exception("Argument 'inverse' must be boolean!")
             if inverse is True and derivative != 0:
-                raise Exception("Argument 'derivative' must be zero "
-                                "when argument 'inverse' is 'True'!")
+                raise Exception(
+                    "Argument 'derivative' must be zero "
+                    "when argument 'inverse' is 'True'!"
+                )
         except ():
             sys.exit()

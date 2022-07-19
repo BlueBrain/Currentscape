@@ -5,7 +5,6 @@ import logging
 
 import json
 
-logging.basicConfig()  # needed for python2
 logger = logging.getLogger(__name__)
 
 

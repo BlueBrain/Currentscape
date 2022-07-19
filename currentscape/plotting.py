@@ -14,7 +14,6 @@ import palettable as pltb
 
 from currentscape.data_processing import sum_chunks
 
-logging.basicConfig()  # needed for python2
 logger = logging.getLogger(__name__)
 
 

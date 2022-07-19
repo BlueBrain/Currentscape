@@ -144,7 +144,6 @@ class eFELFeatureExtra(eFELFeature):
         else:
             efel_trace = self._construct_efel_trace(responses)
 
-            print("efel_trace", efel_trace)
             if efel_trace is None:
                 feature_values = None
             else:

@@ -1,6 +1,7 @@
 """Useful functions to load mechanisms and parameters."""
 
 import collections
+import logging
 import os
 
 import json
@@ -9,6 +10,8 @@ import numpy as np
 import bluepyopt.ephys as ephys
 
 from extract_currs.protocols_func import create_protocols
+
+logger = logging.getLogger(__name__)
 
 
 def multi_locations(sectionlist):
@@ -250,7 +253,7 @@ def extract(config):
     else:
         params_filename = os.path.join(config["params_dir"], config["params_filename"])
     mechs = load_mechanisms(params_filename)
-    print("mechs ok")
+    logger.info("mechanisms are loaded")
 
     # ------------------------#
     # --- load parameters --- #
@@ -264,16 +267,16 @@ def extract(config):
 
     params = define_parameters(params_filename)
 
-    print("params ok")
+    logger.info("parameters are loaded")
 
     # --------------------------------#
     # --- create cell & simulator --- #
     # --------------------------------#
     cell = ephys.models.CellModel(name=emodel, morph=morph, mechs=mechs, params=params)
-    print("cell ok")
+    logger.info("cell is loaded")
     sim = ephys.simulators.NrnSimulator(dt=0.025, cvode_active=False)
 
-    print("sim ok")
+    logger.info("simulator is loaded")
 
     # -------------------------#
     # --- create protocols --- #
@@ -309,21 +312,21 @@ def extract(config):
         protocols=protocols_list,
     )
 
-    print("all good")
-
     # ------------#
     # --- run --- #
     # ------------#
-    print("Python Recordings Running...")
+    logger.info("Python Recordings Running...")
 
     responses = protocols.run(cell_model=cell, param_values=release_params, sim=sim)
+
+    logger.info("Python Recordings Done. Writing down Recordings...")
 
     # ---------------------#
     # --- write output --- #
     # ---------------------#
     for key, resp in responses.items():
         if "holding_current" in key or "threshold_current" in key:
-            print("{} : {}".format(key, resp))
+            logger.debug("{} : {}".format(key, resp))
         else:
             output_path = os.path.join(output_dir, key + ".dat")
 
@@ -332,4 +335,4 @@ def extract(config):
 
             np.savetxt(output_path, np.transpose(np.vstack((time, data))))
 
-    print("Python Recordings Done")
+    logger.info("Recordings written.")

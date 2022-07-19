@@ -1,6 +1,10 @@
 """Location classes."""
 
+import logging
+
 import bluepyopt.ephys as ephys
+
+logger = logging.getLogger(__name__)
 
 
 class NrnSomaDistanceCompLocation(ephys.locations.NrnSomaDistanceCompLocation):
@@ -55,7 +59,7 @@ class NrnSomaDistanceCompLocation(ephys.locations.NrnSomaDistanceCompLocation):
                 "No comp found at %s distance from soma" % self.soma_distance
             )
 
-        print(
+        logger.debug(
             "Using %s at distance %f, nseg %f, length %f"
             % (
                 icomp,
@@ -124,7 +128,7 @@ class NrnSomaDistanceCompLocationApical(ephys.locations.NrnSomaDistanceCompLocat
                     "No comp found at %s distance from soma" % self.soma_distance
                 )
 
-            print(
+            logger.debug(
                 "Using %s at distance %f, nseg %f, length %f"
                 % (
                     icomp,
@@ -181,7 +185,7 @@ class NrnSomaDistanceCompLocationApical(ephys.locations.NrnSomaDistanceCompLocat
                     "No comp found at %s distance from soma" % self.soma_distance
                 )
 
-            print(
+            logger.debug(
                 "Using %s at distance %f"
                 % (icomp, sim.neuron.h.distance(1, comp_x, sec=seccomp))
             )

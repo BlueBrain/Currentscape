@@ -421,8 +421,6 @@ class RatSSCxThresholdDetectionProtocol(ephys.protocols.Protocol):
             float(self.max_threshold_voltage - self.holding_voltage) / rin
         )
 
-        print("Max threshold current: %.6g" % max_threshold_current)
-
         return max_threshold_current
 
     def create_step_protocol(self, holdi=0.0, step_current=0.0):

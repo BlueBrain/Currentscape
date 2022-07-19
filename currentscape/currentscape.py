@@ -6,6 +6,7 @@ that are under the CC0 1.0 Universal (CC0 1.0) Public Domain Dedication license.
 """
 
 # pylint: disable=too-many-statements, wrong-import-position
+import logging
 import numpy as np
 import matplotlib
 
@@ -27,6 +28,8 @@ from currentscape.voltages import Voltages
 from currentscape.currents import Currents
 from currentscape.ions import IonConcentrations
 from currentscape.config_parser import set_default_config
+
+logger = logging.getLogger(__name__)
 
 
 def create_figure(voltage, currs, c, ions):
@@ -134,14 +137,14 @@ def plot_currentscape(voltage_data, currents_data, config, ions_data=None, time=
     c = set_default_config(config)
 
     # currenscape data processing
-    print("processing data")
+    logger.info("processing data")
 
     voltage = Voltages(voltage_data, c, time)
     currs = Currents(currents_data, c, time)
     ions = IonConcentrations(ions_data, c, time)
 
     # plot currentscape
-    print("producing figure")
+    logger.info("producing figure")
     fig = create_figure(voltage, currs, c, ions)
 
     # saving matplotlib figure needs a lot of memory

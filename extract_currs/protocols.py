@@ -32,16 +32,12 @@ class RatSSCxMainProtocol(ephys.protocols.Protocol):
         name,
         rmp_protocol=None,
         rmp_efeature=None,
-        rmp_score_threshold=None,
         rinhold_protocol=None,
         rin_efeature=None,
-        rin_score_threshold=None,
         thdetect_protocol=None,
         other_protocols=None,
         pre_protocols=None,
         preprot_score_threshold=None,
-        fitness_calculator=None,
-        use_rmp_rin_thresholds=False,
     ):
         """Constructor."""
 
@@ -49,20 +45,15 @@ class RatSSCxMainProtocol(ephys.protocols.Protocol):
 
         self.rmp_protocol = rmp_protocol
         self.rmp_efeature = rmp_efeature
-        self.rmp_score_threshold = rmp_score_threshold
 
         self.rinhold_protocol = rinhold_protocol
         self.rin_efeature = rin_efeature
-        self.rin_score_threshold = rin_score_threshold
 
         self.thdetect_protocol = thdetect_protocol
         self.other_protocols = other_protocols
 
         self.pre_protocols = pre_protocols
         self.preprot_score_threshold = preprot_score_threshold
-
-        self.use_rmp_rin_thresholds = use_rmp_rin_thresholds
-        self.fitness_calculator = fitness_calculator
 
     def subprotocols(self):
         """Return all the subprotocols contained in this protocol, is recursive."""
@@ -101,70 +92,42 @@ class RatSSCxMainProtocol(ephys.protocols.Protocol):
         rmp_response = self.rmp_protocol.run(cell_model, {}, sim=sim)
         responses.update(rmp_response)
         rmp = self.rmp_efeature.calculate_feature(rmp_response)
-        rmp_score = self.rmp_efeature.calculate_score(rmp_response)
 
-        if (rmp_score <= self.rmp_score_threshold) or (not self.use_rmp_rin_thresholds):
-            # Find Rin and holding current
-            rinhold_response = self.rinhold_protocol.run(
-                cell_model, {}, sim=sim, rmp=rmp
+        # Find Rin and holding current
+        rinhold_response = self.rinhold_protocol.run(cell_model, {}, sim=sim, rmp=rmp)
+
+        holding_current = cell_model.holding_current
+
+        if rinhold_response is not None:
+            rin = self.rin_efeature.calculate_feature(rinhold_response)
+
+            responses.update(rinhold_response)
+
+            responses.update(
+                self.thdetect_protocol.run(
+                    cell_model, {}, sim=sim, holdi=holding_current, rmp=rmp, rin=rin
+                )
             )
 
-            holding_current = cell_model.holding_current
-
-            if rinhold_response is not None:
-                rin = self.rin_efeature.calculate_feature(rinhold_response)
-
-                rin_score = self.rin_efeature.calculate_score(rinhold_response)
-
-                responses.update(rinhold_response)
-
-                if (rin_score <= self.rin_score_threshold) or (
-                    not self.use_rmp_rin_thresholds
-                ):
-
-                    responses.update(
-                        self.thdetect_protocol.run(
-                            cell_model,
-                            {},
-                            sim=sim,
-                            holdi=holding_current,
-                            rmp=rmp,
-                            rin=rin,
-                        )
-                    )
-
-                    if cell_model.threshold_current is not None:
-
-                        continue_others = True
-                        # check objectives if pre protocols are given
-                        if len(self.pre_protocols) > 0:
-                            for pre_protocol in self.pre_protocols:
-                                response = pre_protocol.run(cell_model, {}, sim=sim)
-                                responses.update(response)
-
-                            # select only objectives correspondong to pre_protocols
-                            pre_objectives = []
-                            for objective in self.fitness_calculator.objectives:
-                                if pre_protocol.name in objective.name:
-                                    pre_objectives.append(objective)
-                            fitcalc = ephys.objectivescalculators.ObjectivesCalculator(
-                                pre_objectives
-                            )
-
-                            preobj = fitcalc.calculate_scores(responses)
-                            preobj_val = numpy.array(preobj.values())
-
-                            if any(preobj_val > self.preprot_score_threshold):
-                                continue_others = False
-
-                        if continue_others:
-                            for other_protocol in self.other_protocols:
-                                response = other_protocol.run(cell_model, {}, sim=sim)
-                                responses.update(response)
+            if cell_model.threshold_current is not None:
+                self._run_pre_protocols(cell_model, sim, responses)
+                self._run_other_protocols(cell_model, sim, responses)
 
         cell_model.unfreeze(param_values.keys())
 
         return responses
+
+    def _run_pre_protocols(self, cell_model, sim, responses):
+        """Runs the pre_protocols and updates responses dict."""
+        for pre_protocol in self.pre_protocols:
+            response = pre_protocol.run(cell_model, {}, sim=sim)
+            responses.update(response)
+
+    def _run_other_protocols(self, cell_model, sim, responses):
+        """Runs the other_protocols and updates responses dict."""
+        for other_protocol in self.other_protocols:
+            response = other_protocol.run(cell_model, {}, sim=sim)
+            responses.update(response)
 
 
 class RatSSCxRinHoldcurrentProtocol(ephys.protocols.Protocol):
@@ -191,7 +154,7 @@ class RatSSCxRinHoldcurrentProtocol(ephys.protocols.Protocol):
         self.holdi_precision = holdi_precision
         self.holdi_max_depth = holdi_max_depth
 
-        if prefix == None:
+        if prefix is None:
             self.prefix = ""
         else:
             self.prefix = prefix + "."
@@ -376,7 +339,7 @@ class RatSSCxThresholdDetectionProtocol(ephys.protocols.Protocol):
         self.short_steps = 20
         self.holding_voltage = holding_voltage
 
-        if prefix == None:
+        if prefix is None:
             self.prefix = ""
         else:
             self.prefix = prefix + "."

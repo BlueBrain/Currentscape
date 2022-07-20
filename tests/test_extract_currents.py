@@ -191,10 +191,6 @@ def test_create_protocols_with_recipes():
         # protocol from json file
         orig_prot = get_prot_from_recipe(recipe_path, emodel)
 
-    # Main
-    assert prot.rmp_score_threshold == orig_prot["Main"]["rmp_score_threshold"]
-    assert prot.rin_score_threshold == orig_prot["Main"]["rin_score_threshold"]
-
     # RMP
     compare_step_prot(prot.rmp_protocol, orig_prot["RMP"]["stimuli"])
 

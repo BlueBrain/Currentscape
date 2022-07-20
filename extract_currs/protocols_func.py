@@ -21,7 +21,7 @@ from extract_currs.locations import (
     NrnSomaDistanceCompLocation,
     NrnSomaDistanceCompLocationApical,
 )
-from extract_currs.features import define_fitness_calculator
+from extract_currs.features import define_efeatures
 from extract_currs.stimuli import SAHP
 
 logger = logging.getLogger(__name__)
@@ -220,10 +220,8 @@ def define_protocols(
     protocols_filename,
     var_list,
     stochkv_det=None,
-    runopt=False,
     prefix="",
     apical_point_isec=None,
-    stage=None,
     do_simplify_morph=False,
 ):
     """Define protocols."""
@@ -237,10 +235,6 @@ def define_protocols(
     protocols_dict = {}
 
     for protocol_name, protocol_definition in protocol_definitions.items():
-
-        if ("stage" in protocol_definition) and (stage is not None) and (stage > 0):
-            if stage not in protocol_definition["stage"]:
-                continue  # protocol not used in this stage
 
         if protocol_name not in ["Main", "RinHoldcurrent"]:
             # changed here
@@ -391,14 +385,11 @@ def define_protocols(
         protocols_dict["Main"] = RatSSCxMainProtocol(
             "Main",
             rmp_protocol=protocols_dict["RMP"],
-            rmp_score_threshold=protocol_definitions["Main"]["rmp_score_threshold"],
             rinhold_protocol=protocols_dict["RinHoldcurrent"],
-            rin_score_threshold=protocol_definitions["Main"]["rin_score_threshold"],
             thdetect_protocol=protocols_dict["ThresholdDetection"],
             other_protocols=other_protocols,
             pre_protocols=pre_protocols,
             preprot_score_threshold=preprot_score_threshold,
-            use_rmp_rin_thresholds=runopt,
         )
 
     return protocols_dict
@@ -433,12 +424,9 @@ def create_protocols(
     recipe_path="",
     stochkv_det=None,
     usethreshold=False,
-    runopt=False,
     altmorph=None,
     etypetest=None,
-    stage=None,
     do_simplify_morph=False,
-    use_powertransform=False,
     prot_path="",
     apical_point_isec=None,
     features_path="",
@@ -451,15 +439,12 @@ def create_protocols(
         recipe_path (str): path to recipe path. Not mandatory.
         stochkv_det (bool): set if stochastic or deterministic
         usethreshold (bool): set to True to take etype from recipe file.
-        runopt (bool): is used as use_rmp_rin_thresholds in RatSSCxMainProtocol
         altmorph (list of lists containing the following):
             morphname -> morphology name to put in output files (can be '_')
             morph -> morphology file name
             apical_point_isec (optional) -> index of apical point section
         etypetest (str): if not None and altmorph is None: get morph_path from recipe
-        stage (int): protocol stage.
         do_simplify_morph (bool): if True, set apical point to None and simplify morph in locations
-        use_powertransform (bool): used in eFELFeatureExtra
 
         prot_path (str): protocol path. if not set, is taken from recipe.
         features_path (str): feature path. if not set, is taken from recipe.
@@ -479,9 +464,6 @@ def create_protocols(
                 etype = etype.replace("_legacy", "")
             if "_combined" in etype:
                 etype = etype.replace("_combined", "")
-
-    if recipe and "use_powertransform" in recipe:
-        use_powertransform = recipe["use_powertransform"]
 
     if recipe and not prot_path:
         prot_path = recipe["protocol"]
@@ -531,24 +513,18 @@ def create_protocols(
             prot_path,
             var_list,
             stochkv_det,
-            runopt,
             morphname,
             apical_point_isec,
-            stage,
             do_simplify_morph,
         )
 
         if "Main" in protocols_dict.keys():
 
-            fitness_calculator, efeatures = define_fitness_calculator(
+            efeatures = define_efeatures(
                 protocols_dict["Main"],
                 features_path,
                 morphname,
-                stage,
-                use_powertransform,
             )
-
-            protocols_dict["Main"].fitness_calculator = fitness_calculator
 
             protocols_dict["Main"].rmp_efeature = efeatures[
                 morphname + ".RMP.soma.v.voltage_base"

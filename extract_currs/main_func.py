@@ -5,11 +5,11 @@ import logging
 import os
 
 import json
-import numpy as np
 
 import bluepyopt.ephys as ephys
 
 from extract_currs.protocols_func import create_protocols
+from extract_currs.output import write_output
 
 logger = logging.getLogger(__name__)
 
@@ -324,15 +324,6 @@ def extract(config):
     # ---------------------#
     # --- write output --- #
     # ---------------------#
-    for key, resp in responses.items():
-        if "holding_current" in key or "threshold_current" in key:
-            logger.debug("{} : {}".format(key, resp))
-        else:
-            output_path = os.path.join(output_dir, key + ".dat")
-
-            time = np.array(resp["time"])
-            data = np.array(resp["voltage"])  # can be voltage or current
-
-            np.savetxt(output_path, np.transpose(np.vstack((time, data))))
+    write_output(responses, output_dir)
 
     logger.info("Recordings written.")

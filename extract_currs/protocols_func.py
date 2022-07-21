@@ -423,7 +423,6 @@ def create_protocols(
     var_list,
     recipe_path="",
     stochkv_det=None,
-    usethreshold=False,
     altmorph=None,
     etypetest=None,
     do_simplify_morph=False,
@@ -434,11 +433,10 @@ def create_protocols(
     """Return a dict containing protocols.
 
     Args:
-        etype (str): emodel. is taken from recipe if usethreshold and 'mm_test_recipe' in recipe
+        etype (str): emodel.
         var_list (list of str): list of variables (v, ina_NaTg, etc.) to record.
         recipe_path (str): path to recipe path. Not mandatory.
         stochkv_det (bool): set if stochastic or deterministic
-        usethreshold (bool): set to True to take etype from recipe file.
         altmorph (list of lists containing the following):
             morphname -> morphology name to put in output files (can be '_')
             morph -> morphology file name
@@ -455,15 +453,6 @@ def create_protocols(
         recipe = recipes[etype]
     else:
         recipe = None
-
-    if usethreshold:
-        if recipe and "mm_test_recipe" in recipe:
-            etype = recipe["mm_test_recipe"]
-        else:
-            if "_legacy" in etype:
-                etype = etype.replace("_legacy", "")
-            if "_combined" in etype:
-                etype = etype.replace("_combined", "")
 
     if recipe and not prot_path:
         prot_path = recipe["protocol"]

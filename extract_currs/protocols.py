@@ -573,20 +573,6 @@ class RatSSCxThresholdDetectionProtocol(ephys.protocols.Protocol):
 class SweepProtocolCustom(ephys.protocols.SweepProtocol):
     """Sweep protocol but checking recordings when instantiating."""
 
-    def __init__(self, name=None, stimuli=None, recordings=None, cvode_active=None):
-        """Constructor.
-
-        Args:
-            name (str): name of this object
-            stimuli (list of Stimuli): Stimulus objects used in the protocol
-            recordings (list of Recordings): Recording objects used in the
-                protocol
-            cvode_active (bool): whether to use variable time step
-        """
-        super(SweepProtocolCustom, self).__init__(
-            name, stimuli, recordings, cvode_active
-        )
-
     def instantiate(self, sim=None, icell=None):
         """Check recordings, then instantiate."""
         self.recordings = check_recordings(self.recordings, icell, sim)

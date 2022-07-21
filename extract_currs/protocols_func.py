@@ -395,9 +395,9 @@ def define_protocols(
     return protocols_dict
 
 
-def get_apical_point_data(recipe, etypetest, morph):
-    """Return filename and apical points list from file."""
-    if recipe and ("morph_path" in recipe) and etypetest is not None:
+def get_apical_point_data(recipe, apical_point_from_recipe, morph):
+    """Return apical points isec from file."""
+    if recipe and ("morph_path" in recipe) and apical_point_from_recipe:
         # use direct path
         morph_path = recipe["morph_path"]
     else:
@@ -406,25 +406,27 @@ def get_apical_point_data(recipe, etypetest, morph):
 
     basename = os.path.basename(morph)
     filename = os.path.splitext(basename)[0]
-    morph = os.path.join(morph_path, basename)
 
+    apsec_file = os.path.join(morph_path, "apical_points_isec.json")
     try:
-        apsec_file = os.path.join(morph_path, "apical_points_isec.json")
         apical_points_isecs = json.load(open(apsec_file))
         logger.debug("Reading %s", apsec_file)
-
-        return filename, apical_points_isecs
     except FileNotFoundError:
-        return "", []
+        logger.warning(f"Could not find {apsec_file}")
+        apical_points_isecs = []
+
+    if filename in apical_points_isecs:
+        apical_point_isec = int(apical_points_isecs[filename])
+        return apical_point_isec
+    return None
 
 
 def create_protocols(
-    etype,
     var_list,
-    recipe_path="",
+    recipe=None,
     stochkv_det=None,
     altmorph=None,
-    etypetest=None,
+    apical_point_from_recipe=False,
     do_simplify_morph=False,
     prot_path="",
     apical_point_isec=None,
@@ -433,27 +435,20 @@ def create_protocols(
     """Return a dict containing protocols.
 
     Args:
-        etype (str): emodel.
         var_list (list of str): list of variables (v, ina_NaTg, etc.) to record.
-        recipe_path (str): path to recipe path. Not mandatory.
+        recipe (dict): contains recipe data, such as paths to protocols, and features files.
+            Not mandatory.
         stochkv_det (bool): set if stochastic or deterministic
         altmorph (list of lists containing the following):
             morphname -> morphology name to put in output files (can be '_')
             morph -> morphology file name
             apical_point_isec (optional) -> index of apical point section
-        etypetest (str): if not None and altmorph is None: get morph_path from recipe
+        apical_point_from_recipe (bool): if true and altmorph is None:
+            get apical point filepath from recipe
         do_simplify_morph (bool): if True, set apical point to None and simplify morph in locations
-
         prot_path (str): protocol path. if not set, is taken from recipe.
         features_path (str): feature path. if not set, is taken from recipe.
     """
-    if recipe_path:
-        with open(os.path.join(recipe_path)) as f:
-            recipes = json.load(f)
-        recipe = recipes[etype]
-    else:
-        recipe = None
-
     if recipe and not prot_path:
         prot_path = recipe["protocol"]
 
@@ -480,12 +475,10 @@ def create_protocols(
             apical_point_isec0 = None
 
         # get apical point isec if a directory is given!
-        if apical_point_isec is None and (altmorph is None):
-            filename, apical_points_isecs = get_apical_point_data(
-                recipe, etypetest, morph
+        if apical_point_isec is None and altmorph is None:
+            apical_point_isec = get_apical_point_data(
+                recipe, apical_point_from_recipe, morph
             )
-            if filename in apical_points_isecs:
-                apical_point_isec = int(apical_points_isecs[filename])
 
         if do_simplify_morph:
             apical_point_isec = None

@@ -53,7 +53,6 @@ def compare_stepthreshold_prot(p_class, p_dict):
 
 def test_create_protocols():
     """Test create_protocols function."""
-    emodel = "bNAC_L23SBC"
 
     var_list = [
         "v",
@@ -84,7 +83,6 @@ def test_create_protocols():
     features_path = ""
 
     protocols_dict = create_protocols(
-        emodel,
         var_list,
         altmorph=altmorph,
         prot_path=prot_path,
@@ -181,8 +179,12 @@ def test_create_protocols_with_recipes():
     recipe_path = os.path.join("config", "recipes", "recipes.json")
 
     with cwd("tests"):
+        with open(recipe_path) as f:
+            recipes = json.load(f)
+        recipe = recipes[emodel]
+
         protocols_dict = create_protocols(
-            emodel, var_list, recipe_path=recipe_path, etypetest="get_apical_points"
+            var_list, recipe=recipe, apical_point_from_recipe=True
         )
 
         # protocol from function

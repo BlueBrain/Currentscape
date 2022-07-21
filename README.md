@@ -342,16 +342,13 @@ Below is an example of a config file used to extract currents.
         "output_dir": "output",
         "join_emodel_to_output_dir_name": true,
         "use_recipes": false,
-        "recipe_dir": "/gpfs/bbp.cscs.ch/home/ajaquier/Eve-Marder-style-module/output/config/recipes",
-        "recipe_filename": "recipes.json",
+        "recipe_path": "/gpfs/bbp.cscs.ch/home/ajaquier/Eve-Marder-style-module/output/config/recipes/recipes.json",
         "morph_name": "_",
+        "morph_dir": "/gpfs/bbp.cscs.ch/home/ajaquier/Eve-Marder-style-module/output/memodel_dirs/L23_BP/bNAC/L23_BP_bNAC_150/morphology",
         "morph_filename": "C230998A-I3_-_Scale_x1.000_y0.975_z1.000_-_Clone_2.asc",
         "apical_point_isec": null,
-        "morph_dir": "/gpfs/bbp.cscs.ch/home/ajaquier/Eve-Marder-style-module/output/memodel_dirs/L23_BP/bNAC/L23_BP_bNAC_150/morphology",
-        "params_dir": "/gpfs/bbp.cscs.ch/home/ajaquier/Eve-Marder-style-module/output/config/params",
-        "params_filename": "int.json",
-        "final_params_dir": "/gpfs/bbp.cscs.ch/home/ajaquier/Eve-Marder-style-module/output/config/params",
-        "final_params_filename": "final.json",
+        "params_path": "/gpfs/bbp.cscs.ch/home/ajaquier/Eve-Marder-style-module/output/config/params/int.json",
+        "final_params_path": "/gpfs/bbp.cscs.ch/home/ajaquier/Eve-Marder-style-module/output/config/params/final.json",
         "var_list": [
             "v",
             "ihcn_Ih",
@@ -370,11 +367,9 @@ Below is an example of a config file used to extract currents.
             "ik_StochKv3",
             "i_pas"
         ],
-        "etypetest": "",
-        "protocols_dir": ".",
-        "protocols_filename": "protocol_test.json",
-        "features_dir": "/gpfs/bbp.cscs.ch/home/ajaquier/Eve-Marder-style-module/output/config/features",
-        "features_filename": "bNAC.json"
+        "apical_point_from_recipe": false,
+        "protocols_path": "./protocol_test.json",
+        "features_path": "/gpfs/bbp.cscs.ch/home/ajaquier/Eve-Marder-style-module/output/config/features/bNAC.json"
     }
 
 The following keys are mandatory: emodel, output_dir, var_list, use_recipes.
@@ -385,9 +380,9 @@ The extract currents module has two main modes: using recipes, or using custom p
 ###### recipe mode
 
 When you set use_recipes to true, the script will retrieve the default protocols, features and parameters in the recipes file.
-When use_recipes is set to true, recipe_dir, recipe_filename and etypetest should also be present in the config file. 
-If etypetest is not an empty string, the script will retrieve the apical point section index from recipes. 
-Depending on the emodel, you might have an error if you set use_recipes to true, but leave etypetest to an empty string.
+When use_recipes is set to true, recipe_path and apical_point_filepath_from_recipe should also be present in the config file. 
+If apical_point_from_recipe is true, the script will retrieve the apical point section index from recipes. 
+Depending on the emodel, you might have an error if you set use_recipes to true, but leave apical_point_from_recipe to false.
 When use_recipes, the recipe file expects that you have the following folder structure in the directory you launched the script from:
 
 ./
@@ -402,9 +397,9 @@ with a config folder filled as in /gpfs/bbp.cscs.ch/project/proj38/singlecell/op
 
 When use_recipes is set to false, the following keys should be filled in the config:
 
-morph_name, morph_filename, morph_dir, apical_point_isec, params_dir, params_filename, final_params_dir (usually the same as params_dir), final_params_filename (usually final.json), protocols_dir, protocols_filename, features_dir, features_filename
+morph_name, morph_dir, morph_filename, apical_point_isec, params_path, final_params_path (usually points to a final.json), protocols_path, features_path
 
-with protocols_dir and protocols_filename pointing to your cutomized protocols file. If there is no "Main" key in your protocols file, features are not used and features_dir and features_filename can both be set to an empty string (""). morph_name is used solely for the naming of the output files.
+with protocols_path pointing to your cutomized protocols file. If there is no "Main" key in your protocols file, features are not used and features_path can be set to an empty string (""). morph_name is used solely for the naming of the output files.
 
 Your protocols file should follow the same structure as in /gpfs/bbp.cscs.ch/project/proj38/singlecell/optimization/config/protocols/ .
 Note that all protocols are recorded in the soma by default, but you can add recording locations using the extra_recordings key.

@@ -1,6 +1,5 @@
 """Useful functions to load mechanisms and parameters."""
 
-import collections
 import logging
 import os
 
@@ -8,189 +7,22 @@ import json
 
 import bluepyopt.ephys as ephys
 
+from extract_currs.load import (
+    define_parameters,
+    get_apical_point_from_recipe_var_from_config,
+    get_features_path_from_config,
+    get_final_parameters_path_from_config,
+    get_morphology_from_config,
+    get_morphology_from_recipe,
+    get_parameters_path_from_config,
+    get_protocols_path_from_config,
+    get_recipe,
+    load_mechanisms,
+)
 from extract_currs.protocols_func import create_protocols
 from extract_currs.output import write_output
 
 logger = logging.getLogger(__name__)
-
-
-def multi_locations(sectionlist):
-    """Define mechanisms."""
-    if sectionlist == "alldend":
-        seclist_locs = [
-            ephys.locations.NrnSeclistLocation("apical", seclist_name="apical"),
-            ephys.locations.NrnSeclistLocation("basal", seclist_name="basal"),
-        ]
-    elif sectionlist == "somadend":
-        seclist_locs = [
-            ephys.locations.NrnSeclistLocation("apical", seclist_name="apical"),
-            ephys.locations.NrnSeclistLocation("basal", seclist_name="basal"),
-            ephys.locations.NrnSeclistLocation("somatic", seclist_name="somatic"),
-        ]
-    elif sectionlist == "somaxon":
-        seclist_locs = [
-            ephys.locations.NrnSeclistLocation("axonal", seclist_name="axonal"),
-            ephys.locations.NrnSeclistLocation("somatic", seclist_name="somatic"),
-        ]
-    elif sectionlist == "allact":
-        seclist_locs = [
-            ephys.locations.NrnSeclistLocation("apical", seclist_name="apical"),
-            ephys.locations.NrnSeclistLocation("basal", seclist_name="basal"),
-            ephys.locations.NrnSeclistLocation("somatic", seclist_name="somatic"),
-            ephys.locations.NrnSeclistLocation("axonal", seclist_name="axonal"),
-        ]
-    else:
-        seclist_locs = [
-            ephys.locations.NrnSeclistLocation(sectionlist, seclist_name=sectionlist)
-        ]
-
-    return seclist_locs
-
-
-def load_mechanisms(mechs_filename):
-    """Define mechanisms."""
-    with open(mechs_filename) as mechs_file:
-        mech_definitions = json.load(
-            mechs_file, object_pairs_hook=collections.OrderedDict
-        )["mechanisms"]
-
-    mechanisms_list = []
-    for sectionlist, channels in mech_definitions.items():
-
-        seclist_locs = multi_locations(sectionlist)
-
-        for channel in channels["mech"]:
-            mechanisms_list.append(
-                ephys.mechanisms.NrnMODMechanism(
-                    name="%s.%s" % (channel, sectionlist),
-                    mod_path=None,
-                    suffix=channel,
-                    locations=seclist_locs,
-                    preloaded=True,
-                )
-            )
-
-    return mechanisms_list
-
-
-def define_parameters(params_filename):
-    """Define parameters."""
-    parameters = []
-
-    with open(params_filename) as params_file:
-        definitions = json.load(params_file, object_pairs_hook=collections.OrderedDict)
-
-    # set distributions
-    distributions = collections.OrderedDict()
-    distributions["uniform"] = ephys.parameterscalers.NrnSegmentLinearScaler()
-
-    distributions_definitions = definitions["distributions"]
-    for distribution, definition in distributions_definitions.items():
-
-        if "parameters" in definition:
-            dist_param_names = definition["parameters"]
-        else:
-            dist_param_names = None
-        distributions[
-            distribution
-        ] = ephys.parameterscalers.NrnSegmentSomaDistanceScaler(
-            name=distribution,
-            distribution=definition["fun"],
-            dist_param_names=dist_param_names,
-        )
-
-    params_definitions = definitions["parameters"]
-
-    if "__comment" in params_definitions:
-        del params_definitions["__comment"]
-
-    for sectionlist, params in params_definitions.items():
-        if sectionlist == "global":
-            seclist_locs = None
-            is_global = True
-            is_dist = False
-        elif "distribution_" in sectionlist:
-            is_dist = True
-            seclist_locs = None
-            is_global = False
-            dist_name = sectionlist.split("distribution_")[1]
-            dist = distributions[dist_name]
-        else:
-            seclist_locs = multi_locations(sectionlist)
-            is_global = False
-            is_dist = False
-
-        bounds = None
-        value = None
-        for param_config in params:
-            param_name = param_config["name"]
-
-            if isinstance(param_config["val"], (list, tuple)):
-                is_frozen = False
-                bounds = param_config["val"]
-                value = None
-
-            else:
-                is_frozen = True
-                value = param_config["val"]
-                bounds = None
-
-            if is_global:
-                parameters.append(
-                    ephys.parameters.NrnGlobalParameter(
-                        name=param_name,
-                        param_name=param_name,
-                        frozen=is_frozen,
-                        bounds=bounds,
-                        value=value,
-                    )
-                )
-            elif is_dist:
-                parameters.append(
-                    ephys.parameters.MetaParameter(
-                        name="%s.%s" % (param_name, sectionlist),
-                        obj=dist,
-                        attr_name=param_name,
-                        frozen=is_frozen,
-                        bounds=bounds,
-                        value=value,
-                    )
-                )
-
-            else:
-                if "dist" in param_config:
-                    dist = distributions[param_config["dist"]]
-                    use_range = True
-                else:
-                    dist = distributions["uniform"]
-                    use_range = False
-
-                if use_range:
-                    parameters.append(
-                        ephys.parameters.NrnRangeParameter(
-                            name="%s.%s" % (param_name, sectionlist),
-                            param_name=param_name,
-                            value_scaler=dist,
-                            value=value,
-                            bounds=bounds,
-                            frozen=is_frozen,
-                            locations=seclist_locs,
-                        )
-                    )
-                else:
-                    parameters.append(
-                        ephys.parameters.NrnSectionParameter(
-                            name="%s.%s" % (param_name, sectionlist),
-                            param_name=param_name,
-                            value_scaler=dist,
-                            value=value,
-                            bounds=bounds,
-                            frozen=is_frozen,
-                            locations=seclist_locs,
-                        )
-                    )
-
-    return parameters
 
 
 def extract(config):
@@ -221,51 +53,36 @@ def extract(config):
     # should be present when recipe_path is set
     use_recipes = config["use_recipes"]
     if use_recipes:
-        recipe_path = os.path.join(config["recipe_dir"], config["recipe_filename"])
-        with open(recipe_path) as f:
-            recipes = json.load(f)
-        recipe = recipes[emodel]
+        recipe = get_recipe(config, emodel)
 
     # ------------------------#
     # --- load morphology --- #
     # ------------------------#
+    # altmorph is only used when recipes are not used
     if use_recipes:
-        morph_path = os.path.join(recipe["morph_path"], recipe["morphology"][0][1])
+        morph = get_morphology_from_recipe(recipe)
     else:
-        morph_name = config["morph_name"]
-        morph_filename = config["morph_filename"]
-        apical_point_isec = config["apical_point_isec"]
-        morph_dir = config["morph_dir"]
-
-        morph_path = os.path.join(morph_dir, morph_filename)
-        if apical_point_isec is not None:
-            altmorph = [[morph_name, morph_filename, apical_point_isec]]
-        else:
-            altmorph = [[morph_name, morph_filename]]
-
-    morph = ephys.morphologies.NrnFileMorphology(morph_path)
+        morph, altmorph = get_morphology_from_config(config)
 
     # ------------------------#
     # --- load mechanisms --- #
     # ------------------------#
     if use_recipes:
-        params_filename = recipe["params"]
+        params_path = recipe["params"]
     else:
-        params_filename = os.path.join(config["params_dir"], config["params_filename"])
-    mechs = load_mechanisms(params_filename)
+        params_path = get_parameters_path_from_config(config)
+    mechs = load_mechanisms(params_path)
     logger.info("mechanisms are loaded")
 
     # ------------------------#
     # --- load parameters --- #
     # ------------------------#
-    with open(
-        os.path.join(config["final_params_dir"], config["final_params_filename"]), "r"
-    ) as f:
+    with open(get_final_parameters_path_from_config(config), "r") as f:
         params_file = json.load(f)
     data = params_file[emodel]
     release_params = data["params"]
 
-    params = define_parameters(params_filename)
+    params = define_parameters(params_path)
 
     logger.info("parameters are loaded")
 
@@ -289,17 +106,16 @@ def extract(config):
     # either set: recipe
     # or set: altmorph, prot_path, feature_path (if "Main" in protocols)
     if use_recipes:
-        etypetest = config["etypetest"]
+        apical_point_from_recipe = get_apical_point_from_recipe_var_from_config(config)
         protocols_dict = create_protocols(
-            emodel, var_list, recipe_path=recipe_path, etypetest=etypetest
+            var_list,
+            recipe=recipe,
+            apical_point_from_recipe=apical_point_from_recipe,
         )
     else:
-        prot_path = os.path.join(config["protocols_dir"], config["protocols_filename"])
-        features_path = os.path.join(
-            config["features_dir"], config["features_filename"]
-        )
+        prot_path = get_protocols_path_from_config(config)
+        features_path = get_features_path_from_config(config)
         protocols_dict = create_protocols(
-            emodel,
             var_list,
             altmorph=altmorph,
             prot_path=prot_path,

@@ -5,11 +5,11 @@ import copy
 import logging
 import numpy
 
-import bluepyopt.ephys as ephys
-
-logger = logging.getLogger(__name__)
+from bluepyopt import ephys
 
 from extract_currs.recordings import check_recordings
+
+logger = logging.getLogger(__name__)
 
 
 class RatSSCxMainProtocol(ephys.protocols.Protocol):
@@ -40,8 +40,8 @@ class RatSSCxMainProtocol(ephys.protocols.Protocol):
         preprot_score_threshold=None,
     ):
         """Constructor."""
-
-        super(RatSSCxMainProtocol, self).__init__(name=name)
+        # pylint: disable=too-many-arguments
+        super().__init__(name=name)
 
         self.rmp_protocol = rmp_protocol
         self.rmp_efeature = rmp_efeature
@@ -57,7 +57,6 @@ class RatSSCxMainProtocol(ephys.protocols.Protocol):
 
     def subprotocols(self):
         """Return all the subprotocols contained in this protocol, is recursive."""
-
         subprotocols = collections.OrderedDict({self.name: self})
         subprotocols.update(self.rmp_protocol.subprotocols())
         subprotocols.update(self.rinhold_protocol.subprotocols())
@@ -72,18 +71,16 @@ class RatSSCxMainProtocol(ephys.protocols.Protocol):
     @property
     def rin_efeature(self):
         """Get in_efeature."""
-
         return self.rinhold_protocol.rin_efeature
 
     @rin_efeature.setter
     def rin_efeature(self, value):
         """Set rin_efeature."""
-
         self.rinhold_protocol.rin_efeature = value
 
     def run(self, cell_model, param_values, sim=None, isolate=None):
         """Run protocol."""
-
+        # pylint: disable=unused-argument
         responses = collections.OrderedDict()
 
         cell_model.freeze(param_values)
@@ -145,8 +142,8 @@ class RatSSCxRinHoldcurrentProtocol(ephys.protocols.Protocol):
         prefix=None,
     ):
         """Constructor."""
-
-        super(RatSSCxRinHoldcurrentProtocol, self).__init__(name=name)
+        # pylint: disable=too-many-arguments
+        super().__init__(name=name)
         self.rin_protocol_template = rin_protocol_template
         self.voltagebase_efeature = voltagebase_efeature
         self.voltagebase_score_threshold = voltagebase_score_threshold
@@ -162,9 +159,11 @@ class RatSSCxRinHoldcurrentProtocol(ephys.protocols.Protocol):
         # This will be set after the run()
         self.rin_protocol = None
 
+        # Set in RatSSCxMainProtocol's setter
+        self.rin_efeature = None
+
     def run(self, cell_model, param_values, sim, rmp=None):
         """Run protocol."""
-
         responses = collections.OrderedDict()
 
         # Calculate Rin without holding current
@@ -201,7 +200,6 @@ class RatSSCxRinHoldcurrentProtocol(ephys.protocols.Protocol):
 
     def subprotocols(self):
         """Return subprotocols."""
-
         subprotocols = collections.OrderedDict({self.name: self})
 
         subprotocols.update(
@@ -212,7 +210,6 @@ class RatSSCxRinHoldcurrentProtocol(ephys.protocols.Protocol):
 
     def create_rin_protocol(self, holdi=None):
         """Create threshold protocol."""
-
         rin_protocol = copy.deepcopy(self.rin_protocol_template)
         rin_protocol.name = "Rin"
         for recording in rin_protocol.recordings:
@@ -228,7 +225,6 @@ class RatSSCxRinHoldcurrentProtocol(ephys.protocols.Protocol):
         self, cell_model, param_values, sim, holding_voltage, rin_noholding, rmp
     ):
         """Find the holding current to hold cell at holding_voltage."""
-
         holdi_estimate = float(holding_voltage - rmp) / rin_noholding
 
         holdi = self.binsearch_holdi(
@@ -257,7 +253,7 @@ class RatSSCxRinHoldcurrentProtocol(ephys.protocols.Protocol):
         depth=1,
     ):
         """Do binary search to find holding current."""
-
+        # pylint: disable=too-many-arguments
         middle_bound = upper_bound - abs(upper_bound - lower_bound) / 2
 
         if depth > max_depth:
@@ -295,9 +291,8 @@ class RatSSCxRinHoldcurrentProtocol(ephys.protocols.Protocol):
             else:
                 return None
 
-    def voltage_base(self, current, cell_model, param_values, sim=None, short=False):
+    def voltage_base(self, current, cell_model, param_values, sim=None):
         """Calculate voltage base for certain stimulus current."""
-
         protocol = self.create_rin_protocol(holdi=current)
 
         response = protocol.run(cell_model, param_values, sim=sim)
@@ -329,8 +324,7 @@ class RatSSCxThresholdDetectionProtocol(ephys.protocols.Protocol):
         prefix=None,
     ):
         """Constructor."""
-
-        super(RatSSCxThresholdDetectionProtocol, self).__init__(name=name)
+        super().__init__(name=name)
 
         self.step_protocol_template = step_protocol_template
         self.max_threshold_voltage = max_threshold_voltage
@@ -346,7 +340,6 @@ class RatSSCxThresholdDetectionProtocol(ephys.protocols.Protocol):
 
     def subprotocols(self):
         """Return subprotocols."""
-
         subprotocols = collections.OrderedDict({self.name: self})
 
         subprotocols.update(self.step_protocol_template.subprotocols())
@@ -355,7 +348,7 @@ class RatSSCxThresholdDetectionProtocol(ephys.protocols.Protocol):
 
     def run(self, cell_model, param_values, sim, holdi, rin, rmp):
         """Run protocol."""
-
+        # pylint: disable=unused-argument
         responses = collections.OrderedDict()
 
         # Calculate max threshold current
@@ -379,7 +372,7 @@ class RatSSCxThresholdDetectionProtocol(ephys.protocols.Protocol):
 
     def search_max_threshold_current(self, rin=None, rmp=None):
         """Find the current necessary to get to max_threshold_voltage."""
-
+        # pylint: disable=unused-argument
         max_threshold_current = (
             float(self.max_threshold_voltage - self.holding_voltage) / rin
         )
@@ -388,7 +381,6 @@ class RatSSCxThresholdDetectionProtocol(ephys.protocols.Protocol):
 
     def create_step_protocol(self, holdi=0.0, step_current=0.0):
         """Create threshold protocol."""
-
         threshold_protocol = copy.deepcopy(self.step_protocol_template)
         threshold_protocol.name = "Threshold"
         for recording in threshold_protocol.recordings:
@@ -404,11 +396,8 @@ class RatSSCxThresholdDetectionProtocol(ephys.protocols.Protocol):
 
         return threshold_protocol
 
-    def create_short_threshold_protocol(
-        self, short=False, holdi=None, step_current=None
-    ):
+    def create_short_threshold_protocol(self, holdi=None, step_current=None):
         """Create short threshold protocol."""
-
         short_protocol = self.create_step_protocol(
             holdi=holdi, step_current=step_current
         )
@@ -437,7 +426,6 @@ class RatSSCxThresholdDetectionProtocol(ephys.protocols.Protocol):
         short=False,
     ):
         """Detect if spike is present at current level."""
-
         # Only run short pulse if percentage set smaller than 100%
         if short and self.short_perc < 1.0:
             protocol = self.create_short_threshold_protocol(
@@ -478,7 +466,7 @@ class RatSSCxThresholdDetectionProtocol(ephys.protocols.Protocol):
 
         Assumption is that lower_bound has no spike, upper_bound has.
         """
-
+        # pylint: disable=too-many-arguments
         if depth > max_depth or abs(upper_bound - lower_bound) < precision:
             return upper_bound
         else:
@@ -522,6 +510,7 @@ class RatSSCxThresholdDetectionProtocol(ephys.protocols.Protocol):
         upper_bound=None,
     ):
         """Find the current step spiking threshold."""
+        # pylint: disable=undefined-loop-variable
         step_currents = numpy.linspace(lower_bound, upper_bound, num=self.short_steps)
 
         if len(step_currents) == 0:
@@ -577,7 +566,7 @@ class SweepProtocolCustom(ephys.protocols.SweepProtocol):
         """Check recordings, then instantiate."""
         self.recordings = check_recordings(self.recordings, icell, sim)
 
-        super(SweepProtocolCustom, self).instantiate(sim, icell)
+        super().instantiate(sim, icell)
 
 
 class StepProtocol(ephys.protocols.SweepProtocol):
@@ -597,12 +586,13 @@ class StepProtocol(ephys.protocols.SweepProtocol):
         Args:
             name (str): name of this object
             step_stimuli (list of Stimuli): List of Stimulus objects used in protocol
+            holding_stimulus (Stimulus): holding stimulus
             recordings (list of Recordings): Recording objects used in the
                 protocol
             cvode_active (bool): whether to use variable time step
+            stochkv_det (bool): False to use stochasticity
         """
-
-        super(StepProtocol, self).__init__(
+        super().__init__(
             name,
             stimuli=step_stimuli + [holding_stimulus]
             if holding_stimulus is not None
@@ -617,7 +607,6 @@ class StepProtocol(ephys.protocols.SweepProtocol):
 
     def instantiate(self, sim=None, icell=None):
         """Instantiate."""
-
         for stimulus in self.stimuli:
             stimulus.instantiate(sim=sim, icell=icell)
 
@@ -629,12 +618,12 @@ class StepProtocol(ephys.protocols.SweepProtocol):
             except ephys.locations.EPhysLocInstantiateException as e:
                 logger.debug(
                     "SweepProtocol: Instantiating recording generated location "
-                    "exception: %s, will return empty response for this recording" % e
+                    "exception: %s, will return empty response for this recording",
+                    e,
                 )
 
-    def run(self, cell_model, param_values, sim=None, isolate=None):
+    def run(self, cell_model, param_values, sim=None, isolate=None, timeout=None):
         """Run protocol."""
-
         responses = {}
         if self.stochkv_det is not None and not self.stochkv_det:
             for mechanism in cell_model.mechanisms:
@@ -643,9 +632,7 @@ class StepProtocol(ephys.protocols.SweepProtocol):
             self.cvode_active = False
 
         responses.update(
-            super(StepProtocol, self).run(
-                cell_model, param_values, sim=sim, isolate=isolate
-            )
+            super().run(cell_model, param_values, sim=sim, isolate=isolate)
         )
 
         if self.stochkv_det is not None and not self.stochkv_det:
@@ -683,7 +670,6 @@ class StepProtocol(ephys.protocols.SweepProtocol):
     @property
     def step_amplitude(self):
         """Stimuli mean amplitude."""
-
         amplitudes = [step_stim.step_amplitude for step_stim in self.step_stimuli]
 
         if None in amplitudes:
@@ -706,8 +692,7 @@ class StepThresholdProtocol(StepProtocol):
         stochkv_det=None,
     ):
         """Constructor."""
-
-        super(StepThresholdProtocol, self).__init__(
+        super().__init__(
             name,
             step_stimuli=step_stimuli,
             holding_stimulus=holding_stimulus,
@@ -718,15 +703,13 @@ class StepThresholdProtocol(StepProtocol):
 
         self.thresh_perc = thresh_perc
 
-    def run(self, cell_model, param_values, sim=None, isolate=None):
+    def run(self, cell_model, param_values, sim=None, isolate=None, timeout=None):
         """Run protocol."""
-
         responses = {}
         if not hasattr(cell_model, "threshold_current"):
             raise Exception(
                 "StepThresholdProtocol: running on cell_model "
-                "that doesnt have threshold current value set: %s",
-                str(cell_model),
+                f"that doesnt have threshold current value set: {str(cell_model)}"
             )
 
         for step_stim in self.step_stimuli:
@@ -737,9 +720,7 @@ class StepThresholdProtocol(StepProtocol):
         self.holding_stimulus.step_amplitude = cell_model.holding_current
 
         responses.update(
-            super(StepThresholdProtocol, self).run(
-                cell_model, param_values, sim=sim, isolate=isolate
-            )
+            super().run(cell_model, param_values, sim=sim, isolate=isolate)
         )
 
         return responses
@@ -762,12 +743,12 @@ class RampProtocol(SweepProtocolCustom):
         Args:
             name (str): name of this object
             ramp_stimulus (list of Stimuli): Stimulus objects used in protocol
+            holding_stimulus (Stimulus): holding stimulus
             recordings (list of Recordings): Recording objects used in the
                 protocol
             cvode_active (bool): whether to use variable time step
         """
-
-        super(RampProtocol, self).__init__(
+        super().__init__(
             name,
             stimuli=[ramp_stimulus, holding_stimulus]
             if holding_stimulus is not None
@@ -804,8 +785,7 @@ class RampThresholdProtocol(RampProtocol):
         cvode_active=None,
     ):
         """Constructor."""
-
-        super(RampThresholdProtocol, self).__init__(
+        super().__init__(
             name,
             ramp_stimulus=ramp_stimulus,
             holding_stimulus=holding_stimulus,
@@ -816,15 +796,13 @@ class RampThresholdProtocol(RampProtocol):
         self.thresh_perc_start = thresh_perc_start
         self.thresh_perc_end = thresh_perc_end
 
-    def run(self, cell_model, param_values, sim=None, isolate=None):
+    def run(self, cell_model, param_values, sim=None, isolate=None, timeout=None):
         """Run protocol."""
-
         responses = {}
         if not hasattr(cell_model, "threshold_current"):
             raise Exception(
                 "RampThresholdProtocol: running on cell_model "
-                "that doesnt have threshold current value set: %s",
-                str(cell_model),
+                f"that doesnt have threshold current value set: {str(cell_model)}"
             )
 
         self.ramp_stimulus.ramp_amplitude_start = cell_model.threshold_current * (
@@ -837,9 +815,7 @@ class RampThresholdProtocol(RampProtocol):
         self.holding_stimulus.step_amplitude = cell_model.holding_current
 
         responses.update(
-            super(RampThresholdProtocol, self).run(
-                cell_model, param_values, sim=sim, isolate=isolate
-            )
+            super().run(cell_model, param_values, sim=sim, isolate=isolate)
         )
 
         return responses

@@ -3,7 +3,7 @@
 import logging
 import numpy
 
-import bluepyopt.ephys as ephys
+from bluepyopt import ephys
 
 logger = logging.getLogger(__name__)
 
@@ -40,7 +40,6 @@ def get_loc_varlist(isection):
 
 def check_recordings(recordings, icell, sim):
     """Returns a list of valid recordings (where the variable is in the location)."""
-
     new_recs = []  # to return
     varlists = {}  # keep varlists to avoid re-computing them every time
 
@@ -78,9 +77,7 @@ class RecordingCustom(ephys.recordings.CompRecording):
             location (Location): location in the model of the recording
             variable (str): which variable to record from (e.g. 'v')
         """
-        super(RecordingCustom, self).__init__(
-            name=name, location=location, variable=variable
-        )
+        super().__init__(name=name, location=location, variable=variable)
 
         # important to turn current densities into currents
         self.segment_area = None
@@ -95,7 +92,7 @@ class RecordingCustom(ephys.recordings.CompRecording):
 
         self.varvector = sim.neuron.h.Vector()
         seg = self.location.instantiate(sim=sim, icell=icell)
-        self.varvector.record(getattr(seg, "_ref_%s" % self.variable), 0.1)
+        self.varvector.record(getattr(seg, f"_ref_{self.variable}"), 0.1)
 
         self.segment_area = seg.area()
         self.local_ion_list = get_loc_ion_list(seg.sec)
@@ -108,7 +105,6 @@ class RecordingCustom(ephys.recordings.CompRecording):
     @property
     def response(self):
         """Return recording response. Turn current densities into currents."""
-
         if not self.instantiated:
             return None
 

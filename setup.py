@@ -14,6 +14,10 @@ with open("README.md", encoding="utf-8") as f:
 
 VERSION = imp.load_source("", "currentscape/version.py").__version__
 
+EXTRA_EXTRACT_CURRS = ["bluepyopt", "neuron"]
+
+EXTRA_EXAMPLE = ["scipy"]
+
 setup(
     name="currentscape",
     author="Aurelien Jaquier",
@@ -31,14 +35,16 @@ setup(
     install_requires=[
         "numpy",
         "matplotlib",
-        "scipy",
         "palettable",
-        "bluepyopt",
-        "neuron",
     ],
     packages=find_packages(),
     python_requires=">=3.6",
-    extras_require={"docs": ["sphinx", "sphinx-bluebrain-theme"]},
+    extras_require={
+        "docs": ["sphinx", "sphinx-bluebrain-theme"],
+        "extract_currs": EXTRA_EXTRACT_CURRS,
+        "example": EXTRA_EXAMPLE,
+        "all": EXTRA_EXTRACT_CURRS + EXTRA_EXAMPLE,
+    },
     classifiers=[
         "Development Status :: 2 - Pre-Alpha",
         "Intended Audience :: Education",
@@ -47,6 +53,8 @@ setup(
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
         "Topic :: Scientific/Engineering :: Bio-Informatics",
     ],
 )

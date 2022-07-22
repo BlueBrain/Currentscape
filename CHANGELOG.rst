@@ -1,6 +1,40 @@
 Changelog
 =========
 
+Version 0.0.11
+--------------
+
+Changes
+~~~~~~~
+- Improved memory use by deleting large variables when they are not of use anymore.
+- Improved memory use by using np.int8 in create_black_line function.
+- Made sure that every data in Datasets are numpy arrays.
+
+
+Version 0.0.10
+--------------
+
+Changes
+~~~~~~~
+- Forced fixed timesteps in extract_currs, since currentscape expects data with fixed timesteps.
+
+Version 0.0.9
+-------------
+
+Added
+~~~~~
+- New SAHP stimulus for current extraction.
+
+
+
+Version 0.0.8
+-------------
+
+Fixed
+~~~~~
+- Test data in test_currentscape_functions.
+
+
 Version 0.0.7
 -------------
 

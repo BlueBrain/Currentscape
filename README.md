@@ -2,6 +2,21 @@ This package contains code based on [Leandro M. Alonso and Eve Marder, ”Visual
 The code in this package is able to reproduce the currentscape figure in the susmentioned article, including the labels, ticks and legend.
 
 
+### Installing currentscape
+
+Currentscape can be pip installed with all its dependencies with the following line:
+
+    pip install -i https://bbpteam.epfl.ch/repository/devpi/simple/ currentscape[all]
+
+This install the currentscape module and its dependencies, as well as the dependencies needed for the current extraction, and for the example reproducing the currentscape plot from the original paper. You can also select the dependencies you want by putting them into the brackets instead of 'all' (If you want multiple dependencies, you have to separate them by commas). The available dependencies are:
+
+- extract_currs
+- example
+
+Do not put any brackets if you just want to plot currentscapes, and are not interested in current extraction, or the original example.
+
+Note that you also have the possibility of using [BluePyEModel](https://bbpgitlab.epfl.ch/cells/bluepyemodel) (which can call currentscape) to extract the currents and plot currentscapes.
+
 ### Loading currentscape in Python
 
 After installing currentscape, your PYTHONPATH environment variable should normally

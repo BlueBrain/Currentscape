@@ -2,9 +2,9 @@
 
 import json
 import logging
-import os
+from pathlib import Path
 
-import bluepyopt.ephys as ephys
+from bluepyopt import ephys
 
 from extract_currs.protocols import (
     RampProtocol,
@@ -33,7 +33,6 @@ soma_loc = ephys.locations.NrnSeclistCompLocation(
 
 def read_sAHP_protocol(protocol_name, protocol_definition, recordings):
     """Read sAHP protocol from definition."""
-
     sahp_definition = protocol_definition["stimuli"]["sahp"]
 
     # assumes that holding.delay = 0 and holding.duration == sahp.totduration
@@ -69,7 +68,6 @@ def read_sAHP_protocol(protocol_name, protocol_definition, recordings):
 # Adjust accordingly
 def read_ramp_threshold_protocol(protocol_name, protocol_definition, recordings):
     """Read ramp threshold protocol from definition."""
-
     ramp_definition = protocol_definition["stimuli"]["ramp"]
     ramp_stimulus = ephys.stimuli.NrnRampPulse(
         ramp_delay=ramp_definition["ramp_delay"],
@@ -97,7 +95,6 @@ def read_ramp_threshold_protocol(protocol_name, protocol_definition, recordings)
 
 def read_ramp_protocol(protocol_name, protocol_definition, recordings):
     """Read ramp protocol from definition."""
-
     ramp_definition = protocol_definition["stimuli"]["ramp"]
     ramp_stimulus = ephys.stimuli.NrnRampPulse(
         ramp_amplitude_start=ramp_definition["ramp_amplitude_start"],
@@ -132,10 +129,13 @@ def read_step_protocol(
     protocol_name, protocol_definition, recordings, stochkv_det=None, cvode_active=False
 ):
     """Read step protocol from definition."""
-
+    # pylint: disable=undefined-loop-variable
     step_definitions = protocol_definition["stimuli"]["step"]
     if isinstance(step_definitions, dict):
         step_definitions = [step_definitions]
+
+    if len(step_definitions) == 0:
+        raise IndexError("protocol_definition['stimuli']['step'] should not be empty")
 
     step_stimuli = []
     for step_definition in step_definitions:
@@ -179,10 +179,13 @@ def read_step_threshold_protocol(
     protocol_name, protocol_definition, recordings, stochkv_det=None
 ):
     """Read step threshold protocol from definition."""
-
+    # pylint: disable=undefined-loop-variable
     step_definitions = protocol_definition["stimuli"]["step"]
     if isinstance(step_definitions, dict):
         step_definitions = [step_definitions]
+
+    if len(step_definitions) == 0:
+        raise IndexError("protocol_definition['stimuli']['step'] should not be empty")
 
     step_stimuli = []
     for step_definition in step_definitions:
@@ -217,7 +220,7 @@ def read_step_threshold_protocol(
 
 
 def define_protocols(
-    protocols_filename,
+    protocols_path,
     var_list,
     stochkv_det=None,
     prefix="",
@@ -225,8 +228,8 @@ def define_protocols(
     do_simplify_morph=False,
 ):
     """Define protocols."""
-
-    with open(os.path.join(protocols_filename)) as protocol_file:
+    # pylint: disable=too-many-locals, too-many-branches
+    with open(protocols_path, "r", encoding="utf-8") as protocol_file:
         protocol_definitions = json.load(protocol_file)
 
     if "__comment" in protocol_definitions:
@@ -242,7 +245,7 @@ def define_protocols(
             for var in var_list:
                 recordings.append(
                     RecordingCustom(
-                        name="%s.%s.soma.%s" % (prefix, protocol_name, var),
+                        name=f"{prefix}.{protocol_name}.soma.{var}",
                         location=soma_loc,
                         variable=var,
                     )
@@ -277,15 +280,13 @@ def define_protocols(
 
                     else:
                         raise Exception(
-                            "Recording type %s not supported"
-                            % recording_definition["type"]
+                            f"Recording type {recording_definition['type']} not supported"
                         )
 
                     # changed here
                     for var in var_list:
                         recording = RecordingCustom(
-                            name="%s.%s.%s.%s"
-                            % (prefix, protocol_name, location.name, var),
+                            name=f"{prefix}.{protocol_name}.{location.name}.{var}",
                             location=location,
                             variable=var,
                         )
@@ -404,15 +405,15 @@ def get_apical_point_data(recipe, apical_point_from_recipe, morph):
         # if not testing the morph must have been copied here before!
         morph_path = "morphologies/"
 
-    basename = os.path.basename(morph)
-    filename = os.path.splitext(basename)[0]
+    filename = Path(morph).stem
 
-    apsec_file = os.path.join(morph_path, "apical_points_isec.json")
+    apsec_filepath = Path(morph_path) / "apical_points_isec.json"
     try:
-        apical_points_isecs = json.load(open(apsec_file))
-        logger.debug("Reading %s", apsec_file)
+        with open(apsec_filepath, "r", encoding="utf-8") as apsec_file:
+            apical_points_isecs = json.load(apsec_file)
+        logger.debug("Reading %s", apsec_filepath)
     except FileNotFoundError:
-        logger.warning(f"Could not find {apsec_file}")
+        logger.warning("Could not find %s", apsec_filepath)
         apical_points_isecs = []
 
     if filename in apical_points_isecs:
@@ -428,8 +429,8 @@ def create_protocols(
     altmorph=None,
     apical_point_from_recipe=False,
     do_simplify_morph=False,
-    prot_path="",
     apical_point_isec=None,
+    prot_path="",
     features_path="",
 ):
     """Return a dict containing protocols.
@@ -439,16 +440,19 @@ def create_protocols(
         recipe (dict): contains recipe data, such as paths to protocols, and features files.
             Not mandatory.
         stochkv_det (bool): set if stochastic or deterministic
-        altmorph (list of lists containing the following):
+        altmorph (list of lists containing the following): [morphname, morph(, apical_point_isec)]
             morphname -> morphology name to put in output files (can be '_')
             morph -> morphology file name
             apical_point_isec (optional) -> index of apical point section
         apical_point_from_recipe (bool): if true and altmorph is None:
             get apical point filepath from recipe
         do_simplify_morph (bool): if True, set apical point to None and simplify morph in locations
+        apical_point_isec (int): index of apical point section
         prot_path (str): protocol path. if not set, is taken from recipe.
         features_path (str): feature path. if not set, is taken from recipe.
     """
+    # pylint: disable=too-many-arguments, too-many-locals, too-many-branches
+    # pylint: disable=unbalanced-tuple-unpacking
     if recipe and not prot_path:
         prot_path = recipe["protocol"]
 
@@ -500,7 +504,7 @@ def create_protocols(
             do_simplify_morph,
         )
 
-        if "Main" in protocols_dict.keys():
+        if "Main" in protocols_dict:
 
             efeatures = define_efeatures(
                 protocols_dict["Main"],

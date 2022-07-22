@@ -2,7 +2,7 @@
 
 # pylint: disable=too-many-locals, wrong-import-position
 import logging
-import os
+from pathlib import Path
 
 import numpy as np
 import matplotlib
@@ -426,13 +426,11 @@ def get_colormap(cmap, n_colors, use_patterns, N_curr, N_ion):
 
 def save_figure(fig, c):
     """Save figure in output according to config file."""
-    if not os.path.exists(c["output"]["dir"]):
-        os.makedirs(c["output"]["dir"])
+    Path(c["output"]["dir"]).mkdir(parents=True, exist_ok=True)
     out_path = (
-        os.path.join(c["output"]["dir"], c["output"]["fname"])
-        + "."
-        + c["output"]["extension"]
+        f"{Path(c['output']['dir']) / c['output']['fname']}.{c['output']['extension']}"
     )
+
     fig.savefig(
         out_path, dpi=c["output"]["dpi"], transparent=c["output"]["transparent"]
     )

@@ -15,7 +15,7 @@ def write_output(responses, output_dir):
 
     for key, resp in responses.items():
         if "holding_current" in key or "threshold_current" in key:
-            logger.debug("{} : {}".format(key, resp))
+            logger.debug("%s : %s", key, resp)
         else:
             output_path = Path(output_dir) / f"{key}.dat"
 

@@ -2,7 +2,7 @@
 
 import logging
 
-import bluepyopt.ephys as ephys
+from bluepyopt import ephys
 
 logger = logging.getLogger(__name__)
 
@@ -52,15 +52,11 @@ class NrnSomaDistanceCompLocation(ephys.locations.NrnSomaDistanceCompLocation):
         do_simplify_morph=False,
     ):
         """Constructor."""
-
-        super(NrnSomaDistanceCompLocation, self).__init__(
-            name, soma_distance, seclist_name, comment
-        )
+        super().__init__(name, soma_distance, seclist_name, comment)
         self.do_simplify_morph = do_simplify_morph
 
     def instantiate(self, sim=None, icell=None):
         """Find the instantiate compartment."""
-
         soma = icell.soma[0]
 
         sim.neuron.h.distance(0, 0.5, sec=soma)
@@ -89,17 +85,15 @@ class NrnSomaDistanceCompLocation(ephys.locations.NrnSomaDistanceCompLocation):
 
         if icomp is None:
             raise ephys.locations.EPhysLocInstantiateException(
-                "No comp found at %s distance from soma" % self.soma_distance
+                f"No comp found at {self.soma_distance} distance from soma"
             )
 
         logger.debug(
-            "Using %s at distance %f, nseg %f, length %f"
-            % (
-                icomp,
-                sim.neuron.h.distance(1, comp_x, sec=seccomp),
-                seccomp.nseg,
-                end_distance - start_distance,
-            )
+            "Using %s at distance %f, nseg %f, length %f",
+            icomp,
+            sim.neuron.h.distance(1, comp_x, sec=seccomp),
+            seccomp.nseg,
+            end_distance - start_distance,
         )
 
         return icomp
@@ -118,16 +112,13 @@ class NrnSomaDistanceCompLocationApical(ephys.locations.NrnSomaDistanceCompLocat
         do_simplify_morph=False,
     ):
         """Constructor."""
-
-        super(NrnSomaDistanceCompLocationApical, self).__init__(
-            name, soma_distance, seclist_name, comment
-        )
+        super().__init__(name, soma_distance, seclist_name, comment)
         self.apical_point_isec = apical_point_isec
         self.do_simplify_morph = do_simplify_morph
 
     def instantiate(self, sim=None, icell=None):
         """Find the instantiate compartment."""
-
+        # pylint: disable=too-many-locals, too-many-branches
         if self.do_simplify_morph:
 
             soma = icell.soma[0]
@@ -158,17 +149,15 @@ class NrnSomaDistanceCompLocationApical(ephys.locations.NrnSomaDistanceCompLocat
 
             if icomp is None:
                 raise ephys.locations.EPhysLocInstantiateException(
-                    "No comp found at %s distance from soma" % self.soma_distance
+                    f"No comp found at {self.soma_distance} distance from soma"
                 )
 
             logger.debug(
-                "Using %s at distance %f, nseg %f, length %f"
-                % (
-                    icomp,
-                    sim.neuron.h.distance(1, comp_x, sec=seccomp),
-                    seccomp.nseg,
-                    end_distance - start_distance,
-                )
+                "Using %s at distance %f, nseg %f, length %f",
+                icomp,
+                sim.neuron.h.distance(1, comp_x, sec=seccomp),
+                seccomp.nseg,
+                end_distance - start_distance,
             )
 
         else:
@@ -180,7 +169,7 @@ class NrnSomaDistanceCompLocationApical(ephys.locations.NrnSomaDistanceCompLocat
             apical_branch = []
             section = icell.apic[self.apical_point_isec]
             while True:
-                name = str(section.name()).split(".")[-1]
+                name = str(section.name()).rsplit(".", maxsplit=1)[-1]
                 if "soma[0]" == name:
                     break
                 apical_branch.append(section)
@@ -215,12 +204,13 @@ class NrnSomaDistanceCompLocationApical(ephys.locations.NrnSomaDistanceCompLocat
 
             if icomp is None:
                 raise ephys.locations.EPhysLocInstantiateException(
-                    "No comp found at %s distance from soma" % self.soma_distance
+                    f"No comp found at {self.soma_distance} distance from soma"
                 )
 
             logger.debug(
-                "Using %s at distance %f"
-                % (icomp, sim.neuron.h.distance(1, comp_x, sec=seccomp))
+                "Using %s at distance %f",
+                icomp,
+                sim.neuron.h.distance(1, comp_x, sec=seccomp),
             )
 
         return icomp

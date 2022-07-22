@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 # taken from BluePyEModel
 class BPEMStimulus(Stimulus, metaclass=abc.ABCMeta):
 
-    """BPEM current stimulus"""
+    """BPEM current stimulus."""
 
     name = ""
 
@@ -24,11 +24,7 @@ class BPEMStimulus(Stimulus, metaclass=abc.ABCMeta):
         holding_current,
         location,
     ):
-        """Constructor
-        Args:
-            location(Location): location of stimulus
-        """
-
+        """Constructor."""
         super().__init__()
 
         self.step_amplitude = step_amplitude
@@ -43,8 +39,7 @@ class BPEMStimulus(Stimulus, metaclass=abc.ABCMeta):
         self.time_vec = None
 
     def instantiate(self, sim=None, icell=None):
-        """Run stimulus"""
-
+        """Run stimulus."""
         time_series, current_series = self.generate(dt=0.1)
 
         icomp = self.location.instantiate(sim=sim, icell=icell)
@@ -69,37 +64,36 @@ class BPEMStimulus(Stimulus, metaclass=abc.ABCMeta):
 
     def destroy(self, sim=None):  # pylint:disable=W0613
         """Reset instantiated attributes to None."""
-
         self.iclamp = None
         self.time_vec = None
         self.current_vec = None
 
     @abc.abstractmethod
     def generate(self, dt=0.1):  # pylint:disable=W0613
-        """Return current time series
+        """Return current time series.
 
-        WARNING: do not offset ! This is on-top of a holding stimulus."""
+        WARNING: do not offset ! This is on-top of a holding stimulus.
+        """
         raise NotImplementedError
 
     def __str__(self):
-        """String representation"""
-
-        return "%s current played at %s" % (self.name, self.location)
+        """String representation."""
+        return f"{self.name} current played at {self.location}"
 
 
 # taken from BluePyEModel
 class SAHP(BPEMStimulus):
 
-    """sAHP current stimulus"""
+    """sAHP current stimulus."""
 
     name = "sAHP"
 
     def __init__(self, location, **kwargs):
-        """Constructor
+        """Constructor.
+
         Args:
             location(Location): location of stimulus
         """
-
         for k in [
             "delay",
             "totduration",
@@ -112,8 +106,7 @@ class SAHP(BPEMStimulus):
         ]:
             if k not in kwargs:
                 raise Exception(
-                    "Argument {} missing for initialisation of "
-                    "eCode {}".format(k, self.name)
+                    f"Argument {k} missing for initialisation of eCode {self.name}"
                 )
 
         self.tmid = kwargs["tmid"]
@@ -131,8 +124,7 @@ class SAHP(BPEMStimulus):
         )
 
     def instantiate(self, sim=None, icell=None):
-        """Run stimulus"""
-
+        """Run stimulus."""
         icomp = self.location.instantiate(sim=sim, icell=icell)
 
         self.iclamp = sim.neuron.h.IClamp(icomp.x, sec=icomp.sec)
@@ -180,9 +172,10 @@ class SAHP(BPEMStimulus):
         )
 
     def generate(self, dt=0.1):
-        """Return current time series
+        """Return current time series.
 
-        WARNING: do not offset ! This is on-top of a holding stimulus."""
+        WARNING: do not offset ! This is on-top of a holding stimulus.
+        """
         t = numpy.arange(0.0, self.total_duration, dt)
         current = numpy.full(t.shape, self.holding_current, dtype="float64")
 

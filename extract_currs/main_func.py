@@ -1,11 +1,11 @@
 """Useful functions to load mechanisms and parameters."""
 
 import logging
-import os
+from pathlib import Path
 
 import json
 
-import bluepyopt.ephys as ephys
+from bluepyopt import ephys
 
 from extract_currs.load import (
     define_parameters,
@@ -17,6 +17,7 @@ from extract_currs.load import (
     get_parameters_path_from_config,
     get_protocols_path_from_config,
     get_recipe,
+    get_release_params,
     load_mechanisms,
 )
 from extract_currs.protocols_func import create_protocols
@@ -31,9 +32,10 @@ def extract(config):
     Args:
         config (str or dict): dict or filename of json file containing config.
     """
+    # pylint: disable=too-many-locals
     # load config if config is in a json file
     if isinstance(config, str):
-        with open(config, "r") as f:
+        with open(config, "r", encoding="utf-8") as f:
             config = json.load(f)
 
     emodel = config["emodel"]
@@ -46,8 +48,7 @@ def extract(config):
     ):
         output_dir = "_".join((output_dir, emodel))
     # create output directory if needed
-    if not os.path.isdir(output_dir):
-        os.makedirs(output_dir)
+    Path(output_dir).mkdir(parents=True, exist_ok=True)
 
     # a config folder with protocols, features and params files
     # should be present when recipe_path is set
@@ -77,10 +78,9 @@ def extract(config):
     # ------------------------#
     # --- load parameters --- #
     # ------------------------#
-    with open(get_final_parameters_path_from_config(config), "r") as f:
-        params_file = json.load(f)
-    data = params_file[emodel]
-    release_params = data["params"]
+    release_params = get_release_params(
+        get_final_parameters_path_from_config(config), emodel
+    )
 
     params = define_parameters(params_path)
 

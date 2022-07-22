@@ -4,7 +4,7 @@ import collections
 from pathlib import Path
 import json
 
-import bluepyopt.ephys as ephys
+from bluepyopt import ephys
 
 from extract_currs.locations import multi_locations
 
@@ -26,7 +26,7 @@ def get_recipe(config, emodel):
     )
 
     # load recipe file
-    with open(recipe_path) as f:
+    with open(recipe_path, "r", encoding="utf-8") as f:
         recipes = json.load(f)
 
     # return emodel recipe data
@@ -92,12 +92,22 @@ def get_apical_point_from_recipe_var_from_config(config):
     raise KeyError("Could not find 'apical_point_from_recipe' in configuration file")
 
 
+def get_release_params(final_params_path, emodel):
+    """Load final params from file."""
+    with open(final_params_path, "r", encoding="utf-8") as f:
+        params_file = json.load(f)
+    data = params_file[emodel]
+    release_params = data["params"]
+
+    return release_params
+
+
 def load_mechanisms(mechs_path):
     """Define mechanisms.
 
     The mechanism path is the same as the params path.
     """
-    with open(mechs_path) as mechs_file:
+    with open(mechs_path, "r", encoding="utf-8") as mechs_file:
         mech_definitions = json.load(
             mechs_file, object_pairs_hook=collections.OrderedDict
         )["mechanisms"]
@@ -110,7 +120,7 @@ def load_mechanisms(mechs_path):
         for channel in channels["mech"]:
             mechanisms_list.append(
                 ephys.mechanisms.NrnMODMechanism(
-                    name="%s.%s" % (channel, sectionlist),
+                    name=f"{channel}.{sectionlist}",
                     mod_path=None,
                     suffix=channel,
                     locations=seclist_locs,
@@ -123,9 +133,10 @@ def load_mechanisms(mechs_path):
 
 def define_parameters(params_path):
     """Define parameters."""
+    # pylint: disable=too-many-locals, too-many-branches, too-many-statements
     parameters = []
 
-    with open(params_path) as params_file:
+    with open(params_path, "r", encoding="utf-8") as params_file:
         definitions = json.load(params_file, object_pairs_hook=collections.OrderedDict)
 
     # set distributions
@@ -196,7 +207,7 @@ def define_parameters(params_path):
             elif is_dist:
                 parameters.append(
                     ephys.parameters.MetaParameter(
-                        name="%s.%s" % (param_name, sectionlist),
+                        name=f"{param_name}.{sectionlist}",
                         obj=dist,
                         attr_name=param_name,
                         frozen=is_frozen,
@@ -216,7 +227,7 @@ def define_parameters(params_path):
                 if use_range:
                     parameters.append(
                         ephys.parameters.NrnRangeParameter(
-                            name="%s.%s" % (param_name, sectionlist),
+                            name=f"{param_name}.{sectionlist}",
                             param_name=param_name,
                             value_scaler=dist,
                             value=value,
@@ -228,7 +239,7 @@ def define_parameters(params_path):
                 else:
                     parameters.append(
                         ephys.parameters.NrnSectionParameter(
-                            name="%s.%s" % (param_name, sectionlist),
+                            name=f"{param_name}.{sectionlist}",
                             param_name=param_name,
                             value_scaler=dist,
                             value=value,

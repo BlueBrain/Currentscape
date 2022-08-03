@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 import palettable as pltb
 
 from currentscape.data_processing import sum_chunks
+from currentscape.mapper import map_colors, map_patterns
 
 logger = logging.getLogger(__name__)
 
@@ -49,23 +50,25 @@ def get_rows_tot(c, ions):
     return rows_tot
 
 
-def get_colors_and_hatches_lists(c, col_idxs, cmap, mapper):
+def get_colors_and_hatches_lists(c, curr_idxs, cmap, mapper=None):
     """Get colors and hatches lists from color indexes list.
 
     Args:
         c (dict): config
-        col_idxs (ndarray of ints): list of indexes of colors
+        curr_idxs (ndarray of ints): list of indexes of currents
         cmap (matplotlib.colors.Colormap): colormap
         mapper (int): number used to mix colors and patterns
     """
-    n_colors = c["colormap"]["n_colors"]
-    patterns = np.array([x * c["pattern"]["density"] for x in c["pattern"]["patterns"]])
-
     if c["pattern"]["use"]:
-        colors = cmap((mapper * col_idxs) % n_colors)
-        hatches = patterns[((mapper * col_idxs) // n_colors) % len(patterns)]
+        n_colors = c["colormap"]["n_colors"]
+        patterns = np.array(
+            [x * c["pattern"]["density"] for x in c["pattern"]["patterns"]]
+        )
+
+        colors = cmap(map_colors(curr_idxs, n_colors, mapper))
+        hatches = patterns[map_patterns(curr_idxs, n_colors, len(patterns), mapper)]
     else:
-        colors = cmap(col_idxs)
+        colors = cmap(curr_idxs)
         hatches = None
 
     return colors, hatches

@@ -1,4 +1,4 @@
-"""Test currentscape functions."""
+"""Test currentscape dataprocessing functions."""
 
 import numpy as np
 
@@ -6,11 +6,11 @@ from currentscape.data_processing import (
     autoscale_ticks_and_ylim,
     sum_chunks,
     check_chunksize,
+    remove_zero_arrays,
     reorder,
     order_of_mag,
     round_down_sig_digit,
 )
-from currentscape.datasets import DataSet
 
 
 def compare_floats(n1, n2, err=1e-10):
@@ -82,6 +82,15 @@ def test_check_chunksize():
     assert check_chunksize(49, 3000) == 40
 
 
+def test_remove_zero_arrays():
+    """Test remove zero array function."""
+    arr = np.array([np.array([0, 1]), np.array([0, 0]), np.array([np.nan, 0])])
+    new_arr, new_idx = remove_zero_arrays(arr)
+
+    assert np.array_equal(new_arr, [[0, 1]])
+    assert new_idx == 0
+
+
 def test_reorder():
     """Test reorder function.
 
@@ -99,26 +108,3 @@ def test_reorder():
         new_arr, [[1, 1, 2, 9, 3, 3], [1, 1, 2, 2, 3, 3], [0, 1, 2, 0, 1, 2]]
     )
     assert np.array_equal(new_idx, [3, 0, 1])
-
-
-def test_dataset_xticks():
-    """Test the DataSet function that automatically sets xticks."""
-    ds1 = DataSet(data=None, time=np.arange(0, 2000, 10))
-    assert np.array_equal(
-        ds1.xticks, [0.0, 250.0, 500.0, 750.0, 1000.0, 1250.0, 1500.0, 1750.0]
-    )
-
-    ds2 = DataSet(data=None, time=np.arange(0, 2001, 10))
-    assert np.array_equal(ds2.xticks, [0, 500, 1000, 1500, 2000])
-
-    ds3 = DataSet(data=None, time=np.array([0, 0.51]))
-    # round to avoid floating errors
-    ds3ticks = np.around(ds3.xticks, decimals=1)
-    expected_ds3 = np.around([0.0, 0.1, 0.2, 0.3, 0.4, 0.5], decimals=1)
-    assert np.array_equal(ds3ticks, expected_ds3)
-
-    ds4 = DataSet(data=None, time=np.arange(1002, 1055, 1))
-    assert np.array_equal(ds4.xticks, [1010, 1020, 1030, 1040, 1050])
-
-    ds5 = DataSet(data=None, time=np.arange(999, 1005, 1))
-    assert np.array_equal(ds5.xticks, [999, 1000, 1001, 1002, 1003, 1004])

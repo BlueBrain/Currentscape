@@ -17,7 +17,7 @@ from currentscape.legends import (
     set_legend,
     set_legend_with_lines,
 )
-from currentscape.mapper import create_mapper
+from currentscape.mapper import create_mapper, map_colors, map_patterns
 
 
 class IonConcentrations(DataSet):
@@ -76,8 +76,8 @@ class IonConcentrations(DataSet):
         # can do it because selected_currs have same shape as self (no zero arrays removed)
         for i, ion in enumerate(self.data[self.idxs]):
             if not np.all(ion == 0):
-                color = cmap((self.mapper * i) % n_colors)
-                linestyle = ls[((self.mapper * i) // n_colors) % len(ls)]
+                color = cmap(map_colors(i, n_colors, self.mapper))
+                linestyle = ls[map_patterns(i, n_colors, len(ls), self.mapper)]
 
                 ax.plot(x, ion, color=color, ls=linestyle, lw=lw, zorder=2)
 

@@ -5,6 +5,7 @@ import matplotlib
 matplotlib.use("agg")  # to avoid tkinter error
 from matplotlib.legend_handler import HandlerTuple
 
+from currentscape.mapper import map_colors, map_patterns
 from currentscape.plotting import select_color
 
 
@@ -90,11 +91,13 @@ def set_legend_with_hatches(ax, cmap, mapper, c, idx_names):
     patterns = [x * c["pattern"]["density"] for x in c["pattern"]["patterns"]]
     n_colors = c["colormap"]["n_colors"]
     for i_color, (text, handle) in enumerate(zip(leg.texts, leg.legendHandles)):
-        text.set_color(cmap((mapper * i_color) % n_colors))
+        text.set_color(cmap(map_colors(i_color, n_colors, mapper)))
         text.set_weight("bold")
 
-        handle.set_facecolor(cmap((mapper * i_color) % n_colors))
-        handle.set_hatch(patterns[((mapper * i_color) // n_colors) % len(patterns)])
+        handle.set_facecolor(cmap(map_colors(i_color, n_colors, mapper)))
+        handle.set_hatch(
+            patterns[map_patterns(i_color, n_colors, len(patterns), mapper)]
+        )
 
 
 def set_legend_with_lines(ax, cmap, mapper, c, idx_names, names, n_colors):
@@ -118,11 +121,11 @@ def set_legend_with_lines(ax, cmap, mapper, c, idx_names, names, n_colors):
     ls = c["line"]["styles"]
     lw = c["lw"]
     for i_color, (text, handle) in enumerate(zip(leg.texts, leg.legendHandles)):
-        text.set_color(cmap((mapper * i_color) % n_colors))
+        text.set_color(cmap(map_colors(i_color, n_colors, mapper)))
         text.set_weight("bold")
 
-        handle.set_color(cmap((mapper * i_color) % n_colors))
-        handle.set_linestyle(ls[((mapper * i_color) // n_colors) % len(ls)])
+        handle.set_color(cmap(map_colors(i_color, n_colors, mapper)))
+        handle.set_linestyle(ls[map_patterns(i_color, n_colors, len(ls), mapper)])
         handle.set_linewidth(lw)
 
 
@@ -147,14 +150,14 @@ def get_handles_with_hatches_and_linestyles(c, cmap, mapper, N_curr):
     return [
         (
             matplotlib.patches.Patch(
-                facecolor=cmap((mapper * i) % n_col),
-                hatch=patterns[((mapper * i) // n_col) % n_pat],
+                facecolor=cmap(map_colors(i, n_col, mapper)),
+                hatch=patterns[map_patterns(i, n_col, n_pat, mapper)],
             ),
             matplotlib.lines.Line2D(
                 [],
                 [],
-                color=cmap((mapper * i) % n_col),
-                ls=ls[((mapper * i) // n_col) % len(ls)],
+                color=cmap(map_colors(i, n_col, mapper)),
+                ls=ls[map_patterns(i, n_col, len(ls), mapper)],
                 lw=lw,
             ),
         )
@@ -198,5 +201,5 @@ def set_legend_with_hatches_and_linestyles(ax, cmap, mapper, c, idx_names):
 
     # set legend label color & boldness, and handles color&pattern
     for i_color, text in enumerate(leg.texts):
-        text.set_color(cmap((mapper * i_color) % n_col))
+        text.set_color(cmap(map_colors(i_color, n_col, mapper)))
         text.set_weight("bold")

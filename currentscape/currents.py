@@ -30,7 +30,7 @@ from currentscape.legends import (
     set_legend_with_lines,
     set_legend,
 )
-from currentscape.mapper import create_mapper
+from currentscape.mapper import create_mapper, map_colors, map_patterns
 
 
 class CurrentPlottingMixin:
@@ -221,8 +221,8 @@ class CurrentPlottingMixin:
         for i, curr in enumerate(selected_currs[self.idxs]):
             if not np.all(curr == 0):
                 if c["pattern"]["use"]:
-                    color = cmap((self.mapper * i) % n_colors)
-                    linestyle = ls[((self.mapper * i) // n_colors) % len(ls)]
+                    color = cmap(map_colors(i, n_colors, self.mapper))
+                    linestyle = ls[map_patterns(i, n_colors, len(ls), self.mapper)]
                 else:
                     color = select_color(cmap, i, self.N)
                     linestyle = "solid"
@@ -337,10 +337,10 @@ class CurrentPlottingMixin:
         valsnorm = np.sum(data / np.sum(data) * 2 * np.pi, axis=1)
         valsleft = np.cumsum(np.append(0, valsnorm[:-1]))
 
-        # color indexes
-        col_idxs = np.arange(self.N)
+        # current indexes
+        curr_idxs = np.arange(self.N)
         # set colors and patterns
-        colors, hatches = get_colors_and_hatches_lists(c, col_idxs, cmap, self.mapper)
+        colors, hatches = get_colors_and_hatches_lists(c, curr_idxs, cmap, self.mapper)
 
         bars = ax.bar(
             x=valsleft,
@@ -464,8 +464,8 @@ class Currents(CurrentPlottingMixin, DataSet):
         cpos = self.get_positive_data()
         cneg = self.get_negative_data()
 
-        normapos = np.sum(np.abs(np.array(cpos)), axis=0)
-        normaneg = np.sum(np.abs(np.array(cneg)), axis=0)
+        normapos = np.sum(np.abs(np.asarray(cpos)), axis=0)
+        normaneg = np.sum(np.abs(np.asarray(cneg)), axis=0)
 
         # replace 0s by 1s in norma* to avoid 0/0 error.
         # When norma* is 0, all values it divides are 0s, so even when replaced by 1s,
@@ -515,15 +515,13 @@ class Currents(CurrentPlottingMixin, DataSet):
         cnorm_neg, idx_neg = reorder(cnorm_neg)
 
         # for the order of names, just stack the positive and negative order,
-        # while removing duplicates.
+        # then removing duplicates (while conserving order).
         # also stack arange in case a current is zero for all the sim -> avoid index errors later
-        idx_names = []
-        _ = [
-            idx_names.append(x)
-            for x in np.concatenate((idx_pos, idx_neg, np.arange(self.N)))
-            if x not in idx_names
-        ]
-        self.idxs = idx_names  # pylint: disable=attribute-defined-outside-init
+        idx_names = np.concatenate((idx_pos, idx_neg, np.arange(self.N)))
+        _, i = np.unique(idx_names, return_index=True)
+        self.idxs = idx_names[
+            np.sort(i)
+        ]  # pylint: disable=attribute-defined-outside-init
 
         return cnorm_pos, cnorm_neg, idx_pos, idx_neg
 

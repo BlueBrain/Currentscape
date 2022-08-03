@@ -41,7 +41,7 @@ class DataSet:
         self.xticks = None
 
         if data is not None:
-            self.data = np.array(data)
+            self.data = np.asarray(data)
 
             self.N = len(self.data)
             self.idxs = range(self.N)
@@ -52,15 +52,15 @@ class DataSet:
                 self.x_size = 0
 
         if names is not None:
-            self.names = np.array(names)
+            self.names = np.asarray(names)
 
         if time is not None:
-            self.time = np.array(time)
+            self.time = np.asarray(time)
         elif self.x_size:
             self.time = np.arange(self.x_size)
 
         if xticks is not None:
-            self.xticks = np.array(xticks)
+            self.xticks = np.asarray(xticks)
         elif self.time is not None:
             self.xticks = self.set_xticks()
 

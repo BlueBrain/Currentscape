@@ -1,6 +1,48 @@
 Changelog
 =========
 
+Version 0.0.12
+--------------
+
+Changes
+~~~~~~~
+- Turned some print statements into logging statements
+- Refactored Main Protocol's run function in extract_currs
+- Refactored output writing into a write_output function in extract_currs
+- Turned os.path statements into pathlib.Path statements
+- Refactored extract_currs/features/define_efeatures
+- Turned string formatting into f-strings
+- Refactored the loading of release_params into a function
+- Moved bluepyopt, neuron and scipy dependencies as extras in setup.py
+- Refactored currents.reorder_currents_and_names for better quality code
+- Used np.asarray instead of np.array when  possible
+- Refactored color and pattern mapping into functions
+- Renamed col_idxs into curr_idxs in several function arguments
+
+Added
+~~~~~
+- Unit tests for all currentscape functions that do not use matplotlib
+- Linting checks to the extract_currs module
+- Test for the new write_output function
+- Installation instructions in the README
+
+Removed
+~~~~~~~
+- Unused logging.basicConfig
+- Print statements
+- extract_currs/YeoJohnson.py
+- extract_currs/features/eFELFeatureExtra
+- extract_currs/features/SingletonWeightObjective
+- Non-necessary stuff from extract_currs/features/define_efeatures
+- Score calculations during Main Protocol
+- Non-necessary variables form extract_currs' create_protocols
+- __init__ function in SweepProtocolCustom that was the same as the parent class
+
+Fixed
+~~~~~
+- Tox
+
+
 Version 0.0.11
 --------------
 

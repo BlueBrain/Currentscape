@@ -30,7 +30,8 @@
     "currentscape": {
         "in_label": "inward %",
         "out_label": "outward %",
-        "cmap": "Set1"
+        "cmap": "Set1",
+        "legacy_method": true
     },
     "voltage": {
         "ylim": [

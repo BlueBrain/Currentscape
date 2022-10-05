@@ -56,6 +56,7 @@ def test_get_rows_tot():
         "show": {"all_currents": False, "total_contribution": False},
         "ions": {"reorder": False, "names": None},
         "xaxis": {"xticks": None},
+        "currentscape": {"legacy_method": True},
     }
     ions = IonConcentrations(None, config)
 
@@ -67,19 +68,24 @@ def test_get_rows_tot():
     assert rows == 8
 
     config["pattern"]["use"] = False
+    config["currentscape"]["legacy_method"] = False
+    rows = get_rows_tot(config, ions)
+    assert rows == 8
+
+    config["pattern"]["use"] = False
     config["show"]["all_currents"] = True
     rows = get_rows_tot(config, ions)
-    assert rows == 9
+    assert rows == 10
 
     config["show"]["all_currents"] = False
     config["show"]["total_contribution"] = True
     rows = get_rows_tot(config, ions)
-    assert rows == 9
+    assert rows == 10
 
     config["show"]["total_contribution"] = False
     ions.data = [[1, 2], [3, 4]]
     rows = get_rows_tot(config, ions)
-    assert rows == 8
+    assert rows == 9
 
     config["pattern"]["use"] = True
     config["show"]["all_currents"] = True

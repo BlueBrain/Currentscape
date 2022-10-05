@@ -1,6 +1,19 @@
 Changelog
 =========
 
+Version 0.1.0
+-------------
+
+Changes
+~~~~~~~
+- use fill_between instead of imshow or barplot (more precise, less pixelised and consumes less memory)
+- default extension for figure saving in config is now pdf (in order to not loose details)
+
+Added
+~~~~~
+- new 'legacy_method' entry in config for currents and currentscape to access legacy imshow and barplots
+
+
 Version 0.0.12
 --------------
 

@@ -128,13 +128,16 @@ Here is an example of a config file containing all defaults values :
             "_comment7": "True to plot absolute currents with stackplots, False to plot them with lines",
             "stackplot": false,
             "_comment8": "thickness of black line separating the inward & outward stackplots. in %age of y size of plot.",
-            "black_line_thickness": 2
+            "black_line_thickness": 2,
+            "_comment9": "only used if stackplot is True",
+            "legacy_method": false
         },
         "currentscape": {
             "in_label": "inward %",
             "out_label": "outward %",
-            "_comment1": "if too low, white pixels can appear at the bottom of currentscape plots because of rounding errors.",
-            "y_resolution": 10000
+            "_comment1": "if too low, white pixels can appear at the bottom of currentscape plots because of rounding errors. Only used when use_legacy_method is True.",
+            "y_resolution": 10000,
+            "legacy_method": false
         },
         "ions": {
             "_comment1": "if True, do not take into account ticks and ylim below.",
@@ -208,7 +211,7 @@ Here is an example of a config file containing all defaults values :
             "savefig": false,
             "dir": ".",
             "fname": "test_1",
-            "extension": "png",
+            "extension": "pdf",
             "dpi": 400,
             "transparent": false
         },
@@ -314,10 +317,6 @@ and it will mix colors and patterns so that two successive currents do not have 
 In the "pattern" key of your config, you can increase the 'density' (frequency) or your patterns, the pattern linewidth, color, etc.
 You can also change the patterns or the number of different colors to use with the adequate config.
 
-However, using patterns come with a cost: it takes more computing time (mainly because bar plots are used instead of imshow).
-To decrease computing time, you have two possibilities: decrease the pattern density (default=5), or increase x_chunksize.
-x_chunksize is related to the x resolution, with x_chunksize = 1 being maximum resolution. The default is x_chunksize=50.
-
 You could also want to use pattern if you are using a non-qualitative colormap that do not have a lot of distinguishable colors.
 
 
@@ -325,6 +324,16 @@ You could also want to use pattern if you are using a non-qualitative colormap t
 
 By putting "show":{"all_currents": True} in the config file, two subplots showing all the positive and negative currents are added at the bottom of the figure.
 The currents can be displayed as stackplots by putting "current":{"stackplot": True} in the config, or as lines, by putting "current":{"stackplot": False} in the config. In case they are displayed with lines, while using patterns for the current shares, the lines will be displayed with styles (dashed, dotted, etc.). In such a case, the number of line styles should be equal to the number of patterns (which they are, be default). Keep this in mind when changing either the line styles or the patterns.
+
+
+### Using legacy methods
+
+You can use currentscape legacy methods by setting "currentscape": {"legacy_method": True} in the config.
+If you want to show all currents with a stackplot, you can also use its legacy method by setting "current": {"legacy_method": True} in the config.
+The legacy methods can take longer to compute, take more memory during computation and
+the barplot method (used when patterns are used for currentscape plot, or when stackplot and show all currents are used) has a bad display when the figure is saved in the pdf format.
+
+However, these methods can be useful to display the main features of the plots, without having the details blurred by e.g. low resolution.
 
 
 ### Showing ionic concentrations
@@ -458,6 +467,6 @@ Ionic concentrations can be extracted by using the same method as the currents e
 
 ### Known caveats
 
-Since currentscape can deal with a lot of data, it sometimes crashes with an error message such as `Bus error` or `Killed` when it runs out of memory. You can solve this error by allocating more memory. 
+Since currentscape can deal with a lot of data, it sometimes crashes with an error message such as `Bus error` or `Killed` when it runs out of memory. You can solve this error by allocating more memory. Note that this error is prone to happen more frequently when legacy methods are used.
 
 In bb5, interactive jobs usually have 4G. You can increase them by specifying e.g. `--mem=16G` when asking for a job. If you are asking for a full node, you can also use all of its available memory with `--exclusive --mem=0`.

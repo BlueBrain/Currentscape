@@ -79,12 +79,16 @@ def create_figure(voltage, currs, c, ions):
     row += 1
 
     # PLOT CURRENT SHARES
-    if c["show"]["currentscape"] and use_patterns:
-        currs.plot_shares_with_bars(c, row, rows_tot, cmap)
-        row += 4
-    elif c["show"]["currentscape"]:
+    if (
+        c["show"]["currentscape"]
+        and c["currentscape"]["legacy_method"]
+        and not use_patterns
+    ):
         currs.plot_shares_with_imshow(c, row, rows_tot, cmap)
         row += 3
+    elif c["show"]["currentscape"]:
+        currs.plot_shares(c, row, rows_tot, cmap)
+        row += 4
 
     # PLOT TOTAL OUTWARD CURRENT IN LOG SCALE
     currs.plot_sum(c, row, rows_tot, False)

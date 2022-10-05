@@ -38,7 +38,7 @@ def configure_mpl_rcParams(c):
 def get_rows_tot(c, ions):
     """Return the total number of rows cumulated by all the subplots."""
     rows_tot = 7
-    if c["pattern"]["use"]:
+    if not c["currentscape"]["legacy_method"] or c["pattern"]["use"]:
         rows_tot += 1
     if c["show"]["all_currents"]:
         rows_tot += 2
@@ -148,6 +148,74 @@ def stackplot_with_bars(
 
             if not top_to_bottom:
                 bottom += curr
+
+
+def stackplot_with_fill_between(
+    ax,
+    cnorm,
+    inames,
+    cmap,
+    c,
+    N_curr,
+    mapper=None,
+    top_to_bottom=True,
+):
+    """Plot currentscape using fill_between.
+
+    Args:
+        ax (matplotlib.axes): currentscape axis
+        cnorm (DataSet): object containing data (e.g. currents data and idxs)
+        inames (ndarray of ints): indexes to new name order (new_names = names[inames])
+        cmap (matplotlib.colors.Colormap): colormap
+        c (dict): config
+        N_curr (int): total number of currents
+        mapper (int): number used to mix colors and patterns
+        top_to_bottom (bool): if True, plot from top to bottom. if False, plot from bottom to top
+    """
+    patterns = [x * c["pattern"]["density"] for x in c["pattern"]["patterns"]]
+    n_colors = c["colormap"]["n_colors"]
+    currs = np.abs(cnorm.data)
+
+    imap = np.zeros(N_curr, dtype=int)
+    imap[inames] = np.arange(N_curr)
+
+    if top_to_bottom:
+        # stack from the top to bottom, like in create_cscape_image func.
+        bottom = np.ones(cnorm.x_size)
+    else:
+        bottom = np.zeros(cnorm.x_size)
+    curr_stack = np.copy(bottom)
+
+    for idx, curr in zip(cnorm.idxs, currs):
+        if not np.all(curr == 0):
+            i = imap[idx]
+
+            if c["pattern"]["use"]:
+                color = cmap((mapper * i) % n_colors)
+                hatch = patterns[((mapper * i) // n_colors) % len(patterns)]
+            else:
+                color = select_color(cmap, i, N_curr)
+                hatch = None
+
+            if top_to_bottom:
+                curr_stack = np.copy(bottom)
+                bottom -= curr
+            else:
+                curr_stack += curr
+
+            ax.fill_between(
+                cnorm.time,
+                curr_stack,
+                bottom,
+                color=color,
+                edgecolor=c["pattern"]["color"],
+                lw=0.0,
+                hatch=hatch,
+                zorder=2,
+            )
+
+            if not top_to_bottom:
+                bottom = np.copy(curr_stack)
 
 
 def black_line_log_scale(ax, ylim, xlim, bl_thickness):

@@ -73,6 +73,7 @@ def set_default_config(c):
     # separating the two inward & outward currentscapes / current stackplot.
     # in %age of y size of plot.
     current["black_line_thickness"] = 2
+    current["legacy_method"] = False
     config["current"] = current
 
     currentscape = {}
@@ -82,6 +83,7 @@ def set_default_config(c):
     # if too low, white pixels can appear at the bottom of currentscape plots
     # because of rounding errors.
     currentscape["y_resolution"] = 10000
+    currentscape["legacy_method"] = False
     config["currentscape"] = currentscape
 
     ions = {}
@@ -148,7 +150,7 @@ def set_default_config(c):
     output["savefig"] = False
     output["dir"] = "."
     output["fname"] = "fig"
-    output["extension"] = "png"
+    output["extension"] = "pdf"
     output["dpi"] = 400
     output["transparent"] = False
     config["output"] = output

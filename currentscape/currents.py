@@ -20,6 +20,7 @@ from currentscape.plotting import (
     apply_labels_ticks_and_lims,
     select_color,
     stackplot_with_bars,
+    stackplot_with_fill_between,
     black_line_log_scale,
     get_colors_and_hatches_lists,
     show_xgridlines,
@@ -71,8 +72,8 @@ class CurrentPlottingMixin:
             "current",
         )
 
-    def plot_shares_with_bars(self, c, row, rows_tot, cmap):
-        """Plot current percentages with barplots.
+    def plot_shares(self, c, row, rows_tot, cmap):
+        """Plot current percentages.
 
         Args:
             c (dict): config
@@ -82,7 +83,14 @@ class CurrentPlottingMixin:
         """
         # outward currents
         ax = plt.subplot2grid((rows_tot, 1), (row, 0), rowspan=2)
-        stackplot_with_bars(ax, self.pos_norm, self.idxs, cmap, c, self.N, self.mapper)
+        if c["currentscape"]["legacy_method"]:
+            stackplot_with_bars(
+                ax, self.pos_norm, self.idxs, cmap, c, self.N, self.mapper
+            )
+        else:
+            stackplot_with_fill_between(
+                ax, self.pos_norm, self.idxs, cmap, c, self.N, self.mapper
+            )
 
         # add at black line a the bottom of the plot.
         # cannot use spines because with subplot_adjust(h=0),
@@ -120,7 +128,14 @@ class CurrentPlottingMixin:
 
         # inward currents
         ax = plt.subplot2grid((rows_tot, 1), (row + 2, 0), rowspan=2)
-        stackplot_with_bars(ax, self.neg_norm, self.idxs, cmap, c, self.N, self.mapper)
+        if c["currentscape"]["legacy_method"]:
+            stackplot_with_bars(
+                ax, self.neg_norm, self.idxs, cmap, c, self.N, self.mapper
+            )
+        else:
+            stackplot_with_fill_between(
+                ax, self.neg_norm, self.idxs, cmap, c, self.N, self.mapper
+            )
 
         ylim = [0, 1]
         ax.set_ylim(ylim)
@@ -263,9 +278,14 @@ class CurrentPlottingMixin:
             )
             sel_currs.idxs = sorted_idxs
 
-            stackplot_with_bars(
-                ax, sel_currs, self.idxs, cmap, c, self.N, self.mapper, False
-            )
+            if c["current"]["legacy_method"]:
+                stackplot_with_bars(
+                    ax, sel_currs, self.idxs, cmap, c, self.N, self.mapper, False
+                )
+            else:
+                stackplot_with_fill_between(
+                    ax, sel_currs, self.idxs, cmap, c, self.N, self.mapper, False
+                )
         else:
             self.plot_with_lines(ax, selected_currs, c, cmap)
 
@@ -423,6 +443,7 @@ class Currents(CurrentPlottingMixin, DataSet):
         lw = c["current"]["black_line_thickness"]
         use_pattern = c["pattern"]["use"]
         n_patterns = len(c["pattern"]["patterns"])
+        legacy = c["currentscape"]["legacy_method"]
 
         super(Currents, self).__init__(
             data=data,
@@ -436,7 +457,7 @@ class Currents(CurrentPlottingMixin, DataSet):
             reorder_
         )
 
-        if use_pattern:
+        if not legacy or use_pattern:
             # check this before creating mapper
             # this change should persist even outside the class
             if c["colormap"]["n_colors"] > self.N:

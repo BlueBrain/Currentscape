@@ -47,7 +47,7 @@ def check_chunksize(cs, len_curr):
 
 
 def sum_chunks(x, chunk_size):
-    """Compute the sums of parts of an array.
+    """Compute the sums of parts of an array, then divide values by chunk size.
 
     Taken from https://stackoverflow.com/questions/18582544/sum-parts-of-numpy-array.
     """
@@ -55,7 +55,8 @@ def sum_chunks(x, chunk_size):
 
     rows, cols = x.shape
     x = x.reshape(int(x.size / chunk_size), chunk_size)
-    return x.sum(axis=1).reshape(rows, int(cols / chunk_size))
+    x = x.sum(axis=1).reshape(rows, int(cols / chunk_size))
+    return x / chunk_size
 
 
 def remove_zero_arrays(arr, idx=None):

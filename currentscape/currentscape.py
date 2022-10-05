@@ -83,7 +83,6 @@ def create_figure(voltage, currs, c, ions):
         currs.plot_shares_with_bars(c, row, rows_tot, cmap)
         row += 4
     elif c["show"]["currentscape"]:
-        # mapper = None
         currs.plot_shares_with_imshow(c, row, rows_tot, cmap)
         row += 3
 

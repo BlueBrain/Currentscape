@@ -105,14 +105,12 @@ def stackplot_with_bars(
     chunksize = c["stackplot"]["x_chunksize"]
 
     currs = sum_chunks(np.abs(cnorm.data), chunksize)  # reduce data x resolution
-    currs = currs / chunksize  # get the mean over each chunk
 
     imap = np.zeros(N_curr, dtype=int)
     imap[inames] = np.arange(N_curr)
 
     size = len(currs[0])
     step = float(cnorm.time[-1] - cnorm.time[0]) / size
-
     x = np.arange(cnorm.time[0], cnorm.time[-1], step)
 
     if top_to_bottom:
@@ -126,8 +124,8 @@ def stackplot_with_bars(
             i = imap[idx]
 
             if c["pattern"]["use"]:
-                color = cmap((mapper * i) % n_colors)
-                hatch = patterns[((mapper * i) // n_colors) % len(patterns)]
+                color = cmap(map_colors(i, n_colors, mapper))
+                hatch = patterns[map_patterns(i, n_colors, len(patterns), mapper)]
             else:
                 color = select_color(cmap, i, N_curr)
                 hatch = None

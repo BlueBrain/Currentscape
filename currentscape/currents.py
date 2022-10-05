@@ -59,6 +59,7 @@ class CurrentPlottingMixin:
             lw=c["lw"],
             zorder=2,
         )
+
         apply_labels_ticks_and_lims(
             ax,
             c,

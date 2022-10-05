@@ -66,8 +66,8 @@ def test_sum_chunks():
     arr = np.array([arr1, arr2])
 
     assert np.array_equal(sum_chunks(arr, 1), [[1, 1, 2, 2, 3, 3], [0, 1, 2, 0, 1, 2]])
-    assert np.array_equal(sum_chunks(arr, 2), [[2, 4, 6], [1, 2, 3]])
-    assert np.array_equal(sum_chunks(arr, 3), [[4, 8], [3, 3]])
+    assert np.array_equal(sum_chunks(arr, 2), [[1, 2, 3], [0.5, 1, 1.5]])
+    assert np.array_equal(sum_chunks(arr, 3), [[4 / 3.0, 8 / 3.0], [1, 1]])
 
 
 def test_check_chunksize():

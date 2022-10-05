@@ -41,6 +41,7 @@ Removed
 Fixed
 ~~~~~
 - Tox
+- Barplot shrinking when chunk size has to be resized
 
 
 Version 0.0.11

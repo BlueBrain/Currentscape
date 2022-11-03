@@ -1,6 +1,14 @@
 Changelog
 =========
 
+Version 0.1.1
+-------------
+
+Fixed
+~~~~~
+- Fixed legend for currentscape with no hatches
+
+
 Version 0.1.0
 -------------
 

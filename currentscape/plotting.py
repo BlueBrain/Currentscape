@@ -191,8 +191,8 @@ def stackplot_with_fill_between(
             i = imap[idx]
 
             if c["pattern"]["use"]:
-                color = cmap((mapper * i) % n_colors)
-                hatch = patterns[((mapper * i) // n_colors) % len(patterns)]
+                color = cmap(map_colors(i, n_colors, mapper))
+                hatch = patterns[map_patterns(i, n_colors, len(patterns), mapper)]
             else:
                 color = select_color(cmap, i, N_curr)
                 hatch = None

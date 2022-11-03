@@ -119,7 +119,16 @@ class CurrentPlottingMixin:
         # legend
         # place legend here so that legend top is at the level of share plot top
         if c["show"]["legend"]:
-            if c["show"]["all_currents"] and not c["current"]["stackplot"]:
+            if not c["pattern"]["use"]:
+                set_legend(
+                    ax,
+                    cmap,
+                    c["current"]["names"],
+                    c["legend"]["bgcolor"],
+                    c["legend"]["ypos"],
+                    self.idxs,
+                )
+            elif c["show"]["all_currents"] and not c["current"]["stackplot"]:
                 set_legend_with_hatches_and_linestyles(
                     ax, cmap, self.mapper, c, self.idxs
                 )

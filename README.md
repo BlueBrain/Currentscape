@@ -6,14 +6,11 @@ The code in this package is able to reproduce the currentscape figure in the sus
 
 Currentscape can be pip installed with all its dependencies with the following line:
 
-    pip install -i https://bbpteam.epfl.ch/repository/devpi/simple/ currentscape[all]
+    pip install -i https://bbpteam.epfl.ch/repository/devpi/simple/ currentscape[example]
 
-This install the currentscape module and its dependencies, as well as the dependencies needed for the current extraction, and for the example reproducing the currentscape plot from the original paper. You can also select the dependencies you want by putting them into the brackets instead of 'all' (If you want multiple dependencies, you have to separate them by commas). The available dependencies are:
+This install the currentscape module and its dependencies, as well as the dependencies needed for the example reproducing the currentscape plot from the original paper.
 
-- extract_currs
-- example
-
-Do not put any brackets if you just want to plot currentscapes, and are not interested in current extraction, or the original example.
+Do not put any brackets if you just want to plot currentscapes, and are not interested in the original example.
 
 Note that you also have the possibility of using [BluePyEModel](https://bbpgitlab.epfl.ch/cells/bluepyemodel) (which can call currentscape) to extract the currents and plot currentscapes.
 
@@ -275,7 +272,7 @@ Also, be careful not to use any colormap that uses white, since white is the def
 It would be then hard to know if there is a "white" current, or no current at all.
 Using a colormap that uses black is also not advised, since the plots on top and bottom of currentscapes, 
 as well as the line separating the inward and outward currentscapes, are black. 
-If a black current end up near the top or bottom of the plot, it would decrease readability.
+If a black current ends up near the top or bottom of the plot, it would decrease readability.
 
 You can set your colormap using "colormap":{"name": "the_name_of_the_colormap"} in the config file.
 The name of the colormap can be one of the matplotlib colormaps (https://matplotlib.org/3.1.0/tutorials/colors/colormaps.html), 
@@ -346,124 +343,10 @@ You can plot the ionic concentrations in a subplot at the bottom of the figure b
 By setting "show":{"total_contribution": True} in the configuration, two pie charts are added at the bottom of the figure, each showing the overall contribution of each current over the whole simulation, one for the outward currents, and the other one for the inward currents.
 
 
-### Extracting currents
+### Extracting currents and ionic concentrations
 
-You can now use the currentscape module to easily extract currents at different locations with custom protocols.
-This should be as simple as:
+You can see an example of how to extract currents and ionic concentractions with bluepyopt in the example folder (TODO)
 
-    from extract_currs.main_func import extract
-    extract("extraction_config_filename")
-
-Where you have a config file (not the same as for the ploting module) in a json format. The config file can also be passed as a dictionary.
-The segment area from neuron is used in the module to output the currents (and not the current densities).
-
-#### The config file for extractng currents
-
-Below is an example of a config file used to extract currents.
-
-    {
-        "emodel": "bNAC_L23SBC",
-        "output_dir": "output",
-        "join_emodel_to_output_dir_name": true,
-        "use_recipes": false,
-        "recipe_path": "/gpfs/bbp.cscs.ch/home/ajaquier/Eve-Marder-style-module/output/config/recipes/recipes.json",
-        "morph_name": "_",
-        "morph_dir": "/gpfs/bbp.cscs.ch/home/ajaquier/Eve-Marder-style-module/output/memodel_dirs/L23_BP/bNAC/L23_BP_bNAC_150/morphology",
-        "morph_filename": "C230998A-I3_-_Scale_x1.000_y0.975_z1.000_-_Clone_2.asc",
-        "apical_point_isec": null,
-        "params_path": "/gpfs/bbp.cscs.ch/home/ajaquier/Eve-Marder-style-module/output/config/params/int.json",
-        "final_params_path": "/gpfs/bbp.cscs.ch/home/ajaquier/Eve-Marder-style-module/output/config/params/final.json",
-        "var_list": [
-            "v",
-            "ihcn_Ih",
-            "ica_Ca_HVA",
-            "ica_Ca_HVA2",
-            "ica_Ca_LVAst",
-            "ik_K_Pst",
-            "ik_K_Tst",
-            "ik_KdShu2007",
-            "ina_Nap_Et2",
-            "ina_NaTg",
-            "ina_NaTg2",
-            "ik_SK_E2",
-            "ik_SKv3_1",
-            "ik_StochKv2",
-            "ik_StochKv3",
-            "i_pas"
-        ],
-        "apical_point_from_recipe": false,
-        "protocols_path": "./protocol_test.json",
-        "features_path": "/gpfs/bbp.cscs.ch/home/ajaquier/Eve-Marder-style-module/output/config/features/bNAC.json"
-    }
-
-The following keys are mandatory: emodel, output_dir, var_list, use_recipes.
-Protocols can now record in multiple places in the neuron, the available variables on those places can differ. So now, if a current that is in the var_list is not present in the recording location, the script does not crash, and the variable is simply ignored for this location.
-
-The extract currents module has two main modes: using recipes, or using custom protocols and parameters.
-
-###### recipe mode
-
-When you set use_recipes to true, the script will retrieve the default protocols, features and parameters in the recipes file.
-When use_recipes is set to true, recipe_path and apical_point_filepath_from_recipe should also be present in the config file. 
-If apical_point_from_recipe is true, the script will retrieve the apical point section index from recipes. 
-Depending on the emodel, you might have an error if you set use_recipes to true, but leave apical_point_from_recipe to false.
-When use_recipes, the recipe file expects that you have the following folder structure in the directory you launched the script from:
-
-./
-    config/
-        features/
-        params/
-        protocols/
-
-with a config folder filled as in /gpfs/bbp.cscs.ch/project/proj38/singlecell/optimization/config/ . You can also find there the recipes file.
-
-###### custom mode
-
-When use_recipes is set to false, the following keys should be filled in the config:
-
-morph_name, morph_dir, morph_filename, apical_point_isec, params_path, final_params_path (usually points to a final.json), protocols_path, features_path
-
-with protocols_path pointing to your cutomized protocols file. If there is no "Main" key in your protocols file, features are not used and features_path can be set to an empty string (""). morph_name is used solely for the naming of the output files.
-
-Your protocols file should follow the same structure as in /gpfs/bbp.cscs.ch/project/proj38/singlecell/optimization/config/protocols/ .
-Note that all protocols are recorded in the soma by default, but you can add recording locations using the extra_recordings key.
-
-Below is an example of a simple custom protocol, recording a step protocol in the soma and in the ais.
-
-    {
-        "test": {
-            "type": "StepProtocol",
-            "stimuli": {
-                "step": {
-                    "delay": 700.0,
-                    "amp": 0.063014185402,
-                    "duration": 2000.0,
-                    "totduration": 3000.0
-                },
-                "holding": {
-                    "delay": 0.0,
-                    "amp": -0.0144071499339,
-                    "duration": 3000.0,
-                    "totduration": 3000.0
-                }
-            },
-            "extra_recordings": [
-                {
-                    "comp_x": 0.5,
-                    "type": "nrnseclistcomp",
-                    "name": "ais",
-                    "seclist_name": "axon",
-                    "sec_index": 0
-                }
-            ]
-        }
-    }
-
-Note that if you want to use a "StepThresholdProtocol", you should follow the same procedure as in a protocol from /gpfs/bbp.cscs.ch/project/proj38/singlecell/optimization/config/protocols/ with a "Main" protocol calling the others, in order to collect threshold data needed for the Step Threshold Protocol.
-
-### Extracting ionic concentrations
-
-Ionic concentrations can be extracted by using the same method as the currents extraction. The ionic concentration variables simply have to be added to the "var_list" in the config file. The ionic concentration variables should end with an 'i', e.g. cai, nai, ki, etc.
 
 ### Known caveats
 

@@ -14,8 +14,6 @@ with open("README.md", encoding="utf-8") as f:
 
 VERSION = imp.load_source("", "currentscape/version.py").__version__
 
-EXTRA_EXTRACT_CURRS = ["bluepyopt", "neuron"]
-
 EXTRA_EXAMPLE = ["scipy"]
 
 setup(
@@ -41,9 +39,7 @@ setup(
     python_requires=">=3.6",
     extras_require={
         "docs": ["sphinx", "sphinx-bluebrain-theme"],
-        "extract_currs": EXTRA_EXTRACT_CURRS,
         "example": EXTRA_EXAMPLE,
-        "all": EXTRA_EXTRACT_CURRS + EXTRA_EXAMPLE,
     },
     classifiers=[
         "Development Status :: 2 - Pre-Alpha",

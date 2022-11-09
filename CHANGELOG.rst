@@ -8,6 +8,10 @@ Fixed
 ~~~~~
 - Fixed legend for currentscape with no hatches
 
+Removed
+~~~~~~~
+- extract_currs module
+
 
 Version 0.1.0
 -------------

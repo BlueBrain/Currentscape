@@ -11,6 +11,7 @@ Fixed
 Removed
 ~~~~~~~
 - extract_currs module
+- unused .gitreview file
 
 
 Version 0.1.0

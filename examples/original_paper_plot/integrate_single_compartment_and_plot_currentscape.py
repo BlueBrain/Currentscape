@@ -4,8 +4,8 @@
 # Preliminaries and Modules
 import numpy as np
 from scipy.integrate import odeint
-from examples.single_compartment import single_compartment
-from examples.get_currents import model
+from examples.original_paper_plot.single_compartment import single_compartment
+from examples.original_paper_plot.get_currents import model
 from currentscape.currentscape import plot_currentscape
 
 
@@ -18,17 +18,14 @@ def plot_from_original_paper(t0=0.0, tf=10000.0, dt=0.1):
         dt (float): time step (in ms)
     """
     # specify the path to initial conditions and paramters files
-    config = "examples/config.json"
+    config = "examples/original_paper_plot/config.json"
 
-    pathtocis = "examples/parameters-and-initial-conditions/initial-conditions.txt"
-    pathtoparameters = (
-        "examples/parameters-and-initial-conditions/model-A-name-HZFTSB.txt"
+    pathtocis = (
+        "examples/original_paper_plot/parameters-and-initial-conditions/initial-conditions.txt"
     )
-    # pathtoparameters ='./parameters-and-initial-conditions/model-B-name-8XCUQE.txt'
-    # pathtoparameters ='./parameters-and-initial-conditions/model-D-name-KI47XV.txt'
-    # pathtoparameters ='./parameters-and-initial-conditions/model-D-name-KI47XV.txt'
-    # pathtoparameters ='./parameters-and-initial-conditions/model-E-name-OG1RE2.txt'
-    # pathtoparameters ='./parameters-and-initial-conditions/model-F-name-B7S21N.txt'
+    pathtoparameters = (
+        "examples/original_paper_plot/parameters-and-initial-conditions/model-A-name-HZFTSB.txt"
+    )
 
     # load initialconditions and parameters
 

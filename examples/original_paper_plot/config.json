@@ -43,7 +43,7 @@
     },
     "output": {
         "savefig": true,
-        "dir": "examples/output",
+        "dir": "examples/original_paper_plot/output",
         "fname": "example",
         "extension": "png",
         "dpi": 400,

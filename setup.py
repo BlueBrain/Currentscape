@@ -14,7 +14,7 @@ with open("README.md", encoding="utf-8") as f:
 
 VERSION = imp.load_source("", "currentscape/version.py").__version__
 
-EXTRA_EXAMPLE = ["scipy"]
+EXTRA_EXAMPLE = ["scipy", "bluepyopt", "emodelrunner"]
 
 setup(
     name="currentscape",

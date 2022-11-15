@@ -345,7 +345,22 @@ By setting "show":{"total_contribution": True} in the configuration, two pie cha
 
 ### Extracting currents and ionic concentrations
 
-You can see an example of how to extract currents and ionic concentractions with bluepyopt in the example folder (TODO)
+You can see an example of how to extract currents and ionic concentractions with bluepyopt and emodelrunner in the example folder: `examples/use_case`.
+Please note that you should have bluepyopt, emodelrunner and NEURON installed in order to run the example.
+The example folder contains
+a cell,
+a script to run the cell by applying to it a step stimulus and record its current and ionic concentration traces,
+and another script to plot its currentscape.
+
+To run the cell, go to `examples/use_case` and do
+
+    sh run_py.sh
+
+Once this is done, you can plot the curretnscape by doing:
+
+    python plot.py
+
+You can adjust the currentscape plot by modifying the configuration that is hard-coded in `plot.py`.
 
 
 ### Known caveats

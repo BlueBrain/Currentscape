@@ -14,7 +14,7 @@ with open("README.md", encoding="utf-8") as f:
 
 VERSION = imp.load_source("", "currentscape/version.py").__version__
 
-EXTRA_EXAMPLE = ["scipy", "bluepyopt", "emodelrunner"]
+EXTRA_EXAMPLE = ["scipy", "bluepyopt", "emodelrunner>=1.1.5"]
 
 setup(
     name="currentscape",
@@ -35,7 +35,7 @@ setup(
         "matplotlib",
         "palettable",
     ],
-    packages=find_packages(),
+    packages=find_packages(exclude=["tests"]),
     python_requires=">=3.6",
     extras_require={
         "docs": ["sphinx", "sphinx-bluebrain-theme"],

@@ -4,6 +4,15 @@ Changelog
 Version 0.1.1
 -------------
 
+Changes
+~~~~~~~
+- examples is not be treated as a module anymore (as it should). To use the examples, one should go to the example folder to run the scripts.
+
+Added
+~~~~~
+- Example with a cell, script to record currents/ionic concentrations from it, and script to plot its currentscape.
+- Test to run the new example, running the cell and plotting its currentscape.
+
 Fixed
 ~~~~~
 - Fixed legend for currentscape with no hatches
@@ -12,6 +21,7 @@ Removed
 ~~~~~~~
 - extract_currs module
 - unused .gitreview file
+- __init__.py file in examples. examples folder should not be treated as a module.
 
 
 Version 0.1.0

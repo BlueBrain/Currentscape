@@ -1,11 +1,11 @@
 """Script based from https://datadryad.org/stash/dataset/doi:10.5061/dryad.d0779mb
     under the CC0 1.0 Universal (CC0 1.0) Public Domain Dedication license.
-    Please, run this script from base directory."""
+"""
 # Preliminaries and Modules
 import numpy as np
 from scipy.integrate import odeint
-from examples.original_paper_plot.single_compartment import single_compartment
-from examples.original_paper_plot.get_currents import model
+from single_compartment import single_compartment
+from get_currents import model
 from currentscape.currentscape import plot_currentscape
 
 
@@ -18,13 +18,13 @@ def plot_from_original_paper(t0=0.0, tf=10000.0, dt=0.1):
         dt (float): time step (in ms)
     """
     # specify the path to initial conditions and paramters files
-    config = "examples/original_paper_plot/config.json"
+    config = "config.json"
 
     pathtocis = (
-        "examples/original_paper_plot/parameters-and-initial-conditions/initial-conditions.txt"
+        "parameters-and-initial-conditions/initial-conditions.txt"
     )
     pathtoparameters = (
-        "examples/original_paper_plot/parameters-and-initial-conditions/model-A-name-HZFTSB.txt"
+        "parameters-and-initial-conditions/model-A-name-HZFTSB.txt"
     )
 
     # load initialconditions and parameters

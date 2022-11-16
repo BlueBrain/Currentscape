@@ -8,3 +8,6 @@ doc/build
 build
 dist
 .eggs
+examples/use_case/python_recordings/*.dat
+examples/use_case/x86_64/
+examples/original_paper_plot/output/*.png

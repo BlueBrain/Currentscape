@@ -58,5 +58,5 @@ def plot():
     return fig
 
 if __name__ == "__main__":
-    fig = main()
+    fig = plot()
     fig.show()

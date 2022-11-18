@@ -12,8 +12,6 @@ This install the currentscape module and its dependencies, as well as the depend
 
 Do not put any brackets if you just want to plot currentscapes, and are not interested in the original example.
 
-Note that you also have the possibility of using [BluePyEModel](https://bbpgitlab.epfl.ch/cells/bluepyemodel) (which can call currentscape) to extract the currents and plot currentscapes.
-
 ### Loading currentscape in Python
 
 After installing currentscape, your PYTHONPATH environment variable should normally
@@ -30,7 +28,7 @@ Given voltage and current data (see 'Extracting currents' section below for how 
     import numpy as np
     from currentscape.currentscape import plot_currentscape
 
-    data_dir = "/gpfs/bbp.cscs.ch/home/ajaquier/Eve-Marder-style-module/output/memodel_dirs/L23_BP/bNAC/L23_BP_bNAC_150/python_recordings"
+    data_dir = "path/to/current/recording/files"
     currs = [
         "ihcn_Ih",
         "ica_Ca_HVA2",
@@ -132,7 +130,7 @@ Here is an example of a config file containing all defaults values :
         "currentscape": {
             "in_label": "inward %",
             "out_label": "outward %",
-            "_comment1": "if too low, white pixels can appear at the bottom of currentscape plots because of rounding errors. Only used when use_legacy_method is True.",
+            "_comment1": "only used when legacy_method is true. if too low, white pixels can appear at the bottom of currentscape plots because of rounding errors. Only used when use_legacy_method is True.",
             "y_resolution": 10000,
             "legacy_method": false
         },
@@ -166,7 +164,7 @@ Here is an example of a config file containing all defaults values :
             "n_colors": 8
         },
         "stackplot": {
-            "_comment3": "data along x axis are summed up into chunks when pattern use is True. Put to 1 to disable.",
+            "_comment1": "only used when ['currentscape']['legacy_method'] is true. data along x axis are summed up into chunks when pattern use is True. Put to 1 to disable.",
             "x_chunksize": 50
         },
         "pattern": {
@@ -366,5 +364,3 @@ You can adjust the currentscape plot by modifying the configuration that is hard
 ### Known caveats
 
 Since currentscape can deal with a lot of data, it sometimes crashes with an error message such as `Bus error` or `Killed` when it runs out of memory. You can solve this error by allocating more memory. Note that this error is prone to happen more frequently when legacy methods are used.
-
-In bb5, interactive jobs usually have 4G. You can increase them by specifying e.g. `--mem=16G` when asking for a job. If you are asking for a full node, you can also use all of its available memory with `--exclusive --mem=0`.

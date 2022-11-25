@@ -3,29 +3,20 @@ Installation
 
 This installation guide will explain on how to install currentscape.
 
-Installing currentscape as a BBP module
----------------------------------------
-
-If you are on gpfs, getting currentscape should be as easy as::
-
-    module load unstable
-    module load py-currentscape
-
 
 Installing currentscape
 -----------------------
 
-You can also install currentscape using pip.
-
-In that case, you probably want to use a python 
+To install currentscape, you probably want to use a python 
 `virtual environment <https://bbpteam.epfl.ch/project/spaces/display/BBPWFA/virtualenv>`_.
 
-Pip install currentscape from the BBP Devpi server::
+Currentscape can be pip installed with all its dependencies with the following line:
 
-    pip install -i 'https://bbpteam.epfl.ch/repository/devpi/bbprelman/dev/+simple/' currentscape[bbp]
+    pip install -i https://bbpteam.epfl.ch/repository/devpi/simple/ currentscape[example]
 
-Hopefully this installation went smoothly. If it didn't, please create a Jira 
-ticket, assign it to Aurelien Jaquier, and explain as detailed as possible the problems you encountered.
+This install the currentscape module and its dependencies, as well as the dependencies needed for the example reproducing the currentscape plot from the original paper.
+
+Do not put any brackets if you just want to plot currentscapes, and are not interested in the original example.
 
 
 Installing from source 
@@ -40,7 +31,7 @@ the only difference is that you clone the git repo::
 and run pip from inside the newly created currentscape subdirectory 
 (don't forget the dot at the end of the command)::
 
-    pip install -i https://bbpteam.epfl.ch/repository/devpi/bbprelman/dev/+simple --upgrade .[bbp]
+    pip install -i https://bbpteam.epfl.ch/repository/devpi/bbprelman/dev/+simple --upgrade .[example]
 
 Supported systems
 -----------------

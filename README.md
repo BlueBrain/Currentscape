@@ -1,5 +1,13 @@
-This package contains code based on [Leandro M. Alonso and Eve Marder, ”Visualization of the relative contributions of conductances in neuronal models with similar behavior and different conductance densities” (2018)](https://datadryad.org/stash/dataset/doi:10.5061/dryad.d0779mb).
-The code in this package is able to reproduce the currentscape figure in the susmentioned article, including the labels, ticks and legend.
+Currentscape is a Pythonic API enabling scientists to easily plot 
+currentscapes figures in the style of
+[Leandro M. Alonso and Eve Marder, ”Visualization of the relative contributions of conductances in neuronal models with similar behavior and different conductance densities” (2018)](https://datadryad.org/stash/dataset/doi:10.5061/dryad.d0779mb)
+, given the currents and voltage traces of an in-silico neuron cell.
+Currentscape figures plot the percentage of each inward and outward ionic current,
+the total inward and outward currents, as well as the voltage in function of time.
+This API is useful to see what current plays a major (or a minor) role at a given time,
+and see in depth the currents dynamics.
+
+This API is based on the code provided by the susmentioned paper.
 
 
 ### Installing currentscape
@@ -22,7 +30,7 @@ in Python becomes then as easy as:
 
 ### Plotting your first currentscape
 
-Given voltage and current data (see 'Extracting currents' section below for how to get voltage and currents from a cell), as well as an adequate config json file, producing a currenscape figure should be as simple as
+Given voltage and current data (see 'Extracting currents and ionic concentrations' section below for how to get voltage and currents from a cell), as well as an adequate config json file, producing a currenscape figure should be as simple as
 
     import os
     import numpy as np
@@ -30,6 +38,7 @@ Given voltage and current data (see 'Extracting currents' section below for how 
 
     data_dir = "path/to/current/recording/files"
     currs = [
+        "i_pas",
         "ihcn_Ih",
         "ica_Ca_HVA2",
         "ica_Ca_LVAst",
@@ -41,20 +50,20 @@ Given voltage and current data (see 'Extracting currents' section below for how 
     ]
 
     # load voltage data
-    v_path = os.path.join(data_dir, "_".join(("soma_step1", "v")) + ".dat")
-    voltage = np.loadtxt(v_path)[:, 1] # load 2nd column. 1st column is time.
+    v_path = os.path.join(data_dir, "v.dat")
+    voltage = np.loadtxt(v_path)[:, 1]
 
     # load currents from files
     currents = []
     for curr in currs:
-        file_path = os.path.join(data_dir, "_".join(("soma_step1", curr)) + ".dat")
-        currents.append(np.loadtxt(file_path)[:, 1]) # load 2nd column. 1st column is time.
+        file_path = os.path.join(data_dir, f"{curr}.dat")
+        currents.append(np.loadtxt(file_path)[:, 1])
     currents = np.array(currents)
 
     # define config
-    config = "path/to/config"
+    config = "path/to/config.json"
     # can also pass config as a dictionnary, as commented below
-    # curr_names = ["Ih", "Ca_HVA2", "Ca_LVAst", "SK_E2", "SKv3_1", "K_Pst", "K_Tst", "NaTg"]
+    # curr_names = ["pas", "Ih", "Ca_HVA2", "Ca_LVAst", "SK_E2", "SKv3_1", "K_Pst", "K_Tst", "NaTg"]
     # config = {
     #     "current": {"names": curr_names},
     #     "legendtextsize": 5,
@@ -91,7 +100,7 @@ Here is an example of a config file containing all defaults values :
             "total_contribution": false
         },
         "current": {
-            "_comment1": "is not set by default.  The current names should appear in the same order as in the currents argument. is mandatory if ['show']['legend'] is true",
+            "_comment1": "is not set by default.  The current names should appear in the same order as in the currents argument. Is mandatory if ['show']['legend'] is true",
             "names": [
                 "Na",
                 "CaT",
@@ -151,7 +160,7 @@ Here is an example of a config file containing all defaults values :
             "units": "[mM]",
             "_comment4": "if True, reorder currents with decreasing order",
             "reorder": true,
-            "_comment5": "is not set by default.  The ions concentration names should appear in the same order as in the ions argument. is mandatory if ['show']['legend'] is true",
+            "_comment5": "is not set by default.  The ions concentration names should appear in the same order as in the ions argument. Is mandatory if ['show']['legend'] is true",
             "names": [
                 "cai",
                 "ki",
@@ -176,7 +185,7 @@ Here is an example of a config file containing all defaults values :
             "color": "black"
         },
         "line": {
-            "_comment1": "Is used when pattern:use and show:all_currents are True and current:stackplot is False. Should have the same length as pattern:patterns",
+            "_comment1": "Is used when ['pattern']['use'] and ['show']['all_currents'] are True and ['current']['stackplot'] is False. Should have the same length as ['pattern']['patterns']",
             "styles": [
                 "solid",
                 [0, [1, 1]],
@@ -215,7 +224,7 @@ Here is an example of a config file containing all defaults values :
             "bgcolor": "lightgrey",
             "_comment1": "1. : top of legend is at the same level as top of currentscape plot. higher value put legend higher in figure.",
             "ypos": 1.0,
-            "_comment2": "forced to 0 if pattern:use is False and current:stackplot is False",
+            "_comment2": "forced to 0 if ['pattern']['use'] is False and ['current']['stackplot'] is False",
             "handlelength": 1.4
         },
         "figsize": [
@@ -253,11 +262,8 @@ Your configuration file could be as small as:
     }
 
 The config argument can be passed as a dictionnary, or as a path to a json file.
-
 As data can vary greatly, it is recommended to adapt the config file consequently.
-
 One may want to change the y axis limits, or the ticks, for example.
-
 If the legend is cut, one may decrease the legendsize, the adjust right parameter or increase the figsize.
 
 
@@ -267,7 +273,7 @@ Since each color of the colormap applies to one category (one current), using ca
 These colormaps have colors chosen to easily distinguish each category.
 
 Also, be careful not to use any colormap that uses white, since white is the default color when there is no data (no inward or outward currents).
-It would be then hard to know if there is a "white" current, or no current at all.
+It would be then hard to know if there is a 'white' current, or no current at all.
 Using a colormap that uses black is also not advised, since the plots on top and bottom of currentscapes, 
 as well as the line separating the inward and outward currentscapes, are black. 
 If a black current ends up near the top or bottom of the plot, it would decrease readability.
@@ -283,17 +289,17 @@ Example:
 ### Showing x axis label, ticklabel, gridlines
 
 You can use the configuration to show x axis label, ticklabels and vertical gridlines. 
-The label and ticklabels are only shown on the bottom plot, and the vertical gridlines are shown on all plots, and correspond to the x ticks (generated automatically, if not set in the config). 
+If you choose to display them, the label and ticklabels will only show on the bottom plot, and the vertical gridlines will show on all plots, and correspond to the x ticks (generated automatically, if not set in the config). 
 However, to show ticklabels and gridlines, you have to also input time as an argument to the plot_currentscape function. Here is an example:
 
     # load voltage data
-    data_dir = path/to/data/dir
-    v_path = os.path.join(data_dir, "_".join(("soma_step1", "v")) + ".dat")
+    data_dir = "path/to/data/dir"
+    v_path = os.path.join(data_dir, "v.dat")
     time = np.loadtxt(v_path)[:, 0]
     voltage = np.loadtxt(v_path)[:, 1]
 
     currents = load_current_fct(data_dir)
-    config = path/to/config
+    config = "path/to/config.json"
 
     # produce currentscape figure
     fig = plot_currentscape(voltage, currents, config, time=time)
@@ -309,7 +315,7 @@ Note: if you are using a lot of currents, you may want to increase the "legend":
 
 By putting "pattern": {"use": True} in your config, currentscape will put patterns like stripes or dots on top of your currents, 
 and it will mix colors and patterns so that two successive currents do not have the same pattern or color.
-In the "pattern" key of your config, you can increase the 'density' (frequency) or your patterns, the pattern linewidth, color, etc.
+In the "pattern" key of your config, you can increase the 'density' (frequency) or your patterns, change the pattern linewidth, color, etc.
 You can also change the patterns or the number of different colors to use with the adequate config.
 
 You could also want to use pattern if you are using a non-qualitative colormap that do not have a lot of distinguishable colors.
@@ -318,7 +324,7 @@ You could also want to use pattern if you are using a non-qualitative colormap t
 ### Showing all absolute currents
 
 By putting "show":{"all_currents": True} in the config file, two subplots showing all the positive and negative currents are added at the bottom of the figure.
-The currents can be displayed as stackplots by putting "current":{"stackplot": True} in the config, or as lines, by putting "current":{"stackplot": False} in the config. In case they are displayed with lines, while using patterns for the current shares, the lines will be displayed with styles (dashed, dotted, etc.). In such a case, the number of line styles should be equal to the number of patterns (which they are, be default). Keep this in mind when changing either the line styles or the patterns.
+The currents can be displayed as stackplots by putting "current":{"stackplot": True} in the config, or as lines, by putting "current":{"stackplot": False} in the config. In case they are displayed with lines, while using patterns for the current shares, the lines will be displayed with styles (dashed, dotted, etc.). In such a case, the number of line styles should be equal to the number of patterns (which they are, by default). Keep this in mind when changing either the line styles or the patterns.
 
 
 ### Using legacy methods
@@ -326,7 +332,7 @@ The currents can be displayed as stackplots by putting "current":{"stackplot": T
 You can use currentscape legacy methods by setting "currentscape": {"legacy_method": True} in the config.
 If you want to show all currents with a stackplot, you can also use its legacy method by setting "current": {"legacy_method": True} in the config.
 The legacy methods can take longer to compute, take more memory during computation and
-the barplot method (used when patterns are used for currentscape plot, or when stackplot and show all currents are used) has a bad display when the figure is saved in the pdf format.
+the legacy barplot method (used when "pattern": {"use": True}, or when both "current": {"stackplot": True} and "show": {"all_currents": True}) has a bad display when the figure is saved in the pdf format.
 
 However, these methods can be useful to display the main features of the plots, without having the details blurred by e.g. low resolution.
 

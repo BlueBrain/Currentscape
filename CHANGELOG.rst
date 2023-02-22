@@ -16,6 +16,7 @@ Added
 Fixed
 ~~~~~
 - Fixed legend for currentscape with no hatches
+- Removed minor yticks. They were popping out when not using autoscale for ylim and ticks with log scale
 
 Removed
 ~~~~~~~

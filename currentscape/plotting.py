@@ -361,6 +361,7 @@ def apply_labels_ticks_and_lims(
     if c["show"]["yticklabels"]:
         ax.set_yticks(c[config_key]["ticks"])
         ax.get_yaxis().set_major_formatter(matplotlib.ticker.FormatStrFormatter("%g"))
+        ax.get_yaxis().set_minor_formatter(matplotlib.ticker.NullFormatter())
     remove_ticks_and_frame(ax)
 
     # show x axis gridline

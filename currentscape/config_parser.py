@@ -88,8 +88,8 @@ def set_default_config(c):
 
     ions = {}
     ions["autoscale_ticks_and_ylim"] = True
-    ions["ticks"] = [5, 50, 500]
-    ions["ylim"] = (0.01, 1500)
+    ions["ticks"] = [0.0005, 0.05, 5]
+    ions["ylim"] = (0.00001, 100)
     ions["units"] = "[mM]"
     ions["reorder"] = True
     ions["names"] = None

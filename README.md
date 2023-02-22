@@ -148,14 +148,14 @@ Here is an example of a config file containing all defaults values :
             "autoscale_ticks_and_ylim": true,
             "_comment2": "only taken into account if autoscale_ticks_and_ylim is False",
             "ticks": [
-                5,
-                50,
-                500
+                0.0005,
+                0.05,
+                5
             ],
             "_comment3": "only taken into account if autoscale_ticks_and_ylim is False",
             "ylim": [
-                0.01,
-                1500
+                0.00001,
+                100
             ],
             "units": "[mM]",
             "_comment4": "if True, reorder currents with decreasing order",

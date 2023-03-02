@@ -330,7 +330,7 @@ def show_xgridlines(ax, c, xticks, ylim=None):
 
 
 def apply_labels_ticks_and_lims(
-    ax, c, xticks, xlim, ylim, xsize, positive=True, config_key="current"
+    ax, c, xticks, xlim, ylim, positive=True, config_key="current"
 ):
     """Apply labels, ticks, xlim and ylim to current / ion concentration plots.
 
@@ -340,13 +340,12 @@ def apply_labels_ticks_and_lims(
         xticks (list): tick positions on the x axis
         xlim (list of 2 floats): limits of x axis
         ylim (list of 2 floats): limits of y axis (can be different from ylim from config)
-        xsize (int): size of the x axis
         positive (bool): True for positive data, False for negative data
         config_key (str): key for getting data from config. Should be 'current' or 'ions'
     """
     # plot the horizontal dotted lines
     for tick in c[config_key]["ticks"]:
-        ax.plot(tick * np.ones(xsize), color="black", ls=":", lw=1, zorder=1)
+        ax.axhline(tick, color="black", ls=":", lw=1, zorder=1)
 
     ax.set_yscale("log")
 

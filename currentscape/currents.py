@@ -67,7 +67,6 @@ class CurrentPlottingMixin:
             self.xticks,
             [self.time[0], self.time[-1]],
             list(c["current"]["ylim"]),
-            self.x_size,
             positive,
             "current",
         )
@@ -345,7 +344,6 @@ class CurrentPlottingMixin:
             self.xticks,
             [self.time[0], self.time[-1]],
             ylim,
-            self.x_size,
             positive,
             "current",
         )

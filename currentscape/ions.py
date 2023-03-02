@@ -100,7 +100,6 @@ class IonConcentrations(DataSet):
             self.xticks,
             [self.time[0], self.time[-1]],
             ylim,
-            self.x_size,
             True,
             "ions",
         )
@@ -148,7 +147,6 @@ class IonConcentrations(DataSet):
             self.xticks,
             [self.time[0], self.time[-1]],
             list(c["ions"]["ylim"]),
-            self.x_size,
             True,
             "ions",
         )

@@ -10,7 +10,13 @@ logger = logging.getLogger(__name__)
 
 
 def chunksize_warning(cs, len_curr, new_cs):
-    """Warns that chunksize has been re-set."""
+    """Warns that chunksize has been re-set.
+
+    Args:
+        cs (int): chunksize of data
+        len_curr (int): data size (length of one current list)
+        new_cs (int): new chunksize to be used
+    """
     logger.warning(
         "x-chunksize (%d) should be a divisor of data size (%d)."
         " x-chunksize has been reset to %d.",
@@ -50,6 +56,10 @@ def sum_chunks(x, chunk_size):
     """Compute the sums of parts of an array, then divide values by chunk size.
 
     Taken from https://stackoverflow.com/questions/18582544/sum-parts-of-numpy-array.
+
+    Args:
+        x (ndarray): data to sum into chunks
+        chunk_size (int): chunk size of the data to be output
     """
     chunk_size = check_chunksize(int(chunk_size), len(x[0]))
 
@@ -63,6 +73,10 @@ def remove_zero_arrays(arr, idx=None):
     """Removes all arrays made only of zeros.
 
     Returns new array and indexes to previous array indexes.
+
+    Args:
+        arr (ndarray of ndarrays): array
+        idx (ndarray): indices of the array
     """
     if idx is None:
         idx = np.arange(len(arr))
@@ -75,14 +89,22 @@ def remove_zero_arrays(arr, idx=None):
 
 
 def reordered_idx(arr):
-    """Returns indexes of sorted currents %age from smaller to larger absolute summed values."""
+    """Returns indexes of sorted currents %age from smaller to larger absolute summed values.
+
+    Args:
+        arr (ndarray of ndarrays): array
+    """
     # do not take nan values into account
     arr = arr[:, ~np.isnan(arr).any(axis=0)]
     return np.argsort(np.sum(np.abs(arr), axis=1))
 
 
 def reorder(arr):
-    """Remove zeros, reorder data and also return data's original indexes."""
+    """Remove zeros, reorder data and also return data's original indexes.
+
+    Args:
+        arr (ndarray of ndarrays): array
+    """
     arr, idx = remove_zero_arrays(arr)
     new_i = reordered_idx(arr)[::-1]  # reorder from larger to smaller
     arr = arr[new_i]
@@ -95,6 +117,9 @@ def order_of_mag(n):
     """Get order of magnitude of a (absolute value of a) number.
 
     e.g. for 1234 -> 1000, or 0.0456 -> 0.01
+
+    Args:
+        n (float or int): number
     """
     return pow(10, floor(log10(abs(n))))
 

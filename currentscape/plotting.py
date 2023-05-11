@@ -19,7 +19,11 @@ logger = logging.getLogger(__name__)
 
 
 def configure_mpl_rcParams(c):
-    """Configure matplotlib rcParams."""
+    """Configure matplotlib rcParams.
+
+    Args:
+        c (dict): config
+    """
     # set text size
     plt.rcParams["axes.labelsize"] = c["textsize"]
     plt.rcParams["xtick.labelsize"] = c["textsize"]
@@ -36,7 +40,12 @@ def configure_mpl_rcParams(c):
 
 
 def get_rows_tot(c, ions):
-    """Return the total number of rows cumulated by all the subplots."""
+    """Return the total number of rows cumulated by all the subplots.
+
+    Args:
+        c (dict): config
+        ions (IonConcentrations): ion concentration dataset
+    """
     rows_tot = 7
     if not c["currentscape"]["legacy_method"] or c["pattern"]["use"]:
         rows_tot += 1
@@ -252,7 +261,11 @@ def black_line_log_scale(ax, ylim, xlim, bl_thickness):
 
 
 def remove_ticks_and_frame(ax):
-    """Remove ticks (but not ytick label) and frame."""
+    """Remove ticks (but not ytick label) and frame.
+
+    Args:
+        ax (matplotlib.axes): axis
+    """
     ax.tick_params(
         axis="x",  # changes apply to the x-axis
         which="both",  # both major and minor ticks are affected
@@ -274,7 +287,11 @@ def remove_ticks_and_frame(ax):
 
 
 def remove_ticks_and_frame_for_bar_plot(ax):
-    """Remove all ticks (including ytick label) and top & bottom frames."""
+    """Remove all ticks (including ytick label) and top & bottom frames.
+
+    Args:
+        ax (matplotlib.axes): axis
+    """
     ax.tick_params(
         axis="x",  # changes apply to the x-axis
         which="both",  # both major and minor ticks are affected
@@ -294,20 +311,39 @@ def remove_ticks_and_frame_for_bar_plot(ax):
 
 
 def adjust(adjust_left, adjust_right, adjust_top, adjust_bottom):
-    """Adjust Subplots."""
+    """Adjust Subplots.
+
+    Args:
+        adjust_left (float or None): position of the left edge of the subplots,
+            None to use matplotlib default
+        adjust_right (float or None): position of the right edge of the subplots,
+            None ot use matplotlib default
+        adjust_top (float or None): position of the top edge of the subplots,
+            None to use matplotlib default
+        adjust_bottom (float or None): position of the bottom edge of the subplots,
+            None to use matplotlib default
+    """
     plt.subplots_adjust(wspace=0, hspace=0)
-    if adjust_left:
+    if adjust_left is not None:
         plt.subplots_adjust(left=adjust_left)
-    if adjust_right:
+    if adjust_right is not None:
         plt.subplots_adjust(right=adjust_right)
-    if adjust_top:
+    if adjust_top is not None:
         plt.subplots_adjust(top=adjust_top)
-    if adjust_bottom:
+    if adjust_bottom is not None:
         plt.subplots_adjust(bottom=adjust_bottom)
 
 
 def set_label(ax, x, y, label, textsize):
-    """Set text as label on the y axis."""
+    """Set text as label on the y axis.
+
+    Args:
+        ax (matplotlib.axes): axis
+        x (float): x position of the label
+        y (float): y position of the label
+        label (str): text to be displayed as label
+        textsize (int): text size in pixels
+    """
     ax.text(
         x,
         y,
@@ -320,7 +356,14 @@ def set_label(ax, x, y, label, textsize):
 
 
 def show_xgridlines(ax, c, xticks, ylim=None):
-    """Show vertical gridlines corresponding to the x ticks."""
+    """Show vertical gridlines corresponding to the x ticks.
+
+    Args:
+        ax (matplotlib.axes): axis
+        c (dict): config
+        xticks (list): tick positions on the x axis
+        ylim (list of 2 floats): limits of y axis
+    """
     lw = c["xaxis"]["gridline_width"]
     ls = c["xaxis"]["gridline_style"]
     color = c["xaxis"]["gridline_color"]
@@ -376,7 +419,13 @@ def apply_labels_ticks_and_lims(
 
 
 def plot_x_labels(ax, c, xticks):
-    """Plot x labels and x ticklabels."""
+    """Plot x labels and x ticklabels.
+
+    Args:
+        ax (matplotlib.axes): axis
+        c (dict): config
+        xticks (list): tick positions on the x axis
+    """
     if c["show"]["xlabels"]:
         ax.set_xlabel(c["xaxis"]["units"], labelpad=c["labelpad"])
 
@@ -494,7 +543,12 @@ def get_colormap(cmap, n_colors, use_patterns, N_curr, N_ion):
 
 
 def save_figure(fig, c):
-    """Save figure in output according to config file."""
+    """Save figure in output according to config file.
+
+    Args:
+        fig (matplotlib.figure.Figure): figure
+        c (dict): config
+    """
     Path(c["output"]["dir"]).mkdir(parents=True, exist_ok=True)
     out_path = (
         f"{Path(c['output']['dir']) / c['output']['fname']}.{c['output']['extension']}"

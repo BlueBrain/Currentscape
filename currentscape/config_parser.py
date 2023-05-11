@@ -9,7 +9,11 @@ logger = logging.getLogger(__name__)
 
 
 def check_config(c):
-    """Output a warning if something is wrong with the config."""
+    """Output a warning if something is wrong with the config.
+
+    Args:
+        c (dict): config
+    """
     if (
         c["pattern"]["use"]
         and c["show"]["all_currents"]
@@ -19,7 +23,12 @@ def check_config(c):
 
 
 def replace_defaults(config, new_config):
-    """Recursive fct. Replace defaults value with user input."""
+    """Recursive fct. Replace defaults value with user input.
+
+    Args:
+        config (dict): default config
+        new_config (dict): dict containing config items to be updated
+    """
     for key, item in new_config.items():
         if isinstance(item, dict):
             item = replace_defaults(config[key], item)

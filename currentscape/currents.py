@@ -231,7 +231,7 @@ class CurrentPlottingMixin:
         """Plot all the positive (or negative) currents with lines.
 
         Args:
-            ax (matplotlib.axes): currentscape axis
+            ax (matplotlib.axes): current axis
             selected_currs (ndarray of ndarrays): positive or negative currents data
             c (dict): config
             cmap (matplotlib.colors.Colormap): colormap
@@ -352,7 +352,7 @@ class CurrentPlottingMixin:
         """Plot one pie chart of either positive or negative currents contribution.
 
         Args:
-            ax (matplotlib.axes): currentscape axis
+            ax (matplotlib.axes): pie chart axis
             data (ndarray of ndarrays): positive or negative currents data
             c (dict): config
             cmap (matplotlib.colors.Colormap): colormap
@@ -482,6 +482,9 @@ class Currents(CurrentPlottingMixin, DataSet):
         Remove 0s arrays. Reorder if asked. Record reordered name indexes.
         Return the sum and the fraction with its reordered indexes.
 
+        Args:
+            reorder_ (bool): whether to reorder the currents or not
+
         Returns:
             pos_norm (ndarray of ndarrays): arrays containing norm
                 of positive currents
@@ -533,6 +536,12 @@ class Currents(CurrentPlottingMixin, DataSet):
         Reorder from overall largest contribution to smallest contribution.
         Reordering the current names (for legend display) is not essential,
         but is more pleasant to the eye.
+
+        Args:
+            cnorm_pos (ndarray of ndarrays): arrays containing norm
+                of positive currents
+            cnorm_neg (ndarray of ndarrays): arrays containing (-1)* norm
+                of negative currents
 
         Returns:
             trimmed and reordered positive currents array

@@ -5,8 +5,8 @@ import matplotlib
 matplotlib.use("agg")  # to avoid tkinter error
 from matplotlib.legend_handler import HandlerTuple
 
-from currentscape.mapper import map_colors, map_patterns
-from currentscape.plotting import select_color
+from currentscape.mapper import map_colors
+from currentscape.plotting import get_colors_hatches_lines_lists, select_color
 
 
 def base_legend(
@@ -88,19 +88,16 @@ def set_legend_with_hatches(ax, cmap, mapper, c, idx_names):
     leg = base_legend(ax, curr_names, bg_color, ypos, idx_names)
 
     # set legend label color & boldness, and handles color&pattern
-    patterns = [x * c["pattern"]["density"] for x in c["pattern"]["patterns"]]
-    n_colors = c["colormap"]["n_colors"]
     for i_color, (text, handle) in enumerate(zip(leg.texts, leg.legendHandles)):
-        text.set_color(cmap(map_colors(i_color, n_colors, mapper)))
+        color, hatch, _ = get_colors_hatches_lines_lists(c, i_color, cmap, mapper)
+        text.set_color(color)
         text.set_weight("bold")
 
-        handle.set_facecolor(cmap(map_colors(i_color, n_colors, mapper)))
-        handle.set_hatch(
-            patterns[map_patterns(i_color, n_colors, len(patterns), mapper)]
-        )
+        handle.set_facecolor(color)
+        handle.set_hatch(hatch)
 
 
-def set_legend_with_lines(ax, cmap, mapper, c, idx_names, names, n_colors):
+def set_legend_with_lines(ax, cmap, mapper, c, idx_names, names):
     """Create legend and color each current name, and set handles color and pattern.
 
     Args:
@@ -110,7 +107,6 @@ def set_legend_with_lines(ax, cmap, mapper, c, idx_names, names, n_colors):
         c (dict): config
         idx_names (ndarray of ints): indexes to new name order (new_names = names[idx_names])
         names (list of str): legend labels
-        n_colors (int): number of colors (is not always equal to c["colormap"]["n_colors"])
     """
     bg_color = c["legend"]["bgcolor"]
     ypos = c["legend"]["ypos"]
@@ -118,14 +114,14 @@ def set_legend_with_lines(ax, cmap, mapper, c, idx_names, names, n_colors):
     leg = base_legend(ax, names, bg_color, ypos, idx_names, lines=True)
 
     # set legend label color & boldness, and handles color&pattern
-    ls = c["line"]["styles"]
     lw = c["lw"]
     for i_color, (text, handle) in enumerate(zip(leg.texts, leg.legendHandles)):
-        text.set_color(cmap(map_colors(i_color, n_colors, mapper)))
+        color, _, line = get_colors_hatches_lines_lists(c, i_color, cmap, mapper)
+        text.set_color(color)
         text.set_weight("bold")
 
-        handle.set_color(cmap(map_colors(i_color, n_colors, mapper)))
-        handle.set_linestyle(ls[map_patterns(i_color, n_colors, len(ls), mapper)])
+        handle.set_color(color)
+        handle.set_linestyle(line)
         handle.set_linewidth(lw)
 
 
@@ -140,29 +136,20 @@ def get_handles_with_hatches_and_linestyles(c, cmap, mapper, N_curr):
         mapper (int): number used to mix color and patterns
         N_curr (int): number of currents
     """
-    patterns = [x * c["pattern"]["density"] for x in c["pattern"]["patterns"]]
-    n_col = c["colormap"]["n_colors"]
-    n_pat = len(patterns)
-    ls = c["line"]["styles"]
     lw = c["lw"]
 
     # create a patch (proxy artist) for every current
-    return [
-        (
-            matplotlib.patches.Patch(
-                facecolor=cmap(map_colors(i, n_col, mapper)),
-                hatch=patterns[map_patterns(i, n_col, n_pat, mapper)],
-            ),
-            matplotlib.lines.Line2D(
-                [],
-                [],
-                color=cmap(map_colors(i, n_col, mapper)),
-                ls=ls[map_patterns(i, n_col, len(ls), mapper)],
-                lw=lw,
-            ),
+    handles = []
+    for i in range(N_curr):
+        color, hatch, line = get_colors_hatches_lines_lists(c, i, cmap, mapper)
+        handles.append(
+            (
+                matplotlib.patches.Patch(facecolor=color, hatch=hatch),
+                matplotlib.lines.Line2D([], [], color=color, ls=line, lw=lw),
+            )
         )
-        for i in range(N_curr)
-    ]
+
+    return handles
 
 
 def set_legend_with_hatches_and_linestyles(ax, cmap, mapper, c, idx_names):

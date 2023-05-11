@@ -7,6 +7,7 @@ Version 0.1.1
 Changes
 ~~~~~~~
 - examples is not be treated as a module anymore (as it should). To use the examples, one should go to the example folder to run the scripts.
+- Added line creation in get_colors_and hatches_lists, renamed it get_colors_hatches_lines_lists and used it in more places.
 
 Added
 ~~~~~

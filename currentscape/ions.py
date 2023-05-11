@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 from currentscape.datasets import DataSet
 from currentscape.data_processing import reorder
 from currentscape.plotting import (
+    get_colors_hatches_lines_lists,
     apply_labels_ticks_and_lims,
     select_color,
 )
@@ -17,7 +18,7 @@ from currentscape.legends import (
     set_legend,
     set_legend_with_lines,
 )
-from currentscape.mapper import create_mapper, map_colors, map_patterns
+from currentscape.mapper import create_mapper
 
 
 class IonConcentrations(DataSet):
@@ -62,8 +63,6 @@ class IonConcentrations(DataSet):
             rows_tot (int): total number of subplots in the figure
             cmap (matplotlib.colors.Colormap): colormap
         """
-        n_colors = min([c["colormap"]["n_colors"], self.N])
-        ls = c["line"]["styles"]
         lw = c["lw"]
 
         ylim = list(c["ions"]["ylim"])
@@ -76,22 +75,16 @@ class IonConcentrations(DataSet):
         # can do it because selected_currs have same shape as self (no zero arrays removed)
         for i, ion in enumerate(self.data[self.idxs]):
             if not np.all(ion == 0):
-                color = cmap(map_colors(i, n_colors, self.mapper))
-                linestyle = ls[map_patterns(i, n_colors, len(ls), self.mapper)]
-
+                color, _, linestyle = get_colors_hatches_lines_lists(
+                    c, i, cmap, self.mapper
+                )
                 ax.plot(x, ion, color=color, ls=linestyle, lw=lw, zorder=2)
 
         # legend
         # place legend here so that legend top is at the level of share plot top
         if c["show"]["legend"]:
             set_legend_with_lines(
-                ax,
-                cmap,
-                self.mapper,
-                c,
-                self.idxs,
-                c["ions"]["names"],
-                n_colors,
+                ax, cmap, self.mapper, c, self.idxs, c["ions"]["names"]
             )
 
         apply_labels_ticks_and_lims(

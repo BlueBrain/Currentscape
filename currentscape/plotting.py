@@ -59,12 +59,12 @@ def get_rows_tot(c, ions):
     return rows_tot
 
 
-def get_colors_and_hatches_lists(c, curr_idxs, cmap, mapper=None):
-    """Get colors and hatches lists from color indexes list.
+def get_colors_hatches_lines_lists(c, curr_idxs, cmap, mapper=None):
+    """Get colors and hatches and lines lists from color indexes list.
 
     Args:
         c (dict): config
-        curr_idxs (ndarray of ints): list of indexes of currents
+        curr_idxs (ndarray of ints or int): list of indexes of currents
         cmap (matplotlib.colors.Colormap): colormap
         mapper (int): number used to mix colors and patterns
     """
@@ -73,14 +73,19 @@ def get_colors_and_hatches_lists(c, curr_idxs, cmap, mapper=None):
         patterns = np.array(
             [x * c["pattern"]["density"] for x in c["pattern"]["patterns"]]
         )
+        ls = np.array(c["line"]["styles"], dtype=object)
 
         colors = cmap(map_colors(curr_idxs, n_colors, mapper))
         hatches = patterns[map_patterns(curr_idxs, n_colors, len(patterns), mapper)]
+        lines = ls[map_patterns(curr_idxs, n_colors, len(ls), mapper)]
     else:
         colors = cmap(curr_idxs)
         hatches = None
+        lines = "solid"
+        if not np.isscalar(curr_idxs):
+            lines = np.full(curr_idxs.size, "solid")
 
-    return colors, hatches
+    return colors, hatches, lines
 
 
 def stackplot_with_bars(
@@ -109,8 +114,6 @@ def stackplot_with_bars(
 
     Returns the size modified by sum chunks (reduced x resolution)
     """
-    patterns = [x * c["pattern"]["density"] for x in c["pattern"]["patterns"]]
-    n_colors = c["colormap"]["n_colors"]
     chunksize = c["stackplot"]["x_chunksize"]
 
     currs = sum_chunks(np.abs(cnorm.data), chunksize)  # reduce data x resolution
@@ -130,14 +133,7 @@ def stackplot_with_bars(
 
     for idx, curr in zip(cnorm.idxs, currs):
         if not np.all(curr == 0):
-            i = imap[idx]
-
-            if c["pattern"]["use"]:
-                color = cmap(map_colors(i, n_colors, mapper))
-                hatch = patterns[map_patterns(i, n_colors, len(patterns), mapper)]
-            else:
-                color = select_color(cmap, i, N_curr)
-                hatch = None
+            color, hatch, _ = get_colors_hatches_lines_lists(c, imap[idx], cmap, mapper)
 
             if top_to_bottom:
                 bottom -= curr
@@ -181,8 +177,6 @@ def stackplot_with_fill_between(
         mapper (int): number used to mix colors and patterns
         top_to_bottom (bool): if True, plot from top to bottom. if False, plot from bottom to top
     """
-    patterns = [x * c["pattern"]["density"] for x in c["pattern"]["patterns"]]
-    n_colors = c["colormap"]["n_colors"]
     currs = np.abs(cnorm.data)
 
     imap = np.zeros(N_curr, dtype=int)
@@ -197,14 +191,7 @@ def stackplot_with_fill_between(
 
     for idx, curr in zip(cnorm.idxs, currs):
         if not np.all(curr == 0):
-            i = imap[idx]
-
-            if c["pattern"]["use"]:
-                color = cmap(map_colors(i, n_colors, mapper))
-                hatch = patterns[map_patterns(i, n_colors, len(patterns), mapper)]
-            else:
-                color = select_color(cmap, i, N_curr)
-                hatch = None
+            color, hatch, _ = get_colors_hatches_lines_lists(c, imap[idx], cmap, mapper)
 
             if top_to_bottom:
                 curr_stack = np.copy(bottom)

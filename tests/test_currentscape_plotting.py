@@ -17,7 +17,7 @@ from currentscape.plotting import (
     get_colors,
     get_colormap,
     select_color,
-    get_colors_and_hatches_lists,
+    get_colors_hatches_lines_lists,
     save_figure,
 )
 
@@ -170,17 +170,33 @@ def test_select_color():
     assert np.array_equal(select_color(cmap, 3, 2), (1, 1, 1, 1))
 
 
-def test_get_colors_and_hatches_lists():
+def to_tuple(lst):
+    return tuple(to_tuple(i) if isinstance(i, list) else i for i in lst)
+
+
+def test_get_colors_hatches_lines_lists():
     """Test get_colors_and_hatches_lists function."""
+    linestyles = [
+        "solid",
+        [0, [1, 1]],
+        [0, [2, 1]],
+        [0, [2, 1, 1, 1]],
+        [0, [2, 1, 1, 1, 1, 1]],
+        [0, [2, 1, 2, 1, 1, 1]],
+        [0, [2, 1, 2, 1, 1, 1, 1, 1]],
+    ]
     # do not use pattern case
     config = {"pattern": {"use": False}}
     curr_idxs = np.arange(4)
     cmap = get_colormap(
         cmap="Set1", n_colors=None, use_patterns=False, N_curr=4, N_ion=None
     )
-    colors, hatches = get_colors_and_hatches_lists(config, curr_idxs, cmap, mapper=None)
+    colors, hatches, lines = get_colors_hatches_lines_lists(
+        config, curr_idxs, cmap, mapper=None
+    )
     assert len(colors) == 4
     assert hatches is None
+    assert np.array_equal(lines, np.full(4, "solid"))
 
     # use pattern case
     config = {
@@ -190,31 +206,43 @@ def test_get_colors_and_hatches_lists():
             "patterns": ["", "/", "\\", "x", ".", "o", "+"],
         },
         "colormap": {"n_colors": 4},
+        "line": {"styles": linestyles},
     }
     cmap = get_colormap(
         cmap="Set1", n_colors=4, use_patterns=True, N_curr=4, N_ion=None
     )
-    colors, hatches = get_colors_and_hatches_lists(config, curr_idxs, cmap, mapper=9)
+    colors, hatches, lines = get_colors_hatches_lines_lists(
+        config, curr_idxs, cmap, mapper=9
+    )
     assert len(colors) == 4
     assert len(hatches) == 4
+    assert len(lines) == 4
     # no repetition because N_curr <= n_colors, and N_curr <= len(patterns)
     assert len(colors) == len(set(tuple(color) for color in colors))
     assert len(hatches) == len(set(tuple(hatch) for hatch in hatches))
+    assert len(lines) == len(set(to_tuple(lines)))
 
     # now with n_curr > n_colors, n_currs > len(patterns)
     cmap = get_colormap(
         cmap="Set1", n_colors=4, use_patterns=True, N_curr=20, N_ion=None
     )
     curr_idxs = np.arange(20)
-    colors, hatches = get_colors_and_hatches_lists(config, curr_idxs, cmap, mapper=9)
+    colors, hatches, lines = get_colors_hatches_lines_lists(
+        config, curr_idxs, cmap, mapper=9
+    )
     assert len(colors) == 20
     assert len(hatches) == 20
+    assert len(lines) == 20
 
     # colors and hatches get combined with (colors[i], hatches[i])
     # all combinations should be unique
     combinations = []
     for col, hatch in zip(colors, hatches):
         combinations.append((tuple(col), hatch))
+    assert len(combinations) == len(set(combinations)) == 20
+    combinations = []
+    for col, line in zip(colors, lines):
+        combinations.append((tuple(col), to_tuple(line)))
     assert len(combinations) == len(set(combinations)) == 20
 
 

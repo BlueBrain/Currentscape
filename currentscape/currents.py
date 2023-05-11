@@ -18,11 +18,10 @@ from currentscape.plotting import (
     remove_ticks_and_frame_for_bar_plot,
     set_label,
     apply_labels_ticks_and_lims,
-    select_color,
     stackplot_with_bars,
     stackplot_with_fill_between,
     black_line_log_scale,
-    get_colors_and_hatches_lists,
+    get_colors_hatches_lines_lists,
     show_xgridlines,
 )
 from currentscape.legends import (
@@ -31,7 +30,7 @@ from currentscape.legends import (
     set_legend_with_lines,
     set_legend,
 )
-from currentscape.mapper import create_mapper, map_colors, map_patterns
+from currentscape.mapper import create_mapper
 
 
 class CurrentPlottingMixin:
@@ -236,20 +235,15 @@ class CurrentPlottingMixin:
             c (dict): config
             cmap (matplotlib.colors.Colormap): colormap
         """
-        n_colors = c["colormap"]["n_colors"]
-        ls = c["line"]["styles"]
         lw = c["lw"]
 
         # here, use currs.idxs to have the same colors as in currs.names
         # can do it because selected_currs have same shape as self (no zero arrays removed)
         for i, curr in enumerate(selected_currs[self.idxs]):
             if not np.all(curr == 0):
-                if c["pattern"]["use"]:
-                    color = cmap(map_colors(i, n_colors, self.mapper))
-                    linestyle = ls[map_patterns(i, n_colors, len(ls), self.mapper)]
-                else:
-                    color = select_color(cmap, i, self.N)
-                    linestyle = "solid"
+                color, _, linestyle = get_colors_hatches_lines_lists(
+                    c, i, cmap, self.mapper
+                )
 
                 ax.plot(self.time, curr, color=color, ls=linestyle, lw=lw, zorder=2)
 
@@ -335,7 +329,6 @@ class CurrentPlottingMixin:
                     c,
                     self.idxs,
                     c["current"]["names"],
-                    c["colormap"]["n_colors"],
                 )
 
         apply_labels_ticks_and_lims(
@@ -368,7 +361,9 @@ class CurrentPlottingMixin:
         # current indexes
         curr_idxs = np.arange(self.N)
         # set colors and patterns
-        colors, hatches = get_colors_and_hatches_lists(c, curr_idxs, cmap, self.mapper)
+        colors, hatches, _ = get_colors_hatches_lines_lists(
+            c, curr_idxs, cmap, self.mapper
+        )
 
         bars = ax.bar(
             x=valsleft,

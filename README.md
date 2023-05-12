@@ -10,7 +10,7 @@ and see in depth the currents dynamics.
 This API is based on the code provided by the susmentioned paper.
 
 
-![Illustration of a currentscape plot](doc/source/images/plot.pdf)
+![Illustration of a currentscape plot](doc/source/images/plot.png)
 
 ### Citation
 

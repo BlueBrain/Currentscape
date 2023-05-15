@@ -1,12 +1,26 @@
 #!/usr/bin/env python
 
+# Copyright 2023 Blue Brain Project / EPFL
+
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+
+#     http://www.apache.org/licenses/LICENSE-2.0
+
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import imp
 import sys
 
 from setuptools import setup, find_packages
 
-if sys.version_info < (3, 6):
-    sys.exit("Sorry, Python < 3.6 is not supported")
+if sys.version_info < (3, 7):
+    sys.exit("Sorry, Python < 3.7 is not supported")
 
 # read the contents of the README file
 with open("README.md", encoding="utf-8") as f:
@@ -18,8 +32,7 @@ EXTRA_EXAMPLE = ["scipy", "bluepyopt", "emodelrunner>=1.1.5"]
 
 setup(
     name="currentscape",
-    author="Aurelien Jaquier",
-    author_email="aurelien.jaquier@epfl.ch",
+    author="Blue Brain Project, EPFL",
     version=VERSION,
     description="Module to easily plot currentscape.",
     long_description=README,
@@ -29,28 +42,29 @@ setup(
         "Tracker": "https://bbpteam.epfl.ch/project/issues/projects/NSETM/issues",
         "Source": "ssh://bbpcode.epfl.ch/cells/currentscape",
     },
-    license="BBP-internal-confidential",
+    license="Apache 2.0",
     install_requires=[
         "numpy",
         "matplotlib",
         "palettable",
     ],
     packages=find_packages(exclude=["tests"]),
-    python_requires=">=3.6",
+    python_requires=">=3.7",
     extras_require={
         "docs": ["sphinx", "sphinx-bluebrain-theme"],
         "example": EXTRA_EXAMPLE,
     },
     classifiers=[
-        "Development Status :: 2 - Pre-Alpha",
+        "Development Status :: 4 - Beta",
         "Intended Audience :: Education",
         "Intended Audience :: Science/Research",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
         "Topic :: Scientific/Engineering :: Bio-Informatics",
     ],
 )

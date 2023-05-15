@@ -41,13 +41,15 @@ When you use the Currentscape software or method for your research, we ask you t
 
 ### Installing currentscape
 
-Currentscape can be pip installed with all its dependencies with the following line:
+Currentscape can be pip installed with the following line:
+
+    pip install currentscape
+
+This install the currentscape module and its dependencies.
+
+If you want to be able to run the currentscape examples, you will need to also install the example dependencies. This can be done with the following line:
 
     pip install currentscape[example]
-
-This install the currentscape module and its dependencies, as well as the dependencies needed for the example reproducing the currentscape plot from the original paper.
-
-Do not put any brackets if you just want to plot currentscapes, and are not interested in the original example.
 
 ### Loading currentscape in Python
 

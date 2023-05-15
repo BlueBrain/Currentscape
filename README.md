@@ -45,7 +45,7 @@ Currentscape can be pip installed with the following line:
 
     pip install currentscape
 
-This install the currentscape module and its dependencies.
+This installs the currentscape module and its dependencies.
 
 If you want to be able to run the currentscape examples, you will need to also install the example dependencies. This can be done with the following line:
 

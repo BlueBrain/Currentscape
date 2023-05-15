@@ -43,7 +43,7 @@ When you use the Currentscape software or method for your research, we ask you t
 
 Currentscape can be pip installed with all its dependencies with the following line:
 
-    pip install -i https://bbpteam.epfl.ch/repository/devpi/simple/ currentscape[example]
+    pip install currentscape[example]
 
 This install the currentscape module and its dependencies, as well as the dependencies needed for the example reproducing the currentscape plot from the original paper.
 

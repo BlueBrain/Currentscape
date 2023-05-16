@@ -1,6 +1,7 @@
 Currentscape is licensed under the Apache License, unless noted otherwise, e.g., for external 
 dependencies. See file COPYING for the full license. 
-The examples are under the CC0 1.0 license, as specified by the
+The 'original paper plot' example is under the CC0 1.0 license, and the 'use case' example
+is under the CC-BY-NC-SA license, as specified by the
 LICENSE.txt file in each example repository.
 
 

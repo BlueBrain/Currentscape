@@ -1,0 +1,9 @@
+The CC0 1.0 license applies, as indicated by headers in the
+respective source files.
+
+https://creativecommons.org/publicdomain/zero/1.0/
+
+The detailed text is available here
+https://creativecommons.org/publicdomain/zero/1.0/legalcode
+
+or in this tarball in the seperate file LICENSE_CC0-1.0

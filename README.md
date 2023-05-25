@@ -47,7 +47,7 @@ Currentscape can be pip installed with the following line:
 
 This installs the currentscape module and its dependencies.
 
-If you want to be able to run the currentscape examples, you will need to also install the example dependencies. This can be done with the following line:
+If you want to be able to run the currentscape [examples](#examples), you will need to also install the example dependencies. This can be done with the following line:
 
     pip install currentscape[example]
 
@@ -61,7 +61,7 @@ in Python becomes then as easy as:
 
 ### Plotting your first currentscape
 
-Given voltage and current data (see 'Extracting currents and ionic concentrations' section below for how to get voltage and currents from a cell), as well as an adequate config json file, producing a currenscape figure should be as simple as
+Given voltage and current data (see [Run cell and plot currentscape](#run-cell-and-plot-currentscape) example below for how to get voltage and currents from a cell), as well as an adequate config json file, producing a currenscape figure should be as simple as
 
     import os
     import numpy as np
@@ -378,26 +378,50 @@ You can plot the ionic concentrations in a subplot at the bottom of the figure b
 By setting "show":{"total_contribution": True} in the configuration, two pie charts are added at the bottom of the figure, each showing the overall contribution of each current over the whole simulation, one for the outward currents, and the other one for the inward currents.
 
 
-### Extracting currents and ionic concentrations
+### Examples
+
+The examples repository contains two examples: one from the original paper from Alsonso and Marder, and one to run a cell, record its currents, and plot them into a currentscape figure. Remember that these examples need extra dependencies that can be installed with:
+
+    pip install currentscape[example]
+
+
+#### Original paper example
+
+This is a code example from the original paper code, adapted to use this currentscape module. It generates data, implements the model from the paper, and uses the currentscape module to make a plot. You can run it with this command after going to `examples/original_paper_plot`:
+
+    python integrate_single_compartment_and_plot_currentscape.py 
+
+It will produce the currentscape figure and save it under `examples/original_paper_plot/output/example.png`.
+
+
+#### Run cell and plot currentscape
 
 You can see an example of how to extract currents and ionic concentractions with bluepyopt and emodelrunner in the example folder: `examples/use_case`.
-Please note that you should have bluepyopt, emodelrunner and NEURON installed in order to run the example.
+Please note that you should have [bluepyopt](https://github.com/BlueBrain/BluePyOpt), [emodelrunner](https://github.com/BlueBrain/EModelRunner) and [NEURON](https://neuron.yale.edu/neuron/) installed in order to run the example.
 The example folder contains
 a cell,
-a script to run the cell by applying to it a step stimulus and record its current and ionic concentration traces,
+a script to run the cell by applying to it a step stimulus and record its voltage, current and ionic concentration traces,
 and another script to plot its currentscape.
 
 To run the cell, go to `examples/use_case` and do
 
     sh run_py.sh
 
-Once this is done, you can plot the currentscape by doing:
+It should record the currents under the `python_recordings` folder. Once this is done, you can plot the currentscape by doing:
 
     python plot.py
 
+It should open a matplotlib window with the currentscape figure.
 You can adjust the currentscape plot by modifying the configuration that is hard-coded in `plot.py`.
 
 
 ### Known caveats
 
 Since currentscape can deal with a lot of data, it sometimes crashes with an error message such as `Bus error` or `Killed` when it runs out of memory. You can solve this error by allocating more memory. Note that this error is prone to happen more frequently when legacy methods are used.
+
+
+### Funding & Acknowledgements
+
+The development of this software was supported by funding to the Blue Brain Project, a research center of the École polytechnique fédérale de Lausanne (EPFL), from the Swiss government's ETH Board of the Swiss Federal Institutes of Technology.
+ 
+Copyright (c) 2023 Blue Brain Project/EPFL

@@ -15,6 +15,7 @@
             "H",
             "L"
         ],
+        "reorder": false,
         "ticks": [
             5,
             50,

@@ -37,10 +37,10 @@ setup(
     description="Module to easily plot currentscape.",
     long_description=README,
     long_description_content_type="text/markdown",
-    url="https://bbpteam.epfl.ch/documentation/projects/currentscape",
+    url="https://github.com/BlueBrain/Currentscape",
     project_urls={
-        "Tracker": "https://bbpteam.epfl.ch/project/issues/projects/NSETM/issues",
-        "Source": "ssh://bbpcode.epfl.ch/cells/currentscape",
+        "Tracker": "https://github.com/BlueBrain/Currentscape",
+        "Source": "https://github.com/BlueBrain/Currentscape",
     },
     license="Apache 2.0",
     install_requires=[

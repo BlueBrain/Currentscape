@@ -116,7 +116,7 @@ It is recommended to use `virtualenv` to develop in a sandbox environment:
 ```
 virtualenv venv
 . venv/bin/activate
-pip install -r tests/requirement_tests.txt
+pip install tox
 ```
 
 ## Build
@@ -125,7 +125,7 @@ Run the following command to build incrementally the project: `pip install -e .`
 
 ## Test
 
-Install tox in your virtaul environment: `pip install tox`, and run the following command to run the Python tests: `tox -e py3`
+Run the following command to run the Python tests: `tox -e py3`
 
 ## Coding conventions
 

@@ -47,7 +47,7 @@ Currentscape can be pip installed with the following line:
 
 This installs the currentscape module and its dependencies.
 
-If you want to be able to run the currentscape examples, you will need to also install the example dependencies. This can be done with the following line:
+If you want to be able to run the currentscape [examples](#examples), you will need to also install the example dependencies. This can be done with the following line:
 
     pip install currentscape[example]
 
@@ -61,7 +61,7 @@ in Python becomes then as easy as:
 
 ### Plotting your first currentscape
 
-Given voltage and current data (see 'Extracting currents and ionic concentrations' section below for how to get voltage and currents from a cell), as well as an adequate config json file, producing a currenscape figure should be as simple as
+Given voltage and current data (see [Run cell and plot currentscape](#run-cell-and-plot-currentscape) example below for how to get voltage and currents from a cell), as well as an adequate config json file, producing a currenscape figure should be as simple as
 
     import os
     import numpy as np
@@ -309,12 +309,12 @@ Using a colormap that uses black is also not advised, since the plots on top and
 as well as the line separating the inward and outward currentscapes, are black. 
 If a black current ends up near the top or bottom of the plot, it would decrease readability.
 
-You can set your colormap using "colormap":{"name": "the_name_of_the_colormap"} in the config file.
-The name of the colormap can be one of the matplotlib colormaps (https://matplotlib.org/3.1.0/tutorials/colors/colormaps.html), 
-or one of the palettable module (https://jiffyclub.github.io/palettable/).
-The palettable colormaps should be inputted in the form "origin.palette_N", N being the number of different colors (i.e. the number of currents if patterns are not used.)
-Example:
-    "cartocolors.qualitative.Safe_8"
+You can set your colormap using `"colormap":{"name": "the_name_of_the_colormap"}` in the config file.
+The name of the colormap can be one of the [matplotlib colormaps](https://matplotlib.org/3.1.0/tutorials/colors/colormaps.html), 
+or one of the [palettable module](https://jiffyclub.github.io/palettable/).
+The palettable colormaps should be inputted in the form `"origin.palette_N"`, N being the number of different colors (i.e. the number of currents if patterns are not used.)
+
+Example: `"cartocolors.qualitative.Safe_8"`
 
 
 ### Showing x axis label, ticklabel, gridlines
@@ -342,11 +342,11 @@ Also, when setting custom x ticks through the config, try to stick with ticks wi
 ### Using patterns
 
 If you have a lot of currents to display and do not find a colormap with enough colors to distinguish them all, you can use patterns (also called hatches).
-Note: if you are using a lot of currents, you may want to increase the "legend":"ypos" (e.g. to 1.5) in your config to have a legend higher in the figure.
+Note: if you are using a lot of currents, you may want to increase the `"legend": {"ypos"}` (e.g. to `1.5`) in your config to have a legend higher in the figure.
 
-By putting "pattern": {"use": True} in your config, currentscape will put patterns like stripes or dots on top of your currents, 
+By putting `"pattern": {"use": True}` in your config, currentscape will put patterns like stripes or dots on top of your currents, 
 and it will mix colors and patterns so that two successive currents do not have the same pattern or color.
-In the "pattern" key of your config, you can increase the 'density' (frequency) or your patterns, change the pattern linewidth, color, etc.
+In the `"pattern"` key of your config, you can increase the 'density' (frequency) or your patterns, change the pattern linewidth, color, etc.
 You can also change the patterns or the number of different colors to use with the adequate config.
 
 You could also want to use pattern if you are using a non-qualitative colormap that do not have a lot of distinguishable colors.
@@ -354,50 +354,74 @@ You could also want to use pattern if you are using a non-qualitative colormap t
 
 ### Showing all absolute currents
 
-By putting "show":{"all_currents": True} in the config file, two subplots showing all the positive and negative currents are added at the bottom of the figure.
-The currents can be displayed as stackplots by putting "current":{"stackplot": True} in the config, or as lines, by putting "current":{"stackplot": False} in the config. In case they are displayed with lines, while using patterns for the current shares, the lines will be displayed with styles (dashed, dotted, etc.). In such a case, the number of line styles should be equal to the number of patterns (which they are, by default). Keep this in mind when changing either the line styles or the patterns.
+By putting `"show":{"all_currents": True}` in the config file, two subplots showing all the positive and negative currents are added at the bottom of the figure.
+The currents can be displayed as stackplots by putting `"current":{"stackplot": True}` in the config, or as lines, by putting `"current":{"stackplot": False}` in the config. In case they are displayed with lines, while using patterns for the current shares, the lines will be displayed with styles (dashed, dotted, etc.). In such a case, the number of line styles should be equal to the number of patterns (which they are, by default). Keep this in mind when changing either the line styles or the patterns.
 
 
 ### Using legacy methods
 
-You can use currentscape legacy methods by setting "currentscape": {"legacy_method": True} in the config.
-If you want to show all currents with a stackplot, you can also use its legacy method by setting "current": {"legacy_method": True} in the config.
+You can use currentscape legacy methods by setting `"currentscape": {"legacy_method": True}` in the config.
+If case you are displaying absolute currents with a stackplot, you can also use its legacy method by setting `"current": {"legacy_method": True}` in the config.
 The legacy methods can take longer to compute, take more memory during computation and
-the legacy barplot method (used when "pattern": {"use": True}, or when both "current": {"stackplot": True} and "show": {"all_currents": True}) has a bad display when the figure is saved in the pdf format.
+the legacy barplot method (used when `"pattern": {"use": True}`, or when both `"current": {"stackplot": True}` and `"show": {"all_currents": True}`) has a bad display when the figure is saved in the pdf format.
 
 However, these methods can be useful to display the main features of the plots, without having the details blurred by e.g. low resolution.
 
 
 ### Showing ionic concentrations
 
-You can plot the ionic concentrations in a subplot at the bottom of the figure by passing your ionic concentration data to the main function: plot_currentscape(voltage, currents, config, ions), and by passing the ion names to the config under: "ions":{"names":your_list}. Note that, as for the currents, the ion names should correspond to the ion data (i.e. be listed in the same order).
+You can plot the ionic concentrations in a subplot at the bottom of the figure by passing your ionic concentration data to the main function: `plot_currentscape(voltage, currents, config, ions)`, and by passing the ion names to the config under: `"ions":{"names":your_list}`. Note that, as for the currents, the ion names should correspond to the ion data (i.e. be listed in the same order).
 
 
 ### Showing overall contribution pie charts
 
-By setting "show":{"total_contribution": True} in the configuration, two pie charts are added at the bottom of the figure, each showing the overall contribution of each current over the whole simulation, one for the outward currents, and the other one for the inward currents.
+By setting `"show":{"total_contribution": True}` in the configuration, two pie charts are added at the bottom of the figure, each showing the overall contribution of each current over the whole simulation, one for the outward currents, and the other one for the inward currents.
 
 
-### Extracting currents and ionic concentrations
+### Examples
+
+The examples repository contains two examples: one from the original paper from Alsonso and Marder, and one to run a cell, record its currents, and plot them into a currentscape figure. Remember that these examples need extra dependencies that can be installed with:
+
+    pip install currentscape[example]
+
+
+#### Original paper example
+
+This is a code example from the original paper code, adapted to use this currentscape module. It generates data, implements the model from the paper, and uses the currentscape module to make a plot. You can run it with this command after going to `examples/original_paper_plot`:
+
+    python integrate_single_compartment_and_plot_currentscape.py 
+
+It will produce the currentscape figure and save it under `examples/original_paper_plot/output/example.png`.
+
+
+#### Run cell and plot currentscape
 
 You can see an example of how to extract currents and ionic concentractions with bluepyopt and emodelrunner in the example folder: `examples/use_case`.
-Please note that you should have bluepyopt, emodelrunner and NEURON installed in order to run the example.
+Please note that you should have [bluepyopt](https://github.com/BlueBrain/BluePyOpt), [emodelrunner](https://github.com/BlueBrain/EModelRunner) and [NEURON](https://neuron.yale.edu/neuron/) installed in order to run the example.
 The example folder contains
 a cell,
-a script to run the cell by applying to it a step stimulus and record its current and ionic concentration traces,
+a script to run the cell by applying to it a step stimulus and record its voltage, current and ionic concentration traces,
 and another script to plot its currentscape.
 
 To run the cell, go to `examples/use_case` and do
 
     sh run_py.sh
 
-Once this is done, you can plot the currentscape by doing:
+It should record the currents under the `python_recordings` folder. Once this is done, you can plot the currentscape by doing:
 
     python plot.py
 
+It should open a matplotlib window with the currentscape figure.
 You can adjust the currentscape plot by modifying the configuration that is hard-coded in `plot.py`.
 
 
 ### Known caveats
 
 Since currentscape can deal with a lot of data, it sometimes crashes with an error message such as `Bus error` or `Killed` when it runs out of memory. You can solve this error by allocating more memory. Note that this error is prone to happen more frequently when legacy methods are used.
+
+
+### Funding & Acknowledgements
+
+The development of this software was supported by funding to the Blue Brain Project, a research center of the École polytechnique fédérale de Lausanne (EPFL), from the Swiss government's ETH Board of the Swiss Federal Institutes of Technology.
+ 
+Copyright (c) 2023 Blue Brain Project/EPFL

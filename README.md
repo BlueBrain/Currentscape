@@ -4,8 +4,8 @@
 |----------------|----------------------------------------------------------|
 | Latest Release | available after open sourcing                            |
 | Documentation  | available after open sourcing                            |
-| License        | [![License Badge]([license_badge_img])]([license_link])  |
-| Build Status   | [![Build Status Badge]([build_badge_img])]([build_link]) |
+| License        | [![License Badge][license_badge_img]][license_link]      |
+| Build Status   | [![Build Status Badge][build_badge_img]][build_link]     |
 | Coverage       | available after open sourcing                            |
 | Gitter         | available after open sourcing                            |
 

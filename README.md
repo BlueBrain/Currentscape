@@ -1,5 +1,16 @@
 # Currentscape
 
+|                |                                                          |
+|----------------|----------------------------------------------------------|
+| Latest Release | available after open sourcing                            |
+| Documentation  | available after open sourcing                            |
+| License        | [![License Badge][license_badge_img]][license_link]      |
+| Build Status   | [![Build Status Badge][build_badge_img]][build_link]     |
+| Coverage       | available after open sourcing                            |
+| Gitter         | available after open sourcing                            |
+
+### Introduction
+
 Currentscape is a Pythonic API enabling scientists to easily plot 
 currentscapes figures in the style of
 [Leandro M. Alonso and Eve Marder, ”Visualization of currents in neural models with similar behavior and different conductance densities” (2019)](https://datadryad.org/stash/dataset/doi:10.5061/dryad.d0779mb)
@@ -40,8 +51,18 @@ When you use the Currentscape software or method for your research, we ask you t
     publisher = {eLife Sciences Publications, Ltd},
     }
 
+### Support
 
-### Installing Currentscape
+We are providing support at the [Github discussion page](https://github.com/BlueBrain/Currentscape/issues).
+
+### Requirements
+
+- [Python 3.7+](https://www.python.org/downloads/release/python-370/)
+- [Pip](https://pip.pypa.io/en/stable/) (installed by default in newer versions of Python)
+- [Numpy](https://numpy.org/) (automatically installed by pip)
+- [palettable](https://github.com/jiffyclub/palettable) (automatically installed by pip)
+
+### Installation
 
 Currentscape can be pip installed with the following line:
 
@@ -61,9 +82,9 @@ in Python becomes then as easy as:
 
     import currentscape
 
-### Plotting your first Currentscape
+### Quick Start: Plotting your first Currentscape
 
-Given voltage and current data (see [Run cell and plot Currentscape](#run-cell-and-plot-Currentscape) example below for how to get voltage and currents from a cell), as well as an adequate config json file, producing a currenscape figure should be as simple as
+Given voltage and current data (see [Run cell and plot Currentscape](#run-cell-and-plot-Currentscape) example below for how to get voltage and currents from a cell), as well as an adequate config json file, producing a Currentscape figure should be as simple as
 
     import os
     import numpy as np
@@ -421,9 +442,18 @@ You can adjust the Currentscape plot by modifying the configuration that is hard
 
 Since Currentscape can deal with a lot of data, it sometimes crashes with an error message such as `Bus error` or `Killed` when it runs out of memory. You can solve this error by allocating more memory. Note that this error is prone to happen more frequently when legacy methods are used.
 
+### API Documentation
+
+The API documentation can be found on ReadTheDocs.
 
 ### Funding & Acknowledgements
 
 The development of this software was supported by funding to the Blue Brain Project, a research center of the École polytechnique fédérale de Lausanne (EPFL), from the Swiss government's ETH Board of the Swiss Federal Institutes of Technology.
  
 Copyright (c) 2023 Blue Brain Project/EPFL
+
+
+[license_badge_img]: https://img.shields.io/badge/License-Apache_2.0-blue.svg
+[license_link]: https://github.com/BlueBrain/Currentscape/blob/main/LICENSE.txt
+[build_badge_img]: https://github.com/BlueBrain/Currentscape/actions/workflows/test.yml/badge.svg?branch=main
+[build_link]: https://github.com/BlueBrain/Currentscape/actions/workflows/test.yml

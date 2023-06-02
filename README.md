@@ -1,5 +1,7 @@
 # Currentscape
 
+|                |                                                          |
+|----------------|----------------------------------------------------------|
 | Latest Release | available after open sourcing                            |
 | Documentation  | available after open sourcing                            |
 | License        | [![License Badge]([license_badge_img])]([license_link])  |

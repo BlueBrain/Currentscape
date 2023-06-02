@@ -1,3 +1,5 @@
+# Currentscape
+
 Currentscape is a Pythonic API enabling scientists to easily plot 
 currentscapes figures in the style of
 [Leandro M. Alonso and Eve Marder, ”Visualization of currents in neural models with similar behavior and different conductance densities” (2019)](https://datadryad.org/stash/dataset/doi:10.5061/dryad.d0779mb)
@@ -10,7 +12,7 @@ and see in depth the currents dynamics.
 This API is based on the code provided by the susmentioned paper.
 
 
-![Illustration of a currentscape plot](doc/source/images/plot.png)
+![Illustration of a Currentscape plot](doc/source/images/plot.png)
 
 ### Citation
 
@@ -39,29 +41,29 @@ When you use the Currentscape software or method for your research, we ask you t
     }
 
 
-### Installing currentscape
+### Installing Currentscape
 
 Currentscape can be pip installed with the following line:
 
     pip install currentscape
 
-This installs the currentscape module and its dependencies.
+This installs the Currentscape module and its dependencies.
 
-If you want to be able to run the currentscape [examples](#examples), you will need to also install the example dependencies. This can be done with the following line:
+If you want to be able to run the Currentscape [examples](#examples), you will need to also install the example dependencies. This can be done with the following line:
 
     pip install currentscape[example]
 
-### Loading currentscape in Python
+### Loading Currentscape in Python
 
-After installing currentscape, your PYTHONPATH environment variable should normally
-contain the directory where the currentscape module is installed. Loading currentscape
+After installing Currentscape, your PYTHONPATH environment variable should normally
+contain the directory where the Currentscape module is installed. Loading Currentscape
 in Python becomes then as easy as:
 
     import currentscape
 
-### Plotting your first currentscape
+### Plotting your first Currentscape
 
-Given voltage and current data (see [Run cell and plot currentscape](#run-cell-and-plot-currentscape) example below for how to get voltage and currents from a cell), as well as an adequate config json file, producing a currenscape figure should be as simple as
+Given voltage and current data (see [Run cell and plot Currentscape](#run-cell-and-plot-Currentscape) example below for how to get voltage and currents from a cell), as well as an adequate config json file, producing a currenscape figure should be as simple as
 
     import os
     import numpy as np
@@ -100,7 +102,7 @@ Given voltage and current data (see [Run cell and plot currentscape](#run-cell-a
     #     "legendtextsize": 5,
     # }
 
-    # produce currentscape figure
+    # produce Currentscape figure
     fig = plot_currentscape(voltage, currents, config)
     fig.show()
 
@@ -170,7 +172,7 @@ Here is an example of a config file containing all defaults values :
         "currentscape": {
             "in_label": "inward %",
             "out_label": "outward %",
-            "_comment1": "only used when legacy_method is true. if too low, white pixels can appear at the bottom of currentscape plots because of rounding errors. Only used when use_legacy_method is True.",
+            "_comment1": "only used when legacy_method is true. if too low, white pixels can appear at the bottom of Currentscape plots because of rounding errors. Only used when use_legacy_method is True.",
             "y_resolution": 10000,
             "legacy_method": false
         },
@@ -253,7 +255,7 @@ Here is an example of a config file containing all defaults values :
         "legend": {
             "textsize": 4,
             "bgcolor": "lightgrey",
-            "_comment1": "1. : top of legend is at the same level as top of currentscape plot. higher value put legend higher in figure.",
+            "_comment1": "1. : top of legend is at the same level as top of Currentscape plot. higher value put legend higher in figure.",
             "ypos": 1.0,
             "_comment2": "forced to 0 if ['pattern']['use'] is False and ['current']['stackplot'] is False",
             "handlelength": 1.4
@@ -332,7 +334,7 @@ However, to show ticklabels and gridlines, you have to also input time as an arg
     currents = load_current_fct(data_dir)
     config = "path/to/config.json"
 
-    # produce currentscape figure
+    # produce Currentscape figure
     fig = plot_currentscape(voltage, currents, config, time=time)
 
 Be aware that the time data are expected to grow monotonically.
@@ -344,7 +346,7 @@ Also, when setting custom x ticks through the config, try to stick with ticks wi
 If you have a lot of currents to display and do not find a colormap with enough colors to distinguish them all, you can use patterns (also called hatches).
 Note: if you are using a lot of currents, you may want to increase the `"legend": {"ypos"}` (e.g. to `1.5`) in your config to have a legend higher in the figure.
 
-By putting `"pattern": {"use": True}` in your config, currentscape will put patterns like stripes or dots on top of your currents, 
+By putting `"pattern": {"use": True}` in your config, Currentscape will put patterns like stripes or dots on top of your currents, 
 and it will mix colors and patterns so that two successive currents do not have the same pattern or color.
 In the `"pattern"` key of your config, you can increase the 'density' (frequency) or your patterns, change the pattern linewidth, color, etc.
 You can also change the patterns or the number of different colors to use with the adequate config.
@@ -360,7 +362,7 @@ The currents can be displayed as stackplots by putting `"current":{"stackplot": 
 
 ### Using legacy methods
 
-You can use currentscape legacy methods by setting `"currentscape": {"legacy_method": True}` in the config.
+You can use Currentscape legacy methods by setting `"currentscape": {"legacy_method": True}` in the config.
 If case you are displaying absolute currents with a stackplot, you can also use its legacy method by setting `"current": {"legacy_method": True}` in the config.
 The legacy methods can take longer to compute, take more memory during computation and
 the legacy barplot method (used when `"pattern": {"use": True}`, or when both `"current": {"stackplot": True}` and `"show": {"all_currents": True}`) has a bad display when the figure is saved in the pdf format.
@@ -380,44 +382,44 @@ By setting `"show":{"total_contribution": True}` in the configuration, two pie c
 
 ### Examples
 
-The examples repository contains two examples: one from the original paper from Alsonso and Marder, and one to run a cell, record its currents, and plot them into a currentscape figure. Remember that these examples need extra dependencies that can be installed with:
+The examples repository contains two examples: one from the original paper from Alsonso and Marder, and one to run a cell, record its currents, and plot them into a Currentscape figure. Remember that these examples need extra dependencies that can be installed with:
 
     pip install currentscape[example]
 
 
 #### Original paper example
 
-This is a code example from the original paper code, adapted to use this currentscape module. It generates data, implements the model from the paper, and uses the currentscape module to make a plot. You can run it with this command after going to `examples/original_paper_plot`:
+This is a code example from the original paper code, adapted to use this Currentscape module. It generates data, implements the model from the paper, and uses the Currentscape module to make a plot. You can run it with this command after going to `examples/original_paper_plot`:
 
     python integrate_single_compartment_and_plot_currentscape.py 
 
-It will produce the currentscape figure and save it under `examples/original_paper_plot/output/example.png`.
+It will produce the Currentscape figure and save it under `examples/original_paper_plot/output/example.png`.
 
 
-#### Run cell and plot currentscape
+#### Run cell and plot Currentscape
 
 You can see an example of how to extract currents and ionic concentractions with bluepyopt and emodelrunner in the example folder: `examples/use_case`.
 Please note that you should have [bluepyopt](https://github.com/BlueBrain/BluePyOpt), [emodelrunner](https://github.com/BlueBrain/EModelRunner) and [NEURON](https://neuron.yale.edu/neuron/) installed in order to run the example.
 The example folder contains
 a cell,
 a script to run the cell by applying to it a step stimulus and record its voltage, current and ionic concentration traces,
-and another script to plot its currentscape.
+and another script to plot its Currentscape.
 
 To run the cell, go to `examples/use_case` and do
 
     sh run_py.sh
 
-It should record the currents under the `python_recordings` folder. Once this is done, you can plot the currentscape by doing:
+It should record the currents under the `python_recordings` folder. Once this is done, you can plot the Currentscape by doing:
 
     python plot.py
 
-It should open a matplotlib window with the currentscape figure.
-You can adjust the currentscape plot by modifying the configuration that is hard-coded in `plot.py`.
+It should open a matplotlib window with the Currentscape figure.
+You can adjust the Currentscape plot by modifying the configuration that is hard-coded in `plot.py`.
 
 
 ### Known caveats
 
-Since currentscape can deal with a lot of data, it sometimes crashes with an error message such as `Bus error` or `Killed` when it runs out of memory. You can solve this error by allocating more memory. Note that this error is prone to happen more frequently when legacy methods are used.
+Since Currentscape can deal with a lot of data, it sometimes crashes with an error message such as `Bus error` or `Killed` when it runs out of memory. You can solve this error by allocating more memory. Note that this error is prone to happen more frequently when legacy methods are used.
 
 
 ### Funding & Acknowledgements

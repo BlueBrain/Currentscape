@@ -50,8 +50,18 @@ When you use the Currentscape software or method for your research, we ask you t
     publisher = {eLife Sciences Publications, Ltd},
     }
 
+### Support
 
-### Installing Currentscape
+We are providing support at the [Github discussion page](https://github.com/BlueBrain/Currentscape/issues).
+
+### Requirements
+
+- [Python 3.7+](https://www.python.org/downloads/release/python-370/)
+- [Pip](https://pip.pypa.io/en/stable/) (installed by default in newer versions of Python)
+- [Numpy](https://numpy.org/) (automatically installed by pip)
+- [palettable](https://github.com/jiffyclub/palettable) (automatically installed by pip)
+
+### Installation
 
 Currentscape can be pip installed with the following line:
 
@@ -71,9 +81,9 @@ in Python becomes then as easy as:
 
     import currentscape
 
-### Plotting your first Currentscape
+### Quick Start: Plotting your first Currentscape
 
-Given voltage and current data (see [Run cell and plot Currentscape](#run-cell-and-plot-Currentscape) example below for how to get voltage and currents from a cell), as well as an adequate config json file, producing a currenscape figure should be as simple as
+Given voltage and current data (see [Run cell and plot Currentscape](#run-cell-and-plot-Currentscape) example below for how to get voltage and currents from a cell), as well as an adequate config json file, producing a Currentscape figure should be as simple as
 
     import os
     import numpy as np
@@ -431,6 +441,9 @@ You can adjust the Currentscape plot by modifying the configuration that is hard
 
 Since Currentscape can deal with a lot of data, it sometimes crashes with an error message such as `Bus error` or `Killed` when it runs out of memory. You can solve this error by allocating more memory. Note that this error is prone to happen more frequently when legacy methods are used.
 
+### API Documentation
+
+The API documentation can be found on ReadTheDocs.
 
 ### Funding & Acknowledgements
 

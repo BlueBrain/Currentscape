@@ -1,4 +1,4 @@
 * Leandro M Alonso
 * Eve Marder
-* Aur√lien Jaquier
+* Aur√©lien Jaquier (maintainer)
 * Anil Tuncel

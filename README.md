@@ -1,5 +1,15 @@
 # Currentscape
 
+| Latest Release | available after open sourcing                            |
+|----------------|----------------------------------------------------------|
+| Documentation  | available after open sourcing                            |
+| License        | [![License Badge]([license_badge_img])]([license_link])  |
+| Build Status   | [![Build Status Badge]([build_badge_img])]([build_link]) |
+| Coverage       | available after open sourcing                            |
+| Gitter         | available after open sourcing                            |
+
+### Introduction
+
 Currentscape is a Pythonic API enabling scientists to easily plot 
 currentscapes figures in the style of
 [Leandro M. Alonso and Eve Marder, ”Visualization of currents in neural models with similar behavior and different conductance densities” (2019)](https://datadryad.org/stash/dataset/doi:10.5061/dryad.d0779mb)
@@ -427,3 +437,9 @@ Since Currentscape can deal with a lot of data, it sometimes crashes with an err
 The development of this software was supported by funding to the Blue Brain Project, a research center of the École polytechnique fédérale de Lausanne (EPFL), from the Swiss government's ETH Board of the Swiss Federal Institutes of Technology.
  
 Copyright (c) 2023 Blue Brain Project/EPFL
+
+
+[license_badge_img]: https://img.shields.io/badge/License-Apache_2.0-blue.svg
+[license_link]: https://github.com/BlueBrain/Currentscape/blob/main/LICENSE.txt
+[build_badge_img]: https://github.com/BlueBrain/Currentscape/actions/workflows/test.yml/badge.svg?branch=main
+[build_link]: https://github.com/BlueBrain/Currentscape/actions/workflows/test.yml

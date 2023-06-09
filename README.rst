@@ -126,6 +126,8 @@ Quick Start
 
 Given voltage and current data (see [Run cell and plot Currentscape](#run-cell-and-plot-Currentscape) example below for how to get voltage and currents from a cell), as well as an adequate config json file, producing a Currentscape figure should be as simple as
 
+.. code-block:: python
+
     import os
     import numpy as np
     from currentscape.currentscape import plot_currentscape

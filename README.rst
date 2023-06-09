@@ -71,8 +71,6 @@ Citation
 
 When you use this Currentscape software for your research, we ask you to cite the following publication (this includes poster presentations):
 
-[Leandro M. Alonso and Eve Marder, ”Visualization of currents in neural models with similar behavior and different conductance densities” (2019)](https://elifesciences.org/articles/42722)
-
 .. code-block:: 
 
     @article {10.7554/eLife.42722,
@@ -98,7 +96,7 @@ When you use this Currentscape software for your research, we ask you to cite th
 Support
 =======
 
-We are providing support at the [Gitter](https://gitter.im/BlueBrain/Currentscape) and the [Github issue tracker](https://github.com/BlueBrain/Currentscape/issues).
+We are providing support at the `Gitter <https://gitter.im/BlueBrain/Currentscape>`_ and the `Github issue tracker <https://github.com/BlueBrain/Currentscape/issues>`_.
 
 Requirements
 ============
@@ -494,17 +492,11 @@ Since Currentscape can deal with a lot of data, it sometimes crashes with an err
 API Documentation
 =================
 
-The API documentation can be found on ReadTheDocs.
+The API documentation can be found on `ReadTheDocs <"https://currentscape.readthedocs.io">`_.
 
 Funding & Acknowledgements
 ==========================
 
-The development of this software was supported by funding to the Blue Brain Project, a research center of the École polytechnique fédérale de Lausanne (EPFL), from the Swiss government's ETH Board of the Swiss Federal Institutes of Technology.
- 
-Copyright (c) 2023 Blue Brain Project/EPFL
+We wish to thank the authors of `Alonso and Marder, 2019 <https://doi.org/10.7554/eLife.42722>`_ to let us integrate a part of their code into this repository.
 
-
-[license_badge_img]: https://img.shields.io/badge/License-Apache_2.0-blue.svg
-[license_link]: https://github.com/BlueBrain/Currentscape/blob/main/LICENSE.txt
-[build_badge_img]: https://github.com/BlueBrain/Currentscape/actions/workflows/test.yml/badge.svg?branch=main
-[build_link]: https://github.com/BlueBrain/Currentscape/actions/workflows/test.yml
+The part of the code in this repository developed by the EPFL Blue Brain Project was supported by funding to the Blue Brain Project, a research center of the École polytechnique fédérale de Lausanne (EPFL), from the Swiss government's ETH Board of the Swiss Federal Institutes of Technology.

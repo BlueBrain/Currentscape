@@ -22,7 +22,7 @@ This is useful to see what current plays a role at any given time, and check in 
 
 ### Citation
 
-When you use the Currentscape software or method for your research, we ask you to cite the following publication (this includes poster presentations):
+When you use this Currentscape software for your research, we ask you to cite the following publication (this includes poster presentations):
 
 [Leandro M. Alonso and Eve Marder, ”Visualization of currents in neural models with similar behavior and different conductance densities” (2019)](https://elifesciences.org/articles/42722)
 
@@ -63,19 +63,11 @@ Currentscape can be pip installed with the following line:
 
     pip install currentscape
 
-This installs the Currentscape module and its dependencies.
+This installs the currentscape module and its dependencies.
 
 If you want to be able to run the Currentscape [examples](#examples), you will need to also install the example dependencies. This can be done with the following line:
 
     pip install currentscape[example]
-
-### Loading Currentscape in Python
-
-After installing Currentscape, your PYTHONPATH environment variable should normally
-contain the directory where the Currentscape module is installed. Loading Currentscape
-in Python becomes then as easy as:
-
-    import currentscape
 
 ### Quick Start: Plotting your first Currentscape
 

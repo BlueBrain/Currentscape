@@ -96,7 +96,7 @@ When you use this Currentscape software for your research, we ask you to cite th
 Support
 =======
 
-We are providing support at the `Gitter <https://gitter.im/BlueBrain/Currentscape>`_ and the `Github issue tracker <https://github.com/BlueBrain/Currentscape/issues>`_.
+We are providing support on `Gitter <https://gitter.im/BlueBrain/Currentscape>`_. We suggest you create tickets on the `Github issue tracker <https://github.com/BlueBrain/Currentscape/issues>`_ for suggestions, or problems you encounter while using the software.
 
 Requirements
 ============

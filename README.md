@@ -11,17 +11,12 @@
 
 ### Introduction
 
-Currentscape is a Pythonic API enabling scientists to easily plot 
-currentscapes figures in the style of
-[Leandro M. Alonso and Eve Marder, ”Visualization of currents in neural models with similar behavior and different conductance densities” (2019)](https://datadryad.org/stash/dataset/doi:10.5061/dryad.d0779mb)
-, given the currents and voltage traces of an in-silico neuron cell.
-Currentscape figures plot the percentage of each inward and outward ionic current,
+Currentscape is a Python tool enabling scientists to easily plot the currents in electrical neuron models.
+The code is based on the paper [Alonso and Marder, 2019](https://doi.org/10.7554/eLife.42722).
+
+Currentscape figures plot the percentage of inward and outward ionic membrane currents,
 the total inward and outward currents, as well as the voltage in function of time.
-This API is useful to see what current plays a major (or a minor) role at a given time,
-and see in depth the currents dynamics.
-
-This API is based on the code provided by the susmentioned paper.
-
+This is useful to see what current plays a role at any given time, and check in depth the currents dynamics.
 
 ![Illustration of a Currentscape plot](doc/source/images/plot.png)
 
@@ -53,7 +48,7 @@ When you use the Currentscape software or method for your research, we ask you t
 
 ### Support
 
-We are providing support at the [Github discussion page](https://github.com/BlueBrain/Currentscape/issues).
+We are providing support at the [Gitter](https://gitter.im/BlueBrain/Currentscape) and the [Github issue tracker](https://github.com/BlueBrain/Currentscape/issues).
 
 ### Requirements
 

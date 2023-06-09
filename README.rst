@@ -98,13 +98,12 @@ Support
 
 We are providing support on `Gitter <https://gitter.im/BlueBrain/Currentscape>`_. We suggest you create tickets on the `Github issue tracker <https://github.com/BlueBrain/Currentscape/issues>`_ for suggestions, or problems you encounter while using the software.
 
-Requirements
-============
+Main dependencies
+=================
 
-- [Python 3.7+](https://www.python.org/downloads/release/python-370/)
-- [Pip](https://pip.pypa.io/en/stable/) (installed by default in newer versions of Python)
-- [Numpy](https://numpy.org/) (automatically installed by pip)
-- [palettable](https://github.com/jiffyclub/palettable) (automatically installed by pip)
+- `Python 3.7+ <https://www.python.org/downloads/release/python-370/>`_
+- `Numpy <https://numpy.org/> (automatically installed by pip)`_
+- `Palettable <https://github.com/jiffyclub/palettable`_ (automatically installed by pip)
 
 Installation
 ============
@@ -156,14 +155,11 @@ Given voltage and current data (see [Run cell and plot Currentscape](#run-cell-a
         currents.append(np.loadtxt(file_path)[:, 1])
     currents = np.array(currents)
 
-    # define config
-    config = "path/to/config.json"
-    # can also pass config as a dictionnary, as commented below
-    # curr_names = ["pas", "Ih", "Ca_HVA2", "Ca_LVAst", "SK_E2", "SKv3_1", "K_Pst", "K_Tst", "NaTg"]
-    # config = {
-    #     "current": {"names": curr_names},
-    #     "legendtextsize": 5,
-    # }
+    curr_names = ["pas", "Ih", "Ca_HVA2", "Ca_LVAst", "SK_E2", "SKv3_1", "K_Pst", "K_Tst", "NaTg"]
+    config = {
+         "current": {"names": curr_names},
+         "legendtextsize": 5,
+    }
 
     # produce Currentscape figure
     fig = plot_currentscape(voltage, currents, config)
@@ -499,6 +495,6 @@ The API documentation can be found on `ReadTheDocs <"https://currentscape.readth
 Funding & Acknowledgements
 ==========================
 
-We wish to thank the authors of `Alonso and Marder, 2019 <https://doi.org/10.7554/eLife.42722>`_ to let us integrate a part of their code into this repository.
+We wish to thank the authors of `Alonso and Marder, 2019 <https://doi.org/10.7554/eLife.42722>`_ to let us integrate a part of their `code <https://datadryad.org/stash/dataset/doi:10.5061/dryad.d0779mb>`_ into this repository.
 
 The part of the code in this repository developed by the EPFL Blue Brain Project was supported by funding to the Blue Brain Project, a research center of the École polytechnique fédérale de Lausanne (EPFL), from the Swiss government's ETH Board of the Swiss Federal Institutes of Technology.

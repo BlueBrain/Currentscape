@@ -1,15 +1,61 @@
-# Currentscape
+Currentscape
+============
 
-|                |                                                          |
-|----------------|----------------------------------------------------------|
-| Latest Release | available after open sourcing                            |
-| Documentation  | available after open sourcing                            |
-| License        | [![License Badge][license_badge_img]][license_link]      |
-| Build Status   | [![Build Status Badge][build_badge_img]][build_link]     |
-| Coverage       | available after open sourcing                            |
-| Gitter         | available after open sourcing                            |
+.. raw:: html
 
-### Introduction
+	<table>
+	<tr>
+	  <td>Latest Release</td>
+	  <td>
+	    <a href="https://pypi.org/project/currentscape/">
+	    <img src="https://img.shields.io/pypi/v/currentscape.svg" alt="latest release" />
+	    </a>
+	  </td>
+	</tr>
+	<tr>
+	  <td>Documentation</td>
+	  <td>
+	    <a href="https://currentscape.readthedocs.io/">
+	    <img src="https://readthedocs.org/projects/currentscape/badge/?version=latest" alt="latest documentation" />
+	    </a>
+	  </td>
+	</tr>
+	<tr>
+	  <td>License</td>
+	  <td>
+	    <a href="https://github.com/BlueBrain/Currentscape/blob/master/LICENSE.txt">
+	    <img src="https://img.shields.io/pypi/l/currentscape.svg" alt="license" />
+	    </a>
+	</td>
+	</tr>
+	<tr>
+	  <td>Build Status</td>
+	  <td>
+	    <a href="https://github.com/BlueBrain/Currentscape/actions">
+	    <img src="https://github.com/BlueBrain/Currentscape/workflows/Build/badge.svg?branch=master" alt="Actions build status" />
+	    </a>
+	  </td>
+	</tr>
+	<tr>
+	  <td>Coverage</td>
+	  <td>
+	    <a href="https://codecov.io/gh/BlueBrain/currentscape">
+	    <img src="https://codecov.io/github/BlueBrain/Currentscape/coverage.svg?branch=master" alt="coverage" />
+	    </a>
+	  </td>
+	</tr>
+	<tr>
+		<td>Gitter</td>
+		<td>
+			<a href="https://gitter.im/bluebrain/currentscape">
+			<img src="https://badges.gitter.im/Join%20Chat.svg"
+		</a>
+		</td>
+	</tr>
+	</table>
+
+Introduction
+============
 
 Currentscape is a Python tool enabling scientists to easily plot the currents in electrical neuron models.
 The code is based on the paper [Alonso and Marder, 2019](https://doi.org/10.7554/eLife.42722).
@@ -20,11 +66,14 @@ This is useful to see what current plays a role at any given time, and check in 
 
 ![Illustration of a Currentscape plot](doc/source/images/plot.png)
 
-### Citation
+Citation
+========
 
 When you use this Currentscape software for your research, we ask you to cite the following publication (this includes poster presentations):
 
 [Leandro M. Alonso and Eve Marder, ”Visualization of currents in neural models with similar behavior and different conductance densities” (2019)](https://elifesciences.org/articles/42722)
+
+.. code-block:: 
 
     @article {10.7554/eLife.42722,
     article_type = {journal},
@@ -46,30 +95,36 @@ When you use this Currentscape software for your research, we ask you to cite th
     publisher = {eLife Sciences Publications, Ltd},
     }
 
-### Support
+Support
+=======
 
 We are providing support at the [Gitter](https://gitter.im/BlueBrain/Currentscape) and the [Github issue tracker](https://github.com/BlueBrain/Currentscape/issues).
 
-### Requirements
+Requirements
+============
 
 - [Python 3.7+](https://www.python.org/downloads/release/python-370/)
 - [Pip](https://pip.pypa.io/en/stable/) (installed by default in newer versions of Python)
 - [Numpy](https://numpy.org/) (automatically installed by pip)
 - [palettable](https://github.com/jiffyclub/palettable) (automatically installed by pip)
 
-### Installation
+Installation
+============
 
 Currentscape can be pip installed with the following line:
 
-    pip install currentscape
+.. code-block:: python
 
-This installs the currentscape module and its dependencies.
+    pip install currentscape
 
 If you want to be able to run the Currentscape [examples](#examples), you will need to also install the example dependencies. This can be done with the following line:
 
+.. code-block:: python
+
     pip install currentscape[example]
 
-### Quick Start: Plotting your first Currentscape
+Quick Start
+===========
 
 Given voltage and current data (see [Run cell and plot Currentscape](#run-cell-and-plot-Currentscape) example below for how to get voltage and currents from a cell), as well as an adequate config json file, producing a Currentscape figure should be as simple as
 
@@ -121,8 +176,8 @@ The currents should be a list of lists of floats corresponding to each current a
 Each current list and the voltage list should have the same size.
 
 
-### About the config
-
+About the config
+================
 
 Here is an example of a config file containing all defaults values :
 
@@ -308,7 +363,8 @@ One may want to change the y axis limits, or the ticks, for example.
 If the legend is cut, one may decrease the legendsize, the adjust right parameter or increase the figsize.
 
 
-### Setting the colormap
+Setting the colormap
+====================
 
 Since each color of the colormap applies to one category (one current), using categorical / qualitative colormaps is recommended.
 These colormaps have colors chosen to easily distinguish each category.
@@ -327,7 +383,8 @@ The palettable colormaps should be inputted in the form `"origin.palette_N"`, N 
 Example: `"cartocolors.qualitative.Safe_8"`
 
 
-### Showing x axis label, ticklabel, gridlines
+Showing x axis label, ticklabel, gridlines
+==========================================
 
 You can use the configuration to show x axis label, ticklabels and vertical gridlines. 
 If you choose to display them, the label and ticklabels will only show on the bottom plot, and the vertical gridlines will show on all plots, and correspond to the x ticks (generated automatically, if not set in the config). 
@@ -349,7 +406,8 @@ Be aware that the time data are expected to grow monotonically.
 
 Also, when setting custom x ticks through the config, try to stick with ticks within time data limits for optimal display.
 
-### Using patterns
+Using patterns
+==============
 
 If you have a lot of currents to display and do not find a colormap with enough colors to distinguish them all, you can use patterns (also called hatches).
 Note: if you are using a lot of currents, you may want to increase the `"legend": {"ypos"}` (e.g. to `1.5`) in your config to have a legend higher in the figure.
@@ -361,14 +419,14 @@ You can also change the patterns or the number of different colors to use with t
 
 You could also want to use pattern if you are using a non-qualitative colormap that do not have a lot of distinguishable colors.
 
-
-### Showing all absolute currents
+Showing all absolute currents
+=============================
 
 By putting `"show":{"all_currents": True}` in the config file, two subplots showing all the positive and negative currents are added at the bottom of the figure.
 The currents can be displayed as stackplots by putting `"current":{"stackplot": True}` in the config, or as lines, by putting `"current":{"stackplot": False}` in the config. In case they are displayed with lines, while using patterns for the current shares, the lines will be displayed with styles (dashed, dotted, etc.). In such a case, the number of line styles should be equal to the number of patterns (which they are, by default). Keep this in mind when changing either the line styles or the patterns.
 
-
-### Using legacy methods
+Using legacy methods
+====================
 
 You can use Currentscape legacy methods by setting `"currentscape": {"legacy_method": True}` in the config.
 If case you are displaying absolute currents with a stackplot, you can also use its legacy method by setting `"current": {"legacy_method": True}` in the config.
@@ -378,24 +436,26 @@ the legacy barplot method (used when `"pattern": {"use": True}`, or when both `"
 However, these methods can be useful to display the main features of the plots, without having the details blurred by e.g. low resolution.
 
 
-### Showing ionic concentrations
+Showing ionic concentrations
+============================
 
 You can plot the ionic concentrations in a subplot at the bottom of the figure by passing your ionic concentration data to the main function: `plot_currentscape(voltage, currents, config, ions)`, and by passing the ion names to the config under: `"ions":{"names":your_list}`. Note that, as for the currents, the ion names should correspond to the ion data (i.e. be listed in the same order).
 
-
-### Showing overall contribution pie charts
+Showing overall contribution pie charts
+=======================================
 
 By setting `"show":{"total_contribution": True}` in the configuration, two pie charts are added at the bottom of the figure, each showing the overall contribution of each current over the whole simulation, one for the outward currents, and the other one for the inward currents.
 
-
-### Examples
+Examples
+========
 
 The examples repository contains two examples: one from the original paper from Alsonso and Marder, and one to run a cell, record its currents, and plot them into a Currentscape figure. Remember that these examples need extra dependencies that can be installed with:
 
     pip install currentscape[example]
 
 
-#### Original paper example
+Original paper example
+======================
 
 This is a code example from the original paper code, adapted to use this Currentscape module. It generates data, implements the model from the paper, and uses the Currentscape module to make a plot. You can run it with this command after going to `examples/original_paper_plot`:
 
@@ -404,7 +464,8 @@ This is a code example from the original paper code, adapted to use this Current
 It will produce the Currentscape figure and save it under `examples/original_paper_plot/output/example.png`.
 
 
-#### Run cell and plot Currentscape
+Run cell and plot Currentscape
+==============================
 
 You can see an example of how to extract currents and ionic concentractions with bluepyopt and emodelrunner in the example folder: `examples/use_case`.
 Please note that you should have [bluepyopt](https://github.com/BlueBrain/BluePyOpt), [emodelrunner](https://github.com/BlueBrain/EModelRunner) and [NEURON](https://neuron.yale.edu/neuron/) installed in order to run the example.
@@ -425,15 +486,18 @@ It should open a matplotlib window with the Currentscape figure.
 You can adjust the Currentscape plot by modifying the configuration that is hard-coded in `plot.py`.
 
 
-### Known caveats
+Known caveats
+=============
 
 Since Currentscape can deal with a lot of data, it sometimes crashes with an error message such as `Bus error` or `Killed` when it runs out of memory. You can solve this error by allocating more memory. Note that this error is prone to happen more frequently when legacy methods are used.
 
-### API Documentation
+API Documentation
+=================
 
 The API documentation can be found on ReadTheDocs.
 
-### Funding & Acknowledgements
+Funding & Acknowledgements
+==========================
 
 The development of this software was supported by funding to the Blue Brain Project, a research center of the École polytechnique fédérale de Lausanne (EPFL), from the Swiss government's ETH Board of the Swiss Federal Institutes of Technology.
  

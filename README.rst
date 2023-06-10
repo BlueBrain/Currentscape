@@ -102,7 +102,7 @@ Main dependencies
 =================
 
 - `Python 3.7+ <https://www.python.org/downloads/release/python-370/>`_
-- `Numpy <https://numpy.org/> (automatically installed by pip)>`_
+- `Numpy <https://numpy.org/>`_ (automatically installed by pip)
 - `Palettable <https://github.com/jiffyclub/palettable>`_ (automatically installed by pip)
 
 Installation

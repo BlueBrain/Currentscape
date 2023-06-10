@@ -96,25 +96,25 @@ When you use this Currentscape software for your research, we ask you to cite th
 Support
 =======
 
-We are providing support on `Gitter <https://gitter.im/BlueBrain/Currentscape>`_. We suggest you create tickets on the `Github issue tracker <https://github.com/BlueBrain/Currentscape/issues>`_ for suggestions, or problems you encounter while using the software.
+We are providing support on `Gitter <https://gitter.im/BlueBrain/Currentscape>`_. We suggest you create tickets on the `Github issue tracker <https://github.com/BlueBrain/Currentscape/issues>`_ in case you encounter problems while using the software or if you have some suggestions.
 
 Main dependencies
 =================
 
 - `Python 3.7+ <https://www.python.org/downloads/release/python-370/>`_
-- `Numpy <https://numpy.org/> (automatically installed by pip)`_
-- `Palettable <https://github.com/jiffyclub/palettable`_ (automatically installed by pip)
+- `Numpy <https://numpy.org/>`_ (automatically installed by pip)
+- `Palettable <https://github.com/jiffyclub/palettable>`_ (automatically installed by pip)
 
 Installation
 ============
 
-Currentscape can be pip installed with the following line:
+Currentscape can be pip installed with the following command:
 
 .. code-block:: python
 
     pip install currentscape
 
-If you want to be able to run the Currentscape examples, you will need to also install the example dependencies. This can be done with the following line:
+If you want to be able to run the Currentscape examples, you will need to also install the example dependencies:
 
 .. code-block:: python
 
@@ -127,7 +127,13 @@ Below is an example of a ball and stick model in NEURON with simple Hodgkin-Huxl
 
 The voltage and ionic currents are recorded and fed to Currentscape, along with a configuration dictionary containing the current names to be displayed in the legend.
 
-The currentscape function then returns a matplotlib figure.
+To run the code you will first have to install NEURON package:
+
+.. code-block:: python
+
+    pip install neuron
+
+When you then execute the following python code, a window should open with the currentscape plot:
 
 .. code-block:: python
 
@@ -199,15 +205,12 @@ The currentscape function then returns a matplotlib figure.
     fig = plot_currentscape(voltage, [potassium, sodium, leak], config)
     fig.show()
 
-The voltage should be a list of floats corresponding to the voltage at each timestep.
+The current and voltage vector should have the same length. The current names in the config should be in the same order as the current list given to the plot_currentscape function.
 
-The currents should be a list of lists of floats corresponding to each current at each timestep.
+Tutorial
+========
 
-Each current list and the voltage list should have the same size.
-
-The current names in the config should be in the same order as the current list given to the plot_currentscape function.
-
-More detailed explanations on how to use the Currentscape module, as well as other examples can be found in `Tutorial.rst`.
+More detailed explanations on how to use the Currentscape module, as well as other examples can be found on the `tutorial page <Tutorial.rst>`_.
 
 API Documentation
 =================

@@ -3,6 +3,8 @@ About the config
 
 Here is an example of a config file containing all defaults values :
 
+.. code-block:: json
+
     {
         "show": {
             "currentscape": true,
@@ -165,6 +167,8 @@ Here is an example of a config file containing all defaults values :
 If you do not want to modify the default values, you should at least specify the current names if you want to plot with the legend.
 Your configuration file could be as small as:
 
+.. code-block:: json
+
     {
         "current": {
             "names": [
@@ -211,6 +215,8 @@ Showing x axis label, ticklabel, gridlines
 You can use the configuration to show x axis label, ticklabels and vertical gridlines. 
 If you choose to display them, the label and ticklabels will only show on the bottom plot, and the vertical gridlines will show on all plots, and correspond to the x ticks (generated automatically, if not set in the config). 
 However, to show ticklabels and gridlines, you have to also input time as an argument to the plot_currentscape function. Here is an example:
+
+.. code-block:: python
 
     # load voltage data
     data_dir = "path/to/data/dir"
@@ -273,6 +279,8 @@ Examples
 
 The examples repository contains two examples: one from the original paper from Alsonso and Marder, and one to run a cell, record its currents, and plot them into a Currentscape figure. Remember that these examples need extra dependencies that can be installed with:
 
+.. code-block:: bash
+
     pip install currentscape[example]
 
 
@@ -280,6 +288,8 @@ Original paper example
 ======================
 
 This is a code example from the original paper code, adapted to use this Currentscape module. It generates data, implements the model from the paper, and uses the Currentscape module to make a plot. You can run it with this command after going to `examples/original_paper_plot`:
+
+.. code-block:: bash
 
     python integrate_single_compartment_and_plot_currentscape.py 
 
@@ -298,10 +308,12 @@ and another script to plot its Currentscape.
 
 To run the cell, go to `examples/use_case` and do
 
+.. code-block:: bash
     sh run_py.sh
 
 It should record the currents under the `python_recordings` folder. Once this is done, you can plot the Currentscape by doing:
 
+.. code-block:: bash
     python plot.py
 
 It should open a matplotlib window with the Currentscape figure.

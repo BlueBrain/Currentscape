@@ -23,7 +23,7 @@ if sys.version_info < (3, 7):
     sys.exit("Sorry, Python < 3.7 is not supported")
 
 # read the contents of the README file
-with open("README.md", encoding="utf-8") as f:
+with open("README.rst", encoding="utf-8") as f:
     README = f.read()
 
 VERSION = imp.load_source("", "currentscape/version.py").__version__

@@ -96,7 +96,7 @@ When you use this Currentscape software for your research, we ask you to cite th
 Support
 =======
 
-We are providing support on `Gitter <https://gitter.im/BlueBrain/Currentscape>`_. We suggest you create tickets on the `Github issue tracker <https://github.com/BlueBrain/Currentscape/issues>`_ for suggestions, or problems you encounter while using the software.
+We are providing support on `Gitter <https://gitter.im/BlueBrain/Currentscape>`_. We suggest you create tickets on the `Github issue tracker <https://github.com/BlueBrain/Currentscape/issues>`_ in case you encounter problems while using the software or if you have some suggestions.
 
 Main dependencies
 =================
@@ -127,13 +127,13 @@ Below is an example of a ball and stick model in NEURON with simple Hodgkin-Huxl
 
 The voltage and ionic currents are recorded and fed to Currentscape, along with a configuration dictionary containing the current names to be displayed in the legend.
 
-To run the code you will first have to install neuron:
+To run the code you will first have to install NEURON package:
 
 .. code-block:: python
 
-    pip install currentscape[example]
+    pip install neuron
 
-When you then execute the following python code, a window should pop up with the currentscape plot:
+When you then execute the following python code, a window should open with the currentscape plot:
 
 .. code-block:: python
 
@@ -207,7 +207,10 @@ When you then execute the following python code, a window should pop up with the
 
 The current and voltage vector should have the same length. The current names in the config should be in the same order as the current list given to the plot_currentscape function.
 
-More detailed explanations on how to use the Currentscape module, as well as other examples can be found in `Tutorial.rst`.
+Tutorial
+========
+
+More detailed explanations on how to use the Currentscape module, as well as other examples can be found on the `tutorial page <Tutorial.rst>`_.
 
 API Documentation
 =================

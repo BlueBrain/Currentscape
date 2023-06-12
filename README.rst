@@ -32,7 +32,7 @@ Currentscape
 	  <td>Build Status</td>
 	  <td>
 	    <a href="https://github.com/BlueBrain/Currentscape/actions">
-	    <img src="https://github.com/BlueBrain/Currentscape/workflows/Build/badge.svg?branch=main" alt="Actions build status" />
+	    <img src="https://github.com/BlueBrain/Currentscape/workflows/Test/badge.svg?branch=main" alt="Actions build status" />
 	    </a>
 	  </td>
 	</tr>

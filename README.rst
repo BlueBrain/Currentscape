@@ -23,7 +23,7 @@ Currentscape
 	<tr>
 	  <td>License</td>
 	  <td>
-	    <a href="https://github.com/BlueBrain/Currentscape/blob/master/LICENSE.txt">
+	    <a href="https://github.com/BlueBrain/Currentscape/blob/main/LICENSE.txt">
 	    <img src="https://img.shields.io/pypi/l/currentscape.svg" alt="license" />
 	    </a>
 	</td>
@@ -32,7 +32,7 @@ Currentscape
 	  <td>Build Status</td>
 	  <td>
 	    <a href="https://github.com/BlueBrain/Currentscape/actions">
-	    <img src="https://github.com/BlueBrain/Currentscape/workflows/Build/badge.svg?branch=master" alt="Actions build status" />
+	    <img src="https://github.com/BlueBrain/Currentscape/workflows/Build/badge.svg?branch=main" alt="Actions build status" />
 	    </a>
 	  </td>
 	</tr>
@@ -40,7 +40,7 @@ Currentscape
 	  <td>Coverage</td>
 	  <td>
 	    <a href="https://codecov.io/gh/BlueBrain/currentscape">
-	    <img src="https://codecov.io/github/BlueBrain/Currentscape/coverage.svg?branch=master" alt="coverage" />
+	    <img src="https://codecov.io/github/BlueBrain/Currentscape/coverage.svg?branch=main" alt="coverage" />
 	    </a>
 	  </td>
 	</tr>

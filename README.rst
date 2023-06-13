@@ -62,7 +62,7 @@ The code is based on the paper `Alonso and Marder, 2019 <https://doi.org/10.7554
 
 Currentscape figures plot the percentage of inward and outward ionic membrane currents,
 the total inward and outward currents, as well as the voltage in function of time.
-It allows the modellers to see which currents play a role at any given time, and check in depth the currents dynamics.
+It allows modellers to see which currents play a role at any given time during a simulation, and check in depth the current dynamics.
 
 .. image:: doc/source/images/plot.png
 
@@ -198,6 +198,14 @@ When you then execute the following python code, a window should open with the c
     leak = np.asarray(il_vec) * to_pA
 
     config = {
+        "output": {                                                                    
+          "savefig": True,                                                           
+          "dir": ".",                                                                
+          "fname": "quickstart_plot",                                                
+          "extension": "png",                                                        
+          "dpi": 300,                                                                
+          "transparent": False                                                       
+        },   
         "current": {"names": current_names},
         "voltage": {"ylim": [-90, 50]},
         "legendtextsize": 5,
@@ -205,12 +213,14 @@ When you then execute the following python code, a window should open with the c
     fig = plot_currentscape(voltage, [potassium, sodium, leak], config)
     fig.show()
 
-The current and voltage vector should have the same length. The current names in the config should be in the same order as the current list given to the plot_currentscape function.
+When you run this code in Python, it will generate the following currentscape plot (in a window, and on disk as quickstart_plot.png):
+
+.. image:: doc/source/images/quickstart_plot.png
 
 Tutorial
 ========
 
-More detailed explanations on how to use the Currentscape module, as well as other examples can be found on the `tutorial page <Tutorial.rst>`_.
+A more detailed explanation on how to use Currentscape, as well as other examples can be found on the `tutorial page <Tutorial.rst>`_.
 
 API Documentation
 =================

@@ -1,64 +1,26 @@
 Currentscape
 ============
 
-.. raw:: html
 
-	<table>
-	<tr>
-	  <td>Latest Release</td>
-	  <td>
-	    <a href="https://pypi.org/project/currentscape/">
-	    <img src="https://img.shields.io/pypi/v/currentscape.svg" alt="latest release" />
-	    </a>
-	  </td>
-	</tr>
-	<tr>
-	  <td>Documentation</td>
-	  <td>
-	    <a href="https://currentscape.readthedocs.io/">
-	    <img src="https://readthedocs.org/projects/currentscape/badge/?version=latest" alt="latest documentation" />
-	    </a>
-	  </td>
-	</tr>
-	<tr>
-	  <td>License</td>
-	  <td>
-	    <a href="https://github.com/BlueBrain/Currentscape/blob/main/LICENSE.txt">
-	    <img src="https://img.shields.io/pypi/l/currentscape.svg" alt="license" />
-	    </a>
-	</td>
-	</tr>
-	<tr>
-	  <td>Build Status</td>
-	  <td>
-	    <a href="https://github.com/BlueBrain/Currentscape/actions">
-	    <img src="https://github.com/BlueBrain/Currentscape/workflows/Test/badge.svg?branch=main" alt="Actions build status" />
-	    </a>
-	  </td>
-	</tr>
-	<tr>
-	  <td>Coverage</td>
-	  <td>
-	    <a href="https://codecov.io/gh/BlueBrain/currentscape">
-	    <img src="https://codecov.io/github/BlueBrain/Currentscape/coverage.svg?branch=main" alt="coverage" />
-	    </a>
-	  </td>
-	</tr>
-	<tr>
-		<td>Gitter</td>
-		<td>
-			<a href="https://gitter.im/bluebrain/currentscape">
-			<img src="https://badges.gitter.im/Join%20Chat.svg"
-		</a>
-		</td>
-	</tr>
-	</table>
++----------------+------------+
+| Latest Release | |pypi|     |
++----------------+------------+
+| Documentation  | |docs|     |
++----------------+------------+
+| License        | |license|  |
++----------------+------------+
+| Build Status 	 | |build|    |
++----------------+------------+
+| Coverage       | |coverage| |
++----------------+------------+
+| Gitter         | |gitter|   |
++----------------+------------+
 
 Introduction
 ============
 
 Currentscape is a Python tool enabling scientists to easily plot the currents in electrical neuron models.
-The code is based on the paper `Alonso and Marder, 2019 <https://doi.org/10.7554/eLife.42722>`_.
+The code is based on the paper `Alonso and Marder, 2019 <https://doi.org/10.7554/eLife.42722>`__.
 
 Currentscape figures plot the percentage of inward and outward ionic membrane currents,
 the total inward and outward currents, as well as the voltage in function of time.
@@ -230,6 +192,31 @@ The API documentation can be found on `ReadTheDocs <"https://currentscape.readth
 Funding & Acknowledgements
 ==========================
 
-We wish to thank the authors of `Alonso and Marder, 2019 <https://doi.org/10.7554/eLife.42722>`_ to let us integrate a part of their `code <https://datadryad.org/stash/dataset/doi:10.5061/dryad.d0779mb>`_ into this repository.
+We wish to thank the authors of `Alonso and Marder, 2019 <https://doi.org/10.7554/eLife.42722>`__ to let us integrate a part of their `code <https://datadryad.org/stash/dataset/doi:10.5061/dryad.d0779mb>`_ into this repository.
 
 The part of the code in this repository developed by the EPFL Blue Brain Project was supported by funding to the Blue Brain Project, a research center of the École polytechnique fédérale de Lausanne (EPFL), from the Swiss government's ETH Board of the Swiss Federal Institutes of Technology.
+
+
+.. |pypi| image:: https://img.shields.io/pypi/v/currentscape.svg
+               :target: https://test.pypi.org/project/currentscape/
+               :alt: latest release
+
+.. |docs| image:: https://readthedocs.org/projects/currentscape/badge/?version=latest
+               :target: https://currentscape.readthedocs.io/
+               :alt: latest documentation
+
+.. |license| image:: https://img.shields.io/pypi/l/currentscape.svg
+                  :target: https://github.com/BlueBrain/Currentscape/blob/main/LICENSE.txt
+                  :alt: license
+
+.. |build| image:: https://github.com/BlueBrain/Currentscape/workflows/Test/badge.svg?branch=main
+                :target: https://github.com/BlueBrain/Currentscape/actions
+                :alt: actions build status
+
+.. |coverage| image:: https://codecov.io/github/BlueBrain/Currentscape/coverage.svg?branch=main
+                   :target: https://codecov.io/gh/BlueBrain/currentscape
+                   :alt: coverage
+
+.. |gitter| image:: https://badges.gitter.im/Join%20Chat.svg
+                 :target: https://gitter.im/bluebrain/currentscape
+                 :alt: Join the chat at https://gitter.im/bluebrain/currentscape

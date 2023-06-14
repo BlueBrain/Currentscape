@@ -3,6 +3,7 @@ API Documentation
 
 .. autosummary::
    :nosignatures:
-   :toctree: currentscape
+   :toctree: _autosummary
+   :recursive:
 
-   currentscape.currentscape
+   currentscape

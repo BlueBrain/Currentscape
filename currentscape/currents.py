@@ -499,12 +499,13 @@ class Currents(CurrentPlottingMixin, DataSet):
         Args:
             reorder_ (bool): whether to reorder the currents or not
 
-        Returns:
-            pos_norm (ndarray of ndarrays): arrays containing norm
-                of positive currents
-            neg_norm (ndarray of ndarrays): arrays containing (-1)* norm
-                of negative currents
+        Returns: A tuple (pos_norm, neg_norm, normapos, normaneg), with
+            pos_norm (ndarray of ndarrays): arrays containing norm of positive currents
+
+            neg_norm (ndarray of ndarrays): arrays containing (-1)* norm of negative currents
+
             normapos (ndarray): summed positive currents
+            
             normaneg (ndarray): summed (absolute values of) negative currents
         """
         cpos = self.get_positive_data()

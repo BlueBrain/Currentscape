@@ -26,14 +26,12 @@ if sys.version_info < (3, 7):
 with open("README.rst", encoding="utf-8") as f:
     README = f.read()
 
-VERSION = imp.load_source("", "currentscape/version.py").__version__
-
 EXTRA_EXAMPLE = ["scipy", "bluepyopt", "emodelrunner>=1.1.5"]
 
 setup(
     name="currentscape",
     author="Blue Brain Project, EPFL",
-    version=VERSION,
+    use_scm_version=True,
     description="Module to easily plot currentscape.",
     long_description=README,
     long_description_content_type="text/markdown",

@@ -63,7 +63,7 @@ We are providing support on `Gitter <https://gitter.im/BlueBrain/Currentscape>`_
 Main dependencies
 =================
 
-- `Python 3.7+ <https://www.python.org/downloads/release/python-370/>`_
+- `Python 3.8+ <https://www.python.org/downloads/release/python-370/>`_
 - `Numpy <https://numpy.org/>`_ (automatically installed by pip)
 - `Palettable <https://github.com/jiffyclub/palettable>`_ (automatically installed by pip)
 
@@ -198,7 +198,7 @@ The part of the code in this repository developed by the EPFL Blue Brain Project
 
 
 .. |pypi| image:: https://img.shields.io/pypi/v/currentscape.svg
-               :target: https://test.pypi.org/project/currentscape/
+               :target: https://pypi.org/project/currentscape/
                :alt: latest release
 
 .. |docs| image:: https://readthedocs.org/projects/currentscape/badge/?version=latest

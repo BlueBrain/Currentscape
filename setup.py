@@ -18,8 +18,8 @@ import sys
 
 from setuptools import setup, find_packages
 
-if sys.version_info < (3, 7):
-    sys.exit("Sorry, Python < 3.7 is not supported")
+if sys.version_info < (3, 8):
+    sys.exit("Sorry, Python < 3.8 is not supported")
 
 # read the contents of the README file
 with open("README.rst", encoding="utf-8") as f:
@@ -47,7 +47,7 @@ setup(
         "palettable",
     ],
     packages=find_packages(exclude=["tests"]),
-    python_requires=">=3.7",
+    python_requires=">=3.8",
     extras_require={
         "docs": ["sphinx", "sphinx-bluebrain-theme"],
         "example": EXTRA_EXAMPLE,
@@ -58,7 +58,6 @@ setup(
         "Intended Audience :: Science/Research",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",

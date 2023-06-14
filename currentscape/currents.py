@@ -505,7 +505,7 @@ class Currents(CurrentPlottingMixin, DataSet):
             neg_norm (ndarray of ndarrays): arrays containing (-1)* norm of negative currents
 
             normapos (ndarray): summed positive currents
-            
+
             normaneg (ndarray): summed (absolute values of) negative currents
         """
         cpos = self.get_positive_data()

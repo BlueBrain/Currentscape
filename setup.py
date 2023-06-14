@@ -14,7 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import imp
 import sys
 
 from setuptools import setup, find_packages
@@ -32,9 +31,10 @@ setup(
     name="currentscape",
     author="Blue Brain Project, EPFL",
     use_scm_version=True,
+    setup_requires=["setuptools_scm"],
     description="Module to easily plot currentscape.",
     long_description=README,
-    long_description_content_type="text/markdown",
+    long_description_content_type="text/x-rst",
     url="https://github.com/BlueBrain/Currentscape",
     project_urls={
         "Tracker": "https://github.com/BlueBrain/Currentscape",

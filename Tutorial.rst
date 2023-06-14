@@ -309,11 +309,13 @@ and another script to plot its Currentscape.
 To run the cell, go to :code:`examples/use_case` and do
 
 .. code-block:: bash
+
     sh run_py.sh
 
 It should record the currents under the :code:`python_recordings` folder. Once this is done, you can plot the Currentscape by doing:
 
 .. code-block:: bash
+
     python plot.py
 
 It should open a matplotlib window with the Currentscape figure.

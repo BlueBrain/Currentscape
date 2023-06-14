@@ -218,5 +218,5 @@ The part of the code in this repository developed by the EPFL Blue Brain Project
                    :alt: coverage
 
 .. |gitter| image:: https://badges.gitter.im/Join%20Chat.svg
-                 :target: https://gitter.im/bluebrain/currentscape
-                 :alt: Join the chat at https://gitter.im/bluebrain/currentscape
+                 :target: https://gitter.im/BlueBrain/Currentscape
+                 :alt: Join the chat at https://gitter.im/BlueBrain/Currentscape

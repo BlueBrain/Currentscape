@@ -12,7 +12,7 @@ jobs:
     uses: BlueBrain/Currentscape/.github/workflows/test.yml@main
 
   build-n-publish:
-    name: Build and publish on TestPyPI
+    name: Build and publish on PyPI
     runs-on: ubuntu-latest
     needs: call-test-workflow
     steps:
@@ -28,9 +28,8 @@ jobs:
             pip install wheel
             python setup.py sdist bdist_wheel
 
-      - name: Publish package to TestPyPI
+      - name: Publish package to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          repository-url: https://test.pypi.org/legacy/
           user: __token__
-          password: ${{ secrets.TESTPYPI_PASSWORD }}
+          password: ${{ secrets.PYPI_PASSWORD }}

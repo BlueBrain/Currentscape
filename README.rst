@@ -36,23 +36,23 @@ When you use this Currentscape software for your research, we ask you to cite th
 .. code-block:: 
 
     @article {10.7554/eLife.42722,
-    article_type = {journal},
-    title = {Visualization of currents in neural models with similar behavior and different conductance densities},
-    author = {Alonso, Leandro M and Marder, Eve},
-    editor = {Westbrook, Gary L and Skinner, Frances K and Lankarany, Milad and Britton, Oliver},
-    volume = 8,
-    year = 2019,
-    month = {jan},
-    pub_date = {2019-01-31},
-    pages = {e42722},
-    citation = {eLife 2019;8:e42722},
-    doi = {10.7554/eLife.42722},
-    url = {https://doi.org/10.7554/eLife.42722},
-    abstract = {Conductance-based models of neural activity produce large amounts of data that can be hard to visualize and interpret. We introduce visualization methods to display the dynamics of the ionic currents and to display the models’ response to perturbations. To visualize the currents’ dynamics, we compute the percent contribution of each current and display them over time using stacked-area plots. The waveform of the membrane potential and the contribution of each current change as the models are perturbed. To represent these changes over a range of the perturbation control parameter, we compute and display the distributions of these waveforms. We illustrate these procedures in six examples of bursting model neurons with similar activity but that differ as much as threefold in their conductance densities. These visualization methods provide heuristic insight into why individual neurons or networks with similar behavior can respond widely differently to perturbations.},
-    keywords = {neuronal oscillators, Na+ channels, Ca++ channels, K+ channels, conductance-based, ionic channels},
-    journal = {eLife},
-    issn = {2050-084X},
-    publisher = {eLife Sciences Publications, Ltd},
+        article_type = {journal},
+        title = {Visualization of currents in neural models with similar behavior and different conductance densities},
+        author = {Alonso, Leandro M and Marder, Eve},
+        editor = {Westbrook, Gary L and Skinner, Frances K and Lankarany, Milad and Britton, Oliver},
+        volume = 8,
+        year = 2019,
+        month = {jan},
+        pub_date = {2019-01-31},
+        pages = {e42722},
+        citation = {eLife 2019;8:e42722},
+        doi = {10.7554/eLife.42722},
+        url = {https://doi.org/10.7554/eLife.42722},
+        abstract = {Conductance-based models of neural activity produce large amounts of data that can be hard to visualize and interpret. We introduce visualization methods to display the dynamics of the ionic currents and to display the models’ response to perturbations. To visualize the currents’ dynamics, we compute the percent contribution of each current and display them over time using stacked-area plots. The waveform of the membrane potential and the contribution of each current change as the models are perturbed. To represent these changes over a range of the perturbation control parameter, we compute and display the distributions of these waveforms. We illustrate these procedures in six examples of bursting model neurons with similar activity but that differ as much as threefold in their conductance densities. These visualization methods provide heuristic insight into why individual neurons or networks with similar behavior can respond widely differently to perturbations.},
+        keywords = {neuronal oscillators, Na+ channels, Ca++ channels, K+ channels, conductance-based, ionic channels},
+        journal = {eLife},
+        issn = {2050-084X},
+        publisher = {eLife Sciences Publications, Ltd},
     }
 
 Support
@@ -187,7 +187,7 @@ A more detailed explanation on how to use Currentscape, as well as other example
 API Documentation
 =================
 
-The API documentation can be found on `ReadTheDocs <"https://currentscape.readthedocs.io">`_.
+The API documentation can be found on `ReadTheDocs <https://currentscape.readthedocs.io>`_.
 
 Funding & Acknowledgements
 ==========================

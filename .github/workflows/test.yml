@@ -29,7 +29,8 @@ jobs:
       run: tox
     - name: "Upload coverage to Codecov"
       if: ${{matrix.python-version == '3.11'}}
-      uses: codecov/codecov-action@v2
+      uses: codecov/codecov-action@v3
+        env: CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       with:
         fail_ci_if_error: false
 

@@ -1,4 +1,8 @@
 {
+  "title" : "Currentscape",
+  "license": "Apache-2.0",
+  "upload_type": "software",
+  "description": "Currentscape is a Python tool enabling scientists to easily plot the currents in electrical neuron models. The code is based on the paper Alonso and Marder, 2019. Currentscape figures plot the percentage of inward and outward ionic membrane currents, the total inward and outward currents, as well as the voltage in function of time. It allows modellers to see which currents play a role at any given time during a simulation, and check in depth the current dynamics.",
   "creators": [
     {
       "affiliation": "Blue Brain Project, EPFL",
@@ -25,7 +29,5 @@
       "name": "Marder, Eve",
       "orcid": "0000-0001-9632-5448"
     },
-    ],
-  "license": "Apache-2.0",
-  "upload_type": "software"
+    ]
 }

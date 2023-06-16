@@ -191,8 +191,8 @@ def set_default_config(c):
     adjust_ = {}
     adjust_["left"] = 0.15
     adjust_["right"] = 0.85
-    adjust_["top"] = None
-    adjust_["bottom"] = None
+    adjust_["top"] = 0.95
+    adjust_["bottom"] = 0.0
     config["adjust"] = adjust_
 
     config["title"] = None

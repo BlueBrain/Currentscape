@@ -159,8 +159,8 @@ Here is an example of a config file containing all defaults values :
         "adjust": {
             "left": 0.15,
             "right": 0.85,
-            "top": null,
-            "bottom": null
+            "top": 0.95,
+            "bottom": 0.0
         }
     }
 

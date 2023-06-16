@@ -30,7 +30,10 @@ EXTRA_EXAMPLE = ["scipy", "bluepyopt", "emodelrunner>=1.1.5"]
 setup(
     name="currentscape",
     author="Blue Brain Project, EPFL",
-    use_scm_version=True,
+    use_scm_version={
+        'version_scheme': 'python-simplified-semver',
+        'local_scheme': 'no-local-version'
+    },
     setup_requires=["setuptools_scm"],
     description="Module to easily plot currentscape.",
     long_description=README,

@@ -9,6 +9,10 @@ sphinx:
   configuration: doc/source/conf.py
   fail_on_warning: true
 
+build:
+  tools:
+    python: "3.10"
+
 python:
   install:
     - method: pip

@@ -209,7 +209,7 @@ When you then execute the following python code, a window should open with the c
 
 When you run this code in Python, it will generate the following currentscape plot (in a window, and on disk as quickstart_plot.png):
 
-.. image:: doc/source/examples/quickstart/quickstart_plot.png
+.. image:: doc/source/images/quickstart_plot.png
 
 Tutorial
 ========

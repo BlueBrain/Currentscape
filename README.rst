@@ -15,6 +15,8 @@ Currentscape
 +----------------+------------+
 | Gitter         | |gitter|   |
 +----------------+------------+
+| Citation       | |zenodo|   |
++----------------+------------+
 
 Introduction
 ============
@@ -230,3 +232,6 @@ The part of the code in this repository developed by the EPFL Blue Brain Project
 .. |gitter| image:: https://badges.gitter.im/Join%20Chat.svg
                  :target: https://gitter.im/BlueBrain/Currentscape
                  :alt: Join the chat at https://gitter.im/BlueBrain/Currentscape
+
+.. |zenodo| image:: https://zenodo.org/badge/DOI/10.5281/zenodo.8046484.svg
+                :target: https://doi.org/10.5281/zenodo.8046484

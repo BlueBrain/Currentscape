@@ -15,6 +15,8 @@ Currentscape
 +----------------+------------+
 | Gitter         | |gitter|   |
 +----------------+------------+
+| Citation       | |zenodo|   |
++----------------+------------+
 
 Introduction
 ============
@@ -31,7 +33,7 @@ It allows modellers to see which currents play a role at any given time during a
 Citation
 ========
 
-When you use this Currentscape software for your research, we ask you to cite the following publication (this includes poster presentations):
+When you use this Currentscape software for your research, we ask you to cite the following publications (this includes poster presentations):
 
 .. code-block:: 
 
@@ -53,6 +55,16 @@ When you use this Currentscape software for your research, we ask you to cite th
         journal = {eLife},
         issn = {2050-084X},
         publisher = {eLife Sciences Publications, Ltd},
+    }
+    
+    @article{currentscape, 
+        title={Currentscape}, 
+        DOI={10.5281/zenodo.8046484}, 
+        abstractNote={Currentscape is a Python tool enabling scientists to easily plot the currents in electrical neuron models. The code is based on the paper Alonso and Marder, 2019. Currentscape figures plot the percentage of inward and outward ionic membrane currents, the total inward and outward currents, as well as the voltage in function of time. It allows modellers to see which currents play a role at any given time during a simulation, and check in depth the current dynamics.}, 
+        publisher={Zenodo}, 
+        author={Jaquier, Aurélien and Tuncel, Anil and Van Geit, Werner and Alonso, Leandro M and Marder, Eve}, 
+        year={2023}, 
+        month={Jun} 
     }
 
 Support
@@ -220,3 +232,6 @@ The part of the code in this repository developed by the EPFL Blue Brain Project
 .. |gitter| image:: https://badges.gitter.im/Join%20Chat.svg
                  :target: https://gitter.im/BlueBrain/Currentscape
                  :alt: Join the chat at https://gitter.im/BlueBrain/Currentscape
+
+.. |zenodo| image:: https://zenodo.org/badge/DOI/10.5281/zenodo.8046484.svg
+                :target: https://doi.org/10.5281/zenodo.8046484

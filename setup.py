@@ -31,8 +31,8 @@ setup(
     name="currentscape",
     author="Blue Brain Project, EPFL",
     use_scm_version={
-        'version_scheme': 'python-simplified-semver',
-        'local_scheme': 'no-local-version'
+        "version_scheme": "python-simplified-semver",
+        "local_scheme": "no-local-version",
     },
     setup_requires=["setuptools_scm"],
     description="Module to easily plot currentscape.",

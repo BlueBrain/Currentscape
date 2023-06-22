@@ -114,7 +114,7 @@ When you then execute the following python code, a window should open with the c
     import numpy as np
     from neuron import h
     from neuron.units import ms, mV
-    from currentscape.currentscape import plot_currentscape
+    import currentscape
 
 
     def main():
@@ -142,7 +142,7 @@ When you then execute the following python code, a window should open with the c
             }
         }
 
-        fig = plot_currentscape(voltage, [potassium, sodium, leak], config)
+        fig = currentscape.plot(voltage, [potassium, sodium, leak], config)
         fig.show()
 
 

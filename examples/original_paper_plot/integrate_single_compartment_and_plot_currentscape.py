@@ -6,7 +6,7 @@ import numpy as np
 from scipy.integrate import odeint
 from single_compartment import single_compartment
 from get_currents import model
-from currentscape.currentscape import plot_currentscape
+import currentscape
 
 
 def plot_from_original_paper(t0=0.0, tf=10000.0, dt=0.1):
@@ -54,7 +54,7 @@ def plot_from_original_paper(t0=0.0, tf=10000.0, dt=0.1):
     currents = model(fullsolution, parameters, temp)
 
     # plot currentscape (full temporal range)
-    fig = plot_currentscape(voltage, currents, config)
+    fig = currentscape.plot(voltage, currents, config)
 
 
 if __name__ == "__main__":

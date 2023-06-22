@@ -17,7 +17,7 @@
 from pathlib import Path
 import numpy as np
 
-from currentscape.currentscape import plot_currentscape
+import currentscape
 
 from run import absolute_path
 
@@ -68,7 +68,7 @@ def plot():
 
 
     # produce currentscape figure
-    fig = plot_currentscape(voltage, currents, config, ions)
+    fig = currentscape.plot(voltage, currents, config, ions)
     return fig
 
 if __name__ == "__main__":

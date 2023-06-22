@@ -37,7 +37,7 @@ When you use this Currentscape software for your research, we ask you to cite th
 
 .. code-block:: 
 
-    @article {10.7554/eLife.42722,
+    @article {alonsomarder2019,
         article_type = {journal},
         title = {Visualization of currents in neural models with similar behavior and different conductance densities},
         author = {Alonso, Leandro M and Marder, Eve},

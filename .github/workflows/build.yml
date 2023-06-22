@@ -40,7 +40,7 @@ jobs:
 
       - name: Get and store tag from 'Bump version and push tag' step
         if: ${{ !startsWith(github.ref, 'refs/tags/') }}
-        run: echo "TAG_NAME=${{steps.tag.outputs.new_tag}}" >> $GITHUB_ENV
+        run: echo "TAG_NAME=${{ steps.tag.outputs.new_tag }}" >> $GITHUB_ENV
       - name: Get and store tag from triggered tag push
         if: ${{ startsWith(github.ref, 'refs/tags/') }}
         run: echo "TAG_NAME=${{ github.ref_name }}" >> $GITHUB_ENV

@@ -48,7 +48,6 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          files: dist/currentscape-${{ env.TAG_NAME }}.tar.gz
           tag_name: ${{ env.TAG_NAME }}
           name: ${{ env.TAG_NAME }}
           generate_release_notes: true

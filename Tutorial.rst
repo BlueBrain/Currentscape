@@ -214,7 +214,7 @@ Showing x axis label, ticklabel, gridlines
 
 You can use the configuration to show x axis label, ticklabels and vertical gridlines. 
 If you choose to display them, the label and ticklabels will only show on the bottom plot, and the vertical gridlines will show on all plots, and correspond to the x ticks (generated automatically, if not set in the config). 
-However, to show ticklabels and gridlines, you have to also input time as an argument to the plot_currentscape function. Here is an example:
+However, to show ticklabels and gridlines, you have to also input time as an argument to the :code:`currentscape.plot` function. Here is an example:
 
 .. code-block:: python
 
@@ -228,7 +228,7 @@ However, to show ticklabels and gridlines, you have to also input time as an arg
     config = "path/to/config.json"
 
     # produce Currentscape figure
-    fig = plot_currentscape(voltage, currents, config, time=time)
+    fig = currentscape.plot(voltage, currents, config, time=time)
 
 Be aware that the time data are expected to grow monotonically.
 
@@ -267,7 +267,7 @@ However, these methods can be useful to display the main features of the plots, 
 Showing ionic concentrations
 ============================
 
-You can plot the ionic concentrations in a subplot at the bottom of the figure by passing your ionic concentration data to the main function: :code:`plot_currentscape(voltage, currents, config, ions)`, and by passing the ion names to the config under: :code:`"ions":{"names":your_list}`. Note that, as for the currents, the ion names should correspond to the ion data (i.e. be listed in the same order).
+You can plot the ionic concentrations in a subplot at the bottom of the figure by passing your ionic concentration data to the main function: :code:`currentscape.plot(voltage, currents, config, ions)`, and by passing the ion names to the config under: :code:`"ions":{"names":your_list}`. Note that, as for the currents, the ion names should correspond to the ion data (i.e. be listed in the same order).
 
 Showing overall contribution pie charts
 =======================================

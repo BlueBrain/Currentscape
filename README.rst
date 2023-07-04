@@ -28,7 +28,7 @@ Currentscape figures plot the percentage of inward and outward ionic membrane cu
 the total inward and outward currents, as well as the voltage in function of time.
 It allows modellers to see which currents play a role at any given time during a simulation, and check in depth the current dynamics.
 
-.. image:: doc/source/images/plot.png
+.. image:: https://raw.githubusercontent.com/BlueBrain/Currentscape/main/doc/source/images/plot.png
 
 Citation
 ========
@@ -209,7 +209,7 @@ When you then execute the following python code, a window should open with the c
 
 When you run this code in Python, it will generate the following currentscape plot (in a window, and on disk as quickstart_plot.png):
 
-.. image:: doc/source/images/quickstart_plot.png
+.. image:: https://raw.githubusercontent.com/BlueBrain/Currentscape/main/doc/source/images/quickstart_plot.png
 
 Tutorial
 ========

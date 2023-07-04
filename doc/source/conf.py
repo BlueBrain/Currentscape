@@ -16,15 +16,6 @@
 
 from pkg_resources import get_distribution
 
-from pathlib import Path
-import shutil
-
-# -- copy images referenced in Readme ---------------------------------------
-
-Path("doc/source/images").mkdir(parents=True, exist_ok=True)
-shutil.copy("images/plot.png", "doc/source/images/plot.png")
-shutil.copy("images/quickstart_plot.png", "doc/source/images/quickstart_plot.png")
-
 # -- Project information -----------------------------------------------------
 
 project = "currentscape"

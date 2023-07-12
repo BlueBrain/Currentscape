@@ -8,7 +8,7 @@ https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
 
 or in this tarball in the seperate file LICENSE_CC-BY-CA-SA-4.0
 
-The cell morphology is licensed with the above mentioned CC-BY-NC-SA license.
+The cell morphology is licensed with the above mentioned CC-BY-NC-SA license. The original experimental morphologies are in https://zenodo.org/record/5909613.
 
 The python code is licensed with the Apache license.
 

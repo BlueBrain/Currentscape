@@ -483,9 +483,9 @@ def get_colors(cmap, n_col):
         return x.mpl_colors[:n_col], False
 
     # is from matplotlib
-    new_cmap = matplotlib.cm.get_cmap(cmap, n_col)
+    new_cmap = matplotlib.colormaps[cmap].resampled(n_col)
     # check number of colors
-    if matplotlib.cm.get_cmap(cmap).N < n_col:
+    if matplotlib.colormaps[cmap].N < n_col:
         return list(new_cmap(range(n_col))), True
 
     return list(new_cmap(range(n_col))), False

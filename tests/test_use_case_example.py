@@ -1,4 +1,5 @@
 """Test that example produces a figure."""
+
 import os
 import subprocess
 import sys

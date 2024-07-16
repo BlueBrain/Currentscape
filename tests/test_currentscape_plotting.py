@@ -83,7 +83,7 @@ def test_get_rows_tot():
     assert rows == 10
 
     config["show"]["total_contribution"] = False
-    ions.data = [[1, 2], [3, 4]]
+    ions.data = np.asarray([[1, 2], [3, 4]])
     rows = get_rows_tot(config, ions)
     assert rows == 9
 

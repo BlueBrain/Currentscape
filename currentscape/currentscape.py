@@ -66,7 +66,11 @@ def create_figure(voltage, currs, c, ions):
     # put into classes
     if c["current"]["autoscale_ticks_and_ylim"]:
         autoscale_ticks_and_ylim(c, currs.pos_sum, currs.neg_sum)
-    if ions.data is not None and c["ions"]["autoscale_ticks_and_ylim"]:
+    if (
+        ions.data is not None
+        and ions.data.size
+        and c["ions"]["autoscale_ticks_and_ylim"]
+    ):
         autoscale_ticks_and_ylim(c, np.max(ions.data), abs(np.min(ions.data)), "ions")
 
     rows_tot = get_rows_tot(c, ions)
@@ -118,7 +122,7 @@ def create_figure(voltage, currs, c, ions):
         row += 1
 
     # PLOT IONIC CONCENTRATIONS
-    if ions.data is not None:
+    if ions.data is not None and ions.data.size:
         if use_patterns:
             ions.plot_with_linestyles(c, row, rows_tot, cmap)
         else:

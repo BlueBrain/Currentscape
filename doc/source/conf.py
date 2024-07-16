@@ -55,6 +55,10 @@ exclude_patterns = []
 autosummary_generate = True
 autodoc_default_options = {"members": True, "show-inheritance": True}
 
+suppress_warnings = [
+    'autosummary.import_cycle',
+]
+
 
 # -- Options for HTML output -------------------------------------------------
 

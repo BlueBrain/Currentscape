@@ -65,7 +65,7 @@ def get_rows_tot(c, ions):
         rows_tot += 1
     if c["show"]["all_currents"]:
         rows_tot += 2
-    if ions.data is not None:
+    if ions.data is not None and ions.data.size:
         rows_tot += 1
     if c["show"]["total_contribution"]:
         rows_tot += 2

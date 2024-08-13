@@ -92,7 +92,7 @@ def create_figure(voltage, currs, c, ions):
     voltage.plot(c, row, rows_tot)
     row += 2
 
-    # PLOT TOTAL INWARD CURRENT IN LOG SCALE
+    # PLOT TOTAL OUTWARD CURRENT IN LOG SCALE
     currs.plot_sum(c, row, rows_tot, True)
     row += 1
 
@@ -108,7 +108,7 @@ def create_figure(voltage, currs, c, ions):
         currs.plot_shares(c, row, rows_tot, cmap)
         row += 4
 
-    # PLOT TOTAL OUTWARD CURRENT IN LOG SCALE
+    # PLOT TOTAL INWARD CURRENT IN LOG SCALE
     currs.plot_sum(c, row, rows_tot, False)
     row += 1
 

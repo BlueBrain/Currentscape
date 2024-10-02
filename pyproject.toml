@@ -1,0 +1,51 @@
+[build-system]
+requires = ["setuptools >= 64", "setuptools_scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "currentscape"
+authors = [
+    {name = "Blue Brain Project, EPFL"},
+]
+description="Module to easily plot currentscape."
+readme = "README.rst"
+license = {file = "LICENSE.txt"}
+requires-python = ">= 3.8"
+dynamic = ["version"]
+dependencies = [
+    "numpy",
+    "matplotlib",
+    "palettable",
+]
+classifiers=[
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Education",
+    "Intended Audience :: Science/Research",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+]
+
+[project.optional-dependencies]
+docs = ["sphinx", "sphinx-bluebrain-theme"]
+example = ["scipy", "bluepyopt", "emodelrunner>=1.2.5"]
+
+
+[project.urls]
+Homepage = "https://github.com/BlueBrain/Currentscape"
+Source = "https://github.com/BlueBrain/Currentscape"
+Repository = "https://github.com/BlueBrain/Currentscape.git"
+Tracker = "https://github.com/BlueBrain/Currentscape/issues"
+Documentation = "https://currentscape.readthedocs.io/en/latest"
+
+[tool.setuptools.packages.find]
+exclude = ["tests",]
+
+[tool.setuptools_scm]
+version_scheme = "python-simplified-semver"
+local_scheme = "no-local-version"

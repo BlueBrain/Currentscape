@@ -46,6 +46,8 @@ def create_cell():
     morph = SSCXNrnFileMorphology(
         morphology_path=morph_path,
         do_replace_axon=True,
+        axon_stub_length=60,
+        axon_nseg_frequency=15,
     )
 
     return ephys.models.CellModel(

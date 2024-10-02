@@ -241,7 +241,7 @@ The part of the code in this repository developed by the EPFL Blue Brain Project
                   :target: https://github.com/BlueBrain/Currentscape/blob/main/LICENSE.txt
                   :alt: license
 
-.. |build| image:: https://github.com/BlueBrain/Currentscape/workflows/Test/badge.svg?branch=main
+.. |build| image:: https://github.com/BlueBrain/Currentscape/workflows/test.yml/badge.svg?branch=main
                 :target: https://github.com/BlueBrain/Currentscape/actions
                 :alt: actions build status
 

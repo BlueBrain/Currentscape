@@ -33,7 +33,7 @@ classifiers=[
 
 [project.optional-dependencies]
 docs = ["sphinx", "sphinx-bluebrain-theme"]
-example = ["scipy", "bluepyopt", "emodelrunner>=1.2.4"]
+example = ["scipy", "bluepyopt", "emodelrunner>=1.2.5"]
 
 
 [project.urls]

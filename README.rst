@@ -228,6 +228,8 @@ We wish to thank the authors of `Alonso and Marder, 2019 <https://doi.org/10.755
 
 The part of the code in this repository developed by the EPFL Blue Brain Project was supported by funding to the Blue Brain Project, a research center of the École polytechnique fédérale de Lausanne (EPFL), from the Swiss government's ETH Board of the Swiss Federal Institutes of Technology.
 
+Copyright (c) 2023-2024 Blue Brain Project/EPFL
+
 
 .. |pypi| image:: https://img.shields.io/pypi/v/currentscape.svg
                :target: https://pypi.org/project/currentscape/
